@@ -94,13 +94,6 @@ Our goal is to bridge the gap between **Juristic Persons**, **Residents**, **Sec
 </div>
 
 <div align="center">
-
-### ⭐ Built for smarter communities  
-<b>Digital-first • Transparent • Efficient • Automated</b>
-
-</div>
-
-<div align="center">
   
 ## 🎨 Design (Canva)
 
