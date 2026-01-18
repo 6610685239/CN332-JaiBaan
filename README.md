@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=28&duration=2500&pause=800&color=00C2FF&center=true&vCenter=true&width=900&lines=Jaibaan;CN332+OOAD+%E2%80%94+Thammasat+University" alt="Typing SVG" />
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=28&duration=2500&pause=800&color=00C2FF&center=true&vCenter=true&width=900&lines=JaiBaan;Digital+Transformation+Management+System;CN332+OOAD+%E2%80%94+Thammasat+University" alt="Typing SVG" />
 
 <br/>
 
