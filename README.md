@@ -15,7 +15,7 @@ Built with <b>OOAD principles</b> to transform manual workflows into a seamless,
 
 </div>
 
-## 📌 Course & Institution
+## Course & Institution
 
 > **Course:** CN332 Object-Oriented Analysis and Design (OOAD)  
 > **Institution:** Thammasat University  
@@ -24,7 +24,7 @@ Built with <b>OOAD principles</b> to transform manual workflows into a seamless,
 
 <div align="center">
   
-## 🛠 Tech Stack & Ecosystem
+## Tech Stack & Ecosystem
 
 | **Core Backend** | **Frontend** | **Database** |
 | :---: | :---: | :---: |
@@ -38,7 +38,7 @@ Built with <b>OOAD principles</b> to transform manual workflows into a seamless,
 
 <div align="center">
   
-## 👥 Project Members
+## Project Members
 
 <table>
   <thead>
@@ -73,12 +73,12 @@ Built with <b>OOAD principles</b> to transform manual workflows into a seamless,
 
 ---
 
-## 🌟 Project Overview
+## Project Overview
 
 The **Digital Transformation Management System** is a comprehensive solution designed to modernize the administration of residential projects (**Juristic Person Management**).  
 By integrating **Object-Oriented Analysis and Design (OOAD)** principles with cutting-edge technologies, this system aims to transform traditional manual operations into a seamless, transparent, and automated digital ecosystem.
 
-### 🎯 Goal
+### Goal
 
 Our goal is to bridge the gap between **Juristic Persons**, **Residents**, **Security Personnel**, and **Technicians** through a unified platform that enhances quality of life and operational efficiency.
 
@@ -88,14 +88,14 @@ Our goal is to bridge the gap between **Juristic Persons**, **Residents**, **Sec
 
 <div align="center">
 
-### ⭐ Built for smarter communities  
+### Built for smarter communities  
 <b>Digital-first • Transparent • Efficient • Automated</b>
 
 </div>
 
 <div align="center">
   
-## 🎨 Design (Canva)
+## Design (Canva)
 
 **Concept Slides / Pitch Deck Week 1:** [View on Canva](https://www.canva.com/design/DAG-GTz4SEA/NJPW_y26A26ByyObY6FK2g/edit?utm_content=DAG-GTz4SEA&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton) <br>
 **Requirements Slides / Pitch Deck Week 2:** [View on Canva](https://www.canva.com/design/DAG-x67lH8g/QPbV9fTDlENggrXUQ6h9pw/edit?utm_content=DAG-x67lH8g&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
