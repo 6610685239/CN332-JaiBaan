@@ -53,3 +53,60 @@ The team has divided the responsibility for designing the concepts and drafting 
 | Parunchai Timklip | Security & AI Architecture: Designs the system architecture for the License Plate Recognition (LPR) and automated access control integration. | Completed |
 
 ---
+
+
+## Meeting No. 2: Scope Refinement & Week 2 Requirement Analysis
+**Date:** January 19, 2026
+**Time:** 20:00 - 23:00
+**Location:** Online (Discord)
+**Attendees:**
+1. Parunchai Timklip
+2. Chonchanan Jitrawang
+3. Chayawat Kanjanakaew
+4. Nonthapat Boonprasith
+5. Kittidet Wichaidit
+
+---
+
+### Agenda
+1.  **Project Rebranding:** Renaming the project to reflect the new direction.
+2.  **Scope Reduction:** Reviewing and cutting non-essential features to ensure feasibility within the timeline.
+3.  **Week 2 Assignment:** Requirement Analysis using Noun-Verb extraction method.
+4.  **Presentation Overhaul:** Redesigning the slide deck from scratch.
+5.  **Repository Maintenance:** License change and README updates.
+
+---
+
+### Decisions & Summary
+
+#### 1. Rebranding & License
+* **New Project Name:** Officially renamed to **"JaiBaan Project - Digital Transformation Management System"**.
+* **License:** Changed the repository license to **GPL-3.0** (GNU General Public License v3.0) to support open-source collaboration.
+
+#### 2. Feature De-scoping (Scope Reduction)
+The team decided to remove complex predictive features to focus on the core "Buy-Sell" and "Security" logic.
+* **Removed:** Electricity Cost Prediction (Advanced Analytics).
+
+
+#### 3. Week 2 Methodology: Noun & Verb Analysis
+* Adopted the linguistic analysis approach for requirements.
+* **Method:** Identifying Nouns (Candidate Classes) and Verbs (Methods/Relationships) from the problem statement.
+* **Structure:** Mapping `Subject (Noun) -> Verb -> Object (Noun)` to define system interactions.
+
+---
+
+### Task Assignments
+
+The workload was distributed to cover the presentation overhaul, documentation, and the Week 2 analysis requirements.
+
+| Member | Task / Responsibility | Scope / Details | Status |
+| :--- | :--- | :--- | :--- |
+| **Parunchai Timklip** | **Slide Deck Redesign (Part 1)** | Responsible for the **Technical & Architecture** slides (Tech Stack, System Overview, Security/AI Logic). | Completed |
+| **Nonthapat Boonprasith** | **Slide Deck Redesign (Part 2)** | Responsible for the **Business & User Flow** slides (Problem, Solution, User Journey). | Completed |
+| **Nonthapat Boonprasith** | **README.md** | Rewrite the main `README.md` to reflect the new "JaiBaan" name, members, and updated features. | Completed |
+| **Kittidet Wichaidit** | **Week 2 Requirement Analysis (Part 1)** | **Noun-Verb Grouping:** Extracting nouns/verbs for **Core & Security modules** (Member, Guard, LPR). Creating `Subject->Verb->Object` mappings. | Completed |
+| **Chayawat Kanjanakaew** | **Week 2 Requirement Analysis (Part 2)** | **Noun-Verb Grouping:** Extracting nouns/verbs for **Services & Communication modules** (Bill, Booking, Maintenance). Creating `Subject->Verb->Object` mappings. | Completed |
+| **Chonchanan Jitrawang** | **Documentation Updates** | Updating `concept_paper.md` with the new feature list and `meeting_logs.md` with today's summary. | Completed |
+| **Team** | **Repository Config** | Changed LICENSE file to **GPL-3.0**. | Completed |
+
+---

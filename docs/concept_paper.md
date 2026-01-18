@@ -1,79 +1,130 @@
-# Concept Paper: Digital Transformation Management System
+# Concept Paper: JaiBaan Project (Digital Transformation Management System)
+
+![Project Status](https://img.shields.io/badge/Status-Proposal_Phase-blue?style=flat-square)
+![License](https://img.shields.io/badge/License-GPL--3.0-green?style=flat-square)
 
 **Course:** CN332 Object-Oriented Analysis and Design  
 **Department:** Computer Engineering, Thammasat University
 
 ---
 
-## 1. Overview
-The **Digital Transformation Management System** is a unified platform designed to revolutionize the administration of residential projects (Housing Estates/Condominiums). By leveraging modern technologies—specifically **Artificial Intelligence (AI)**, **Workflow Automation**, and **Cloud-based Web Applications**—the system addresses the inefficiencies of traditional manual management. It connects Juristic Persons, Residents, Security Guards, and Technicians into a single, seamless ecosystem, enhancing transparency, security, and quality of life.
+## Table of Contents
+1. [Overview](#1-overview)
+2. [Problem Statement](#2-problem-statement)
+3. [Proposed Solution](#3-proposed-solution)
+4. [System Modules & Key Features](#4-system-modules--key-features)
+5. [Technology Stack](#5-technology-stack)
+6. [Project Team](#6-project-team)
+
+---
+
+## 1. Overview 
+
+**"JaiBaan" (ใจบ้าน)** is not just a juristic management software, but a **"Living OS"** designed to elevate high-end housing estates into a **Smart Community**. By integrating **Object-Oriented Analysis and Design (OOAD)** principles with modern web technologies, JaiBaan transforms traditional manual operations (paper-based/logbooks) into a fully digital, automated, and transparent ecosystem.
+
+Our core philosophy is **"Human-Centric Design"**, ensuring that technology feels warm, relaxing, and private—just like being at home.
 
 ## 2. Problem Statement
-Current residential management systems face several critical challenges:
-1.  **Insecure Ownership Transfers:** The process of updating resident data during property sales (Buy-Sell) is slow and manual. Often, old owners retain access rights while new owners face delays in registration, creating a security gap.
-2.  **Communication Gaps:** Announcements via paper or basic chat groups are often missed or delayed.
-3.  **Lack of Transparency:** Residents cannot easily track juristic spending or verify common area maintenance costs.
-4.  **Inefficient Operations:** Manual recording of water/electricity meters and gate access control is prone to human error and slow.
-5.  **Poor Service Experience:** Booking facilities or reporting repairs involves cumbersome paperwork and untrackable processes.
+Residents and Juristic Persons currently face several operational pain points:
+1.  **Visitor Congestion:** Guests waste time exchanging ID cards at the gate; residents worry about privacy and security.
+2.  **Inefficient Maintenance:** Reporting repairs (e.g., broken pipes) after office hours is difficult. The process relies on manual coordination, causing delays and lack of tracking.
+3.  **Facility Uncertainty:** Residents cannot check facility availability (e.g., swimming pool, meeting room) in real-time, leading to wasted trips.
+4.  **Financial Opacity:** Residents lack visibility into how common fees are spent, relying on paper reports or annual meetings.
+5.  **Delayed Communication:** Urgent announcements (e.g., water cuts) via paper notices are often missed, causing inconvenience.
 
 ## 3. Proposed Solution
-We propose a **"Digital Transformation Management System"** that integrates a **Django-based Web Application** with **Line Official Account (Line OA)**. The system utilizes **n8n** for backend automation and **YOLO (AI)** for physical security, ensuring a robust and user-friendly experience.
+**JaiBaan** offers a seamless solution by connecting the **Line Official Account (Line OA)** for residents with a **Web-based Dashboard** for Juristic staff and Technicians. The system leverages **Automation (n8n)** and **AI (LPR)** to streamline interactions.
 
 ### 3.1 Actors
-* **Juristic Person (Admin):** Manages the system, finances, and announcements; holds authority to approve/revoke resident rights.
-* **Resident:** Accesses services, views bills, and receives notifications via mobile.
-* **Security Guard:** Monitors entry/exit points assisted by AI.
-* **Technician:** Receives maintenance tickets and updates repair status.
+* **Resident:** Uses Line OA for all living services (invite guests, report repairs, pay bills).
+* **Juristic Person (Admin):** Manages the community via a centralized web dashboard.
+* **Technician:** Receives jobs directly via the system and updates status in real-time.
+* **Security Guard / Gate System:** Automated by AI (LPR) and QR Code scanning.
+
+---
 
 ## 4. System Modules & Key Features
 
-The system consists of 9 core modules, categorized into 3 main functional parts covering all dimensions of living:
+The system is designed around 5 key scenarios covering the complete living experience:
 
-### Part 1: Core & Security
-1.  **Digital Resident Lifecycle Management (Smart Member System):**
-    * A dynamic membership system designed for **Real-time Access Control**.
-    * Supports the **Property Ownership Transfer (Buy-Sell)** process via Line OA/Mobile App.
-    * Empowers Juristic staff to **instantly approve new owners** and **revoke access rights of previous owners**, ensuring community security.
-2.  **Self-Service Account Update:**
-    * Module allowing residents to update personal information, vehicle details, and emergency contacts without paperwork.
-3.  **Automated LPR (License Plate Recognition):**
-    * AI-powered system using **YOLO** to automatically scan license plates, control barrier access (Smart Gate), and log entry/exit timestamps based on the *real-time* member status.
+### 4.1 Smart Gate & Visitor Management
+> *Feature: License Plate Recognition & Pre-Registration*
 
-### Part 2: Communication & Finance
-4.  **Smart Announcement:**
-    * Public relation system enabling Juristic staff to broadcast immediate news and notifications to residents via **Line OA**.
-5.  **Billing & Payment:**
-    * Automated notification system for water bills and common fees, including a feature to store and verify payment transfer evidence.
-6.  **Financial Transparency:**
-    * A transparency dashboard displaying the Juristic Person's budget status, income, and expenses for residents to audit.
-7.  **Electricity Analytics:**
-    * An analytics module that analyzes electricity usage behavior and provides forward-looking cost predictions.
+* **Pre-Registration:** Residents generate a QR Code for guests via Line OA by entering license plate and name.
+* **Key Sharing:** Easily share the QR Key to guests via Line/Chat.
+* **Automated Access:** Guests use the QR Code or License Plate Recognition (LPR) to open the barrier automatically.
+* **Instant Alert:** Residents receive immediate Line notifications when guests arrive.
+* **E-Stamp:** Paperless parking validation via the resident's mobile.
 
-### Part 3: Services & Maintenance
-8.  **Facility Booking:**
-    * Reservation system for common areas (e.g., Fitness Center, Meeting Rooms) complete with a calendar and eligibility check.
-9.  **Maintenance & Complaint:**
-    * A comprehensive issue tracking system (Ticket System) for reporting repairs and complaints, allowing users to track status from initiation to completion.
+### 4.2 Smart Repair Request (Maintenance System)
+> *Feature: Direct Technician Assignment*
+
+* **Direct Request:** Residents report issues (photo/location) via Line. The system uses **Smart Categorization** (e.g., Electrical, Plumbing) to route jobs directly to the right technician without waiting for Admin approval.
+* **Job Filtering & Acceptance:** Technicians see only relevant jobs and can "Lock" a job (First-come, first-served basis).
+* **Real-time Tracking:** Residents track status (Pending -> En Route -> Completed).
+* **Quality Control:**
+    * **Proof of Work:** Technicians upload Before/After photos to close the job.
+    * **Rating & Feedback:** Residents rate service (1-5 stars) immediately after completion.
+    * **SLA Warning:** System alerts Admin if a job remains "Pending" > 24 hours.
+
+### 4.3 Smart Facility Reservation
+> *Feature: Real-time Booking & IoT Access*
+
+* **Real-time Availability:** Check status of facilities (Gym, Pool, Meeting Room) via Line OA Calendar.
+* **QR Access:** Booking generates a QR Code used to unlock facility doors (IoT Integration).
+* **Juristic Management:** Admins can view logs, edit bookings, and cross-check with **CCTV Footage** for security.
+
+### 4.4 Financial Transparency Dashboard
+> *Feature: Visual Analytics & Digital Receipts*
+
+* **Transparency Portal:** Residents access a dashboard via Line OA to view Juristic financial status.
+* **Visual Analytics:** Graphs showing Income vs. Expenses and common fee usage breakdown.
+* **Transaction History:** Verify transaction periods and view digital receipts/proof of payment.
+
+### 4.5 Smart Announcement
+> *Feature: Targeted Broadcasting*
+
+* **Broadcast System:** Juristic staff sends urgent notifications (e.g., Urgent Repair) or General News directly to residents' Line OA.
+* **History Board:** Residents can view past announcements categorized by type.
+
+---
 
 ## 5. Technology Stack
 
 ### Core Architecture
-* **Web Framework:** Django (Python)
-* **Frontend:** HTML5, CSS3, JavaScript (Responsive Design)
-* **Database:** SQL (Managed via Django ORM)
+![NodeJS](https://img.shields.io/badge/Backend-Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+![React](https://img.shields.io/badge/Frontend-React-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL-336791?style=for-the-badge&logo=postgresql&logoColor=white)
 
-### Integration & Automation
-* **Messaging Interface:** Line Messaging API (Line OA)
-* **Workflow Automation:** n8n (Node-based workflow automation for triggering notifications and cross-system data sync)
+* **Core Backend:** Node.js - *Fast, Scalable, and Real-time Ready.*
+* **Frontend:** React JS - *Dynamic, Responsive, and Component-Based.*
+* **Database:** PostgreSQL - *Reliable relational database management.*
+
+### Integration & Infrastructure
+![Line](https://img.shields.io/badge/Interface-Line_OA-00C300?style=for-the-badge&logo=line&logoColor=white)
+![n8n](https://img.shields.io/badge/Automation-n8n-FF6584?style=for-the-badge&logo=n8n&logoColor=white)
+![Vercel](https://img.shields.io/badge/Deployment-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)
+
+* **Messaging Interface:** LINE Official Account (Line OA) - *Primary user interface for residents.*
+* **Workflow Automation:** n8n - *Middleware for connecting Line API and Backend logic.*
+* **Deployment:** Vercel - *Cloud hosting and deployment platform.*
 
 ### Advanced Technology
-* **Artificial Intelligence:** YOLOv8 (Computer Vision for Object Detection/LPR)
+![YOLO](https://img.shields.io/badge/AI-YOLOv8-00FFFF?style=for-the-badge&logo=opencv&logoColor=black)
 
-## 6. Expected Benefits
-* **Enhanced Security:** Prevents unauthorized access by immediately revoking rights of former owners upon property sale.
-* **Operational Efficiency:** Reduces manual workload for Juristic staff by approx. 60%.
-* **Real-time Communication:** Ensures 100% reachability for emergency announcements.
-* **Transparency:** Digital accounting builds trust between residents and management.
+* **Artificial Intelligence:** LPR (License Plate Recognition) integration for Smart Gate.
 
 ---
-*Drafted for CN332 Project Proposal*
+
+## 6. Project Team
+
+| Student ID | Name | Role | GitHub |
+| :--- | :--- | :--- | :--- |
+| **6610685056** | Chonchanan Jitrawang | Team Member | [Link](https://github.com/SETPOINT1) |
+| **6610685098** | Kittidet Wichaidit | Team Member | [Link](https://github.com/6610685098) |
+| **6610685122** | Chayawat Kanjanakaew | Team Member | [Link](https://github.com/6610685122) |
+| **6610685205** | Nonthapat Boonprasith | Team Member | [Link](https://github.com/6610685205) |
+| **6610685239** | Parunchai Timklip | Team Member | [Link](https://github.com/6610685239) |
+
+---
+*Drafted for CN332 Project Proposal - Week 1*
