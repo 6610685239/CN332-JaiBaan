@@ -97,7 +97,7 @@ Our goal is to bridge the gap between **Juristic Persons**, **Residents**, **Sec
   
 ## Design (Canva)
 
-**Concept Slides / Pitch Deck Week 1:** [View on Canva](https://www.canva.com/design/DAG-GTz4SEA/NJPW_y26A26ByyObY6FK2g/edit?utm_content=DAG-GTz4SEA&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton) <br>
-**Requirements Slides / Pitch Deck Week 2:** [View on Canva](https://www.canva.com/design/DAG-x67lH8g/QPbV9fTDlENggrXUQ6h9pw/edit?utm_content=DAG-x67lH8g&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
+**Concept Slides / Pitch Deck Week 1:** [View on Canva](https://www.canva.com/design/DAG-GTz4SEA/qIboK-DglKiTsCFo_rzSeA/view?utm_content=DAG-GTz4SEA&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h94c65cc7eb) <br>
+**Requirements Slides / Pitch Deck Week 2:** [View on Canva](https://www.canva.com/design/DAG-x67lH8g/6mgE1tJihe294j1pzOv7Mg/view?utm_content=DAG-x67lH8g&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=he09656b283)
 
 </div>
