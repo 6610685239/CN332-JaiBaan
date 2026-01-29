@@ -9,10 +9,11 @@
 
 ---
 
-## 1. Overview
-**"JaiBaan" (ใจบ้าน)** is an innovative **"Living OS"** designed to elevate high-end housing estates into a fully realized **Smart Community**.
+## 1. Executive Summary
 
-This project aims to transform traditional Juristic Person management (manual-based) into a **Fully Digital Ecosystem**. By shifting all operations and communications to a dedicated **Mobile Application** for residents and a **Web Dashboard** for administration, JaiBaan ensures convenience, transparency, and enhanced security. The system is built upon **"Human-Centric Design"** principles, ensuring technology integrates seamlessly into daily life, providing warmth and privacy just like being at home.
+**"JaiBaan" (ใจบ้าน)** is an innovative **"Living OS"** designed to elevate high-end residential projects into a fully realized **Smart Community**.
+
+This project aims to transform traditional Juristic Person management (manual-based) into a **Fully Digital Ecosystem**. By shifting operations and communications to a dedicated **Mobile Application** for residents and a **Web Dashboard** for administration, JaiBaan ensures convenience, transparency, and enhanced security. The system is built upon **"Human-Centric Design"** principles, seamlessly integrating technology into daily life to provide safety, warmth, and responsiveness.
 
 ---
 
@@ -20,83 +21,83 @@ This project aims to transform traditional Juristic Person management (manual-ba
 
 An analysis of current housing estate management reveals several critical pain points:
 
-1.  **Visitor Congestion:** Traditional ID exchange at gates causes traffic jams and poses risks to resident data privacy.
-2.  **Fragmented Communication:** Important announcements via paper notices or general chat apps (e.g., Line Groups) are often overlooked, leading to missed urgent information.
-3.  **Inefficient Maintenance:** Reporting repairs via phone lacks status tracking, resulting in lost requests and delayed service.
-4.  **Lack of Transparency:** Residents cannot independently verify financial statements or budget utilization.
-5.  **Facility Access Issues:** The inability to check real-time facility availability leads to double bookings and wasted trips.
+1.  **Visitor Congestion:** Traditional ID exchange at gates causes traffic jams and poses data privacy risks.
+2.  **Fragmented Communication:** Important announcements via paper notices or general chat apps (e.g., Line Groups) are often overlooked.
+3.  **Inefficient Maintenance:** Reporting repairs via phone lacks status tracking, leading to lost requests and delayed service.
+4.  **Lack of Financial Transparency:** Residents struggle to access or verify the Juristic Person's financial statements.
+5.  **Facility Management Issues:** The lack of real-time schedule visibility leads to double bookings and conflicts.
+6.  **Disorganized Parcel Management:** Manual parcel logging is time-consuming for staff, and residents are not notified immediately, leading to unclaimed packages.
+7.  **Unheard Voices:** Residents lack a formal channel for general suggestions or complaints (non-repair related), feeling that their feedback is ignored.
 
 ---
 
 ## 3. Project Objectives
 
-1.  To develop a unified platform that seamlessly connects Residents, Juristic Persons, and Security Personnel.
-2.  To integrate **AI and Automation** to reduce redundant manual tasks and enhance security precision.
-3.  To apply **Object-Oriented Analysis and Design (OOAD)** principles to create a flexible, scalable, and maintainable software architecture.
+1.  To develop a **Unified Platform** that seamlessly connects Residents, Juristic Persons, and Security Personnel.
+2.  To integrate **AI (LPR) and Automation** to reduce manual paperwork and enhance security precision.
+3.  To establish a management system that ensures **Transparency, Traceability, and Efficiency**.
+4.  To apply **Object-Oriented Analysis and Design (OOAD)** principles to create a scalable and maintainable software architecture.
 
 ---
 
 ## 4. System Modules & Key Features
 
-The system comprises two main interfaces: **JaiBaan Mobile App** (for Residents) and **Juristic Web Dashboard** (for Admin), covering 5 key modules:
+The system consists of two main interfaces: **JaiBaan Mobile App** (for Residents) and **Juristic Web Dashboard** (for Admin), covering 7 key modules:
 
 ### 4.1 Smart Gate & LPR Access
-> *Concept: "No Card, Just Plate" - Seamless access via license plate recognition.*
-
-* **Pre-Register License Plate:** Residents register their guest's vehicle license plate in advance via the Mobile App.
-* **AI-Driven Access:** Upon arrival, the **AI Camera (LPR)** scans the plate. If it matches the pre-registered data, the barrier opens automatically without ID exchange.
-* **Real-time Visitor Alert:** Residents receive an instant **Push Notification** when their guest enters the premises.
-* **Enhanced Security:** Unregistered vehicles are denied automatic entry and must go through standard security protocols with guards.
+> *Concept: "No Card, Just Plate"*
+* **License Plate Recognition:** Uses AI (YOLOv8) to scan plates and automatically open barriers.
+* **Visitor Pre-registration:** Residents register guest vehicles in advance via the app.
+* **Arrival Notification:** Residents receive an instant notification when their guest arrives.
 
 ### 4.2 Smart Repair Request
-> *Concept: "One-Click Service" - Report and track issues anywhere, anytime.*
-
-* **In-App Reporting:** Residents report issues by taking photos and pinning locations directly in the app. The system automatically creates a ticket for the technician team.
-* **Status Tracking:** Monitor repair progress in real-time (Received -> In Progress -> Completed) via the app dashboard.
-* **Smart Feedback:** Residents can rate services and view service history for quality assurance.
+> *Concept: "One-Click Service"*
+* **Digital Ticketing:** Report issues (e.g., plumbing, electrical) with photos and location pins.
+* **Status Tracking:** Monitor repair progress in real-time (Received -> In Progress -> Completed).
+* **Technician Assignment:** Admins assign tasks to technicians via the backend system.
 
 ### 4.3 Smart Facility Reservation
-> *Concept: "Digital Booking" - Manage your lifestyle effortlessly.*
-
-* **Live Availability Check:** View real-time schedules for facilities (Gym, Pool, Meeting Room).
-* **Instant Booking:** Book slots via the app and receive a digital **E-Pass** to confirm access rights.
-* **Fair Usage Policy:** Automated quota management prevents monopoly of shared spaces.
+> *Concept: "Digital Booking"*
+* **Real-time Availability:** Check schedules for facilities (Gym, Pool, Meeting Room) instantly.
+* **Booking & Cancellation:** Reserve slots and cancel bookings digitally based on community rules.
+* **E-Pass:** Generate a digital pass/QR code to verify access rights.
 
 ### 4.4 Financial Transparency Dashboard
-> *Concept: "Trust & Verify" - Confidence through visible data.*
+> *Concept: "Trust & Verify"*
+* **Financial Overview:** Residents can view intuitive graphs summarizing income and expenses.
+* **Bill Management:** Automated notifications for utilities/common fees with a history of digital receipts.
 
-* **Visual Dashboard:** Residents can view intuitive graphs summarizing the Juristic Person's income, expenses, and balance.
-* **Bill Management:** Automated notifications for common fees and utility bills, with a secure history of digital receipts.
+### 4.5 Smart Announcement
+> *Concept: "Reach Everyone"*
+* **Push Notifications:** Broadcast urgent alerts (e.g., power outage, emergency) directly to resident screens.
+* **News Feed:** A centralized hub for community news and updates.
 
-### 4.5 Smart Announcement & Notification
-> *Concept: "Reach Everyone" - Instant updates directly to residents.*
+### 4.6 Smart Parcel Management
+> *Concept: "Safe & Sound"*
+* **Rapid Entry:** Juristic staff can quickly log incoming parcels (via photo/room number).
+* **Instant Alert:** Residents receive immediate push notifications when a parcel arrives.
+* **Pickup Verification:** Residents view their pending parcel list and confirm pickup via the app.
 
-* **Targeted Push Notification:** Admins can broadcast urgent alerts (e.g., "Water Pipe Burst", "Parcel Arrived") directly to residents' mobile lock screens.
-* **Categorized News Feed:** A dedicated news hub within the app, categorized for easy browsing (Urgent / Activities / Maintenance).
+### 4.7 Community Feedback System
+> *Concept: "Your Voice Matters"*
+* **Suggestion Box:** A dedicated channel for general suggestions, complaints, or compliments (separate from repairs).
+* **Feedback Loop:** Residents can track the status of their feedback (e.g., "Acknowledged", "In Progress") to ensure responsiveness.
 
 ---
 
 ## 5. Technology Stack
 
 ### Core Architecture
-![NodeJS](https://img.shields.io/badge/Backend-Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
-![React](https://img.shields.io/badge/Web_Admin-React-61DAFB?style=for-the-badge&logo=react&logoColor=black)
-![Flutter](https://img.shields.io/badge/Mobile_App-Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white)
-![PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL-336791?style=for-the-badge&logo=postgresql&logoColor=white)
+* **Frontend (User):** Flutter (Cross-platform Mobile App)
+* **Frontend (Admin):** React.js (Web Dashboard)
+* **Backend API:** Node.js (Express Framework)
+* **Database:** PostgreSQL (Managed by Supabase)
 
-* **Backend:** Node.js (Express) - High-performance API handling and scalable server-side logic.
-* **Web Frontend:** React.js - Dynamic dashboard for Juristic management.
-* **Mobile App:** Flutter - Cross-platform mobile application (iOS/Android) for residents.
-* **Database:** PostgreSQL - Reliable relational database management system.
-
-### Integration & Infrastructure
-![Firebase](https://img.shields.io/badge/Notification-Firebase_FCM-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)
-![n8n](https://img.shields.io/badge/Automation-n8n-FF6D5A?style=for-the-badge&logo=n8n&logoColor=white)
-![YOLO](https://img.shields.io/badge/AI-YOLOv8-00FFFF?style=for-the-badge&logo=opencv&logoColor=black)
-
-* **Notification Service:** Firebase Cloud Messaging (FCM) - Precise and fast push notification delivery.
-* **Automation:** n8n - Workflow automation middleware connecting various services.
-* **Artificial Intelligence:** YOLOv8 - Advanced object detection model for License Plate Recognition (LPR).
+### Services & Infrastructure
+* **AI Engine:** YOLOv8 (License Plate Recognition)
+* **Notification:** Firebase Cloud Messaging (FCM)
+* **Automation:** n8n (Workflow Automation)
+* **Deployment:** Vercel (Frontend), Render (Backend)
 
 ---
 
@@ -104,20 +105,21 @@ The system comprises two main interfaces: **JaiBaan Mobile App** (for Residents)
 
 1.  **Enhanced Security:** AI-driven screening reduces human error and unauthorized access.
 2.  **Operational Efficiency:** Reduces manual paperwork and administrative overhead by over 60%.
-3.  **Real-time Communication:** Ensures 100% reach for urgent news, eliminating communication gaps.
-4.  **Transparency & Trust:** verifiable financial data builds stronger trust between residents and management.
+3.  **Real-time Communication:** Ensures 100% reach for urgent news and parcel notifications.
+4.  **Transparency & Trust:** Verifiable financial data builds stronger trust within the community.
+5.  **Service Excellence:** Increases resident satisfaction through convenient services and active listening via the feedback system.
 
 ---
 
 ## 7. Project Team
 
 | Student ID | Name | Role & Responsibility |
-| :--- | :--- | :--- |
-| **6610685239** | Parunchai Timklip |-|
-| **6610685056** | Chonchanan Jitrawang |-|
-| **6610685122** | Chayawat Kanjanakaew |-|
-| **6610685205** | Nonthapat Boonprasith |-|
-| **6610685098** | Kittidet Wichaidit |-|
+| :---: | :--- | :--- |
+| **6610685056** | Chonchanan Jitrawang | - |
+| **6610685098** | Kittidet Wichaidit | - |
+| **6610685122** | Chayawat Kanjanakaew | - |
+| **6610685205** | Nonthapat Boonprasith | - |
+| **6610685239** | Parunchai Timklip | - |
 
 ---
-*Drafted for CN332 Project Proposal - 2nd Revision*
+*Drafted for CN332 Project Proposal*
