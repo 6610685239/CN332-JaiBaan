@@ -7,10 +7,12 @@ public class Facility {
 
     // Attributes
     private String facilityId;
+    public static int facilityCounter = 3;
     private String name;
     private Integer capacity;
     private LocalTime openTime;
     private LocalTime closeTime;
+    
 
     // Constructor
     public Facility(String facilityId, String name, Integer capacity, LocalTime openTime, LocalTime closeTime) {
@@ -39,4 +41,9 @@ public class Facility {
     public Integer getCapacity() { return capacity; }
     public LocalTime getOpenTime() { return openTime; }
     public LocalTime getCloseTime() { return closeTime; }
+    // Setters
+    public void setName(String name) { this.name = name; }
+    public void setCapacity(Integer capacity) { this.capacity = capacity; }
+    public void setOpenTime(LocalTime openTime) { this.openTime = openTime; }
+    public void setCloseTime(LocalTime closeTime) { this.closeTime = closeTime; }
 }

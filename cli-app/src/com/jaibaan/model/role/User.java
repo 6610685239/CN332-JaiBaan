@@ -8,7 +8,8 @@ public abstract class User {
     protected String lastName;
     protected String phoneNumber;
 
-    public User(String userId, String username, String passwordHash, String firstName, String lastName, String phoneNumber) {
+    public User(String userId, String username, String passwordHash, String firstName, String lastName,
+            String phoneNumber) {
         this.userId = userId;
         this.username = username;
         this.passwordHash = passwordHash;
@@ -30,11 +31,26 @@ public abstract class User {
         return true;
     }
 
-    // Getters ไว้เรียกให้ class อื่นๆ เรียกใช้ (ใครมาอ่านอย่างงนะทำไมไม่เหมือน class diagram)
-    public String getUsername() { return username; }
-    public String getFirstName() { return firstName; }
-    public String getLastName() { return lastName; }
-    public String getPhoneNumber() { return phoneNumber; }
+    // Getters ไว้เรียกให้ class อื่นๆ เรียกใช้ (ใครมาอ่านอย่างงนะทำไมไม่เหมือน
+    // class diagram)
+    public String getUsername() {
+        return username;
+    }
 
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public String getUserId() {
+        return this.userId;
+    }
 
 }
