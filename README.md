@@ -109,6 +109,14 @@ Transforming manual workflows into a **Fully Digital Ecosystem** via Mobile App 
 ---
 
 ## Design & Slides
+
+<div align="center">
+
+<a href="https://www.figma.com/proto/n3McNAhstvGYcdtzi9dBgB/332?node-id=74-1203" target="_blank">
+  <img src="https://img.shields.io/badge/Figma-GUI_Prototype-F24E1E?style=for-the-badge&logo=figma&logoColor=white" alt="Figma Prototype" />
+</a>
+
+</div>
 <br>
     <a href="https://www.canva.com/design/DAG-GTz4SEA/qIboK-DglKiTsCFo_rzSeA/view?utm_content=DAG-GTz4SEA&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h94c65cc7eb">
     <img src="https://img.shields.io/badge/Canva-Week_1_Concept-00C4CC?style=for-the-badge&logo=canva&logoColor=white" alt="Week 1 Slides" />
