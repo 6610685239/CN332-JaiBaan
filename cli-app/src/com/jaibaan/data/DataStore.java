@@ -41,7 +41,7 @@ public class DataStore {
         users.add(new SecurityGuard("U005", "guard", "1234", "Ake", "Secure", "084-444-4444", "GATE-A"));
 
         // 5. Mock Data: Parcel & Bill
-        parcels.add(new Parcel("P001", "KER-8888", "Kerry")); // ของใครเดี๋ยวค่อย Link
+        parcels.add(new Parcel("P001", "KER-8888", "Kerry","101/55")); // ของใครเดี๋ยวค่อย Link
         bills.add(new Bill("B001", 500.0, LocalDate.now().plusDays(7), "WATER"));
     }
 
