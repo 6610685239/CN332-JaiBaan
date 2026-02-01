@@ -6,6 +6,7 @@ import java.util.Scanner;
 
 import com.jaibaan.data.DataStore;
 import com.jaibaan.model.coreEntities.RepairTicket;
+import com.jaibaan.model.supportEntities.Announcement;
 
 public class JuristicPerson extends User {
 
@@ -31,7 +32,7 @@ public class JuristicPerson extends User {
             return;
         }
 
-        // แสดง Ticket 
+        // แสดง Ticket
         System.out.println("Select a ticket to assign:");
         int tIndex = 1;
         for (RepairTicket t : allTickets) {
@@ -54,7 +55,7 @@ public class JuristicPerson extends User {
         }
 
         if (ticketChoice == 0)
-            return; 
+            return;
 
         if (ticketChoice < 1 || ticketChoice > allTickets.size()) {
             System.out.println("Invalid ticket number.");
@@ -65,7 +66,7 @@ public class JuristicPerson extends User {
         RepairTicket selectedTicket = allTickets.get(ticketChoice - 1);
         System.out.println("\nSelected Ticket: " + selectedTicket.getDescription());
 
-        // แสดงรายชื่อช่าง 
+        // แสดงรายชื่อช่าง
         List<User> allUsers = DataStore.getInstance().getUsers();
         List<Technician> availableTechs = new ArrayList<>();
 
@@ -97,7 +98,7 @@ public class JuristicPerson extends User {
             // ดึงช่างที่เลือก
             Technician selectedTech = availableTechs.get(techChoice - 1);
 
-            // Assign งาน 
+            // Assign งาน
             selectedTicket.assignTechnician(selectedTech.getUserId());
             System.out.println("Success! Ticket assigned to " + selectedTech.getFirstName());
 
@@ -114,16 +115,20 @@ public class JuristicPerson extends User {
         return true;
     }
 
-    public void broadcastAnnouncement(String content) {
-        // สำหรับสร้าง object Announcement ใหม่และบันทึกลงระบบ
-        System.out.println("Broadcasting Announcement: " + content);
+    public void broadcastAnnouncement(String title, String content, String category) {
+        String id = "ANN-" + System.currentTimeMillis();
+        // สร้าง Object
+        Announcement newAnnounce = new Announcement(id, title, content, category);
+        // บันทึกลง DataStore
+        DataStore.getInstance().addAnnouncement(newAnnounce);
+        System.out.println("Success! Announcement published: " + title);
     }
 
     public void recordParcelEntry(String tracking) {
         // สำหรับสร้าง object Parcel ใหม่เมื่อของมาถึง
         System.out.println("Recorded new Parcel entry. Tracking: " + tracking);
     }
-     
+
     // Getters
     public String getEmployeeId() {
         return employeeId;

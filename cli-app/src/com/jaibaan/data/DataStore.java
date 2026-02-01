@@ -1,6 +1,7 @@
 package com.jaibaan.data;
 
 import com.jaibaan.model.role.*; // Import จากโฟลเดอร์ role
+import com.jaibaan.model.supportEntities.Announcement;
 import com.jaibaan.model.supportEntities.Reservation;
 import com.jaibaan.model.supportEntities.Vehicle;
 import com.jaibaan.model.supportEntities.VisitorLog;
@@ -12,6 +13,8 @@ import java.time.LocalTime;
 
 public class DataStore {
     private static DataStore instance;
+
+    private List<Announcement> announcements;
 
     // เก็บ User ทุกประเภทใน List เดียว (Polymorphism)
     private List<User> users;
@@ -31,6 +34,7 @@ public class DataStore {
         facilities = new ArrayList<>();
         reservations = new ArrayList<>();
         registeredVehicles = new ArrayList<>();
+        announcements = new ArrayList<>();
         seedData();
     }
 
@@ -56,19 +60,6 @@ public class DataStore {
 
         // 5. Mock Data: Parcel & Bill
         parcels.add(new Parcel("P001", "KER-8888", "Kerry","101/55")); // ของใครเดี๋ยวค่อย Link
-        bills.add(new Bill("B001", 500.0, LocalDate.now().plusDays(7), "WATER"));
-    }
-
-    public List<User> getUsers() { return users; }
-    public List<Parcel> getParcels() { return parcels; }
-    public List<Bill> getBills() { return bills; }
-    public List<RepairTicket> getRepairTickets() { return repairTickets; }
-    
-    // Method ช่วยเพิ่มข้อมูล
-    public void addParcel(Parcel p) { parcels.add(p); }
-    public void addRepairTicket(RepairTicket rt) {repairTickets.add(rt);
-        parcels.add(new Parcel("P001", "KER-8888", "Kerry")); // ของใครเดี๋ยวค่อย Link
-        parcels.add(new Parcel("P002", "LZ-9999", "Lazada"));
 
         addFacility(new Facility("F001", "Swimming Pool", 20, LocalTime.of(8, 0), LocalTime.of(20, 0)));
         addFacility(new Facility("F002", "Fitness Center", 10, LocalTime.of(6, 0), LocalTime.of(22, 0)));
@@ -78,7 +69,15 @@ public class DataStore {
 
         bills.add(new Bill("B001", 2000.0, LocalDate.now().plusDays(5), "Common fee", "101/55"));
         bills.add(new Bill("B002", 350.0, LocalDate.now().plusDays(5), "Security fee", "101/55"));
-        
+    }
+
+    public List<RepairTicket> getRepairTickets() { return repairTickets; }
+    
+    // Method ช่วยเพิ่มข้อมูล
+    public void addRepairTicket(RepairTicket rt) 
+    {
+        repairTickets.add(rt);
+
     }
 
     public List<User> getUsers() {
@@ -166,5 +165,13 @@ public class DataStore {
                 return v;
         }
         return null;
+    }
+
+    public void addAnnouncement(Announcement a) { 
+        announcements.add(a); 
+    }
+
+    public List<Announcement> getAnnouncements() { 
+        return announcements; 
     }
 }

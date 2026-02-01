@@ -5,11 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-
 import com.jaibaan.model.coreEntities.Bill;
 import com.jaibaan.model.coreEntities.Parcel;
 import com.jaibaan.model.coreEntities.RepairTicket;
 import com.jaibaan.data.DataStore;
+import com.jaibaan.model.supportEntities.Announcement;
 import com.jaibaan.model.supportEntities.Vehicle;
 
 public class Resident extends User {
@@ -69,11 +69,10 @@ public class Resident extends User {
         System.out.print("Enter location of the issue: ");
         String location = scanner.nextLine();
 
-        
-        String ticketId = "TICKET-" + System.currentTimeMillis(); 
-        RepairTicket newTicket = new RepairTicket(ticketId, description, location, java.time.LocalDateTime.now(), this.unitNumber);
+        String ticketId = "TICKET-" + System.currentTimeMillis();
+        RepairTicket newTicket = new RepairTicket(ticketId, description, location, java.time.LocalDateTime.now(),
+                this.unitNumber);
 
-        
         DataStore.getInstance().addRepairTicket(newTicket);
 
         System.out.println("Repair Ticket created with ID: " + ticketId);
@@ -97,16 +96,28 @@ public class Resident extends User {
     }
 
     // +registerVisitorVehicle(plate) Void
-   public void registerVisitorVehicle(String plate, String model) {
+    public void registerVisitorVehicle(String plate, String model) {
         // 1. สร้าง Object
-       Vehicle v = new Vehicle(plate, model, "CAR");
-        
+        Vehicle v = new Vehicle(plate, model, "CAR");
+
         // บันทึกลง DataStore
         DataStore.getInstance().addRegisteredVehicle(v);
-        
+
         System.out.println(">> [System] Registered: " + plate + " (" + model + ") successfully.");
     }
 
+    public void viewAnnouncements() {
+        List<Announcement> list = DataStore.getInstance().getAnnouncements();
+
+        System.out.println("\n--- Community Announcements ---");
+        if (list.isEmpty()) {
+            System.out.println("No announcements yet.");
+        } else {
+            for (int i = list.size() - 1; i >= 0; i--) {
+                list.get(i).publish();
+            }
+        }
+    }
 
     // Getters/Setters
 
@@ -121,7 +132,8 @@ public class Resident extends User {
     public List<String> getFamilyMembers() {
         return familyMembers;
     }
+
     public String getUserId() {
-    return super.getUserId();
-}
+        return super.getUserId();
+    }
 }

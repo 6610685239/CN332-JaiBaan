@@ -8,6 +8,7 @@ import com.jaibaan.model.coreEntities.Bill;
 import com.jaibaan.model.coreEntities.Facility;
 import com.jaibaan.model.coreEntities.Parcel;
 import com.jaibaan.model.coreEntities.RepairTicket;
+import com.jaibaan.model.supportEntities.Announcement;
 import com.jaibaan.model.supportEntities.PaymentTransaction; 
 import java.util.Scanner;
 import java.util.ArrayList;
@@ -25,12 +26,12 @@ public class ResidentService {
         while (true) {
             System.out.println("\n--- Resident Menu (Unit: " + resident.getUnitNumber() + ") ---");
             System.out.println("1. View My Parcels");
-            System.out.println("2. View My Bills");
-            System.out.println("3. Create Repair Ticket");
-            System.out.println("4. View My Repair Tickets");
-            System.out.println("5. Facility Reservation");
-            System.out.println("6. Register Arrival via E-Pass");
-            System.out.println("7. View & Pay Bills"); 
+            System.out.println("2. Create Repair Ticket");
+            System.out.println("3. View My Repair Tickets");
+            System.out.println("4. Facility Reservation");
+            System.out.println("5. Register Arrival via E-Pass");
+            System.out.println("6. View & Pay Bills"); 
+            System.out.println("7. View Announcements");
             System.out.println("0. Logout");
             System.out.print("Select: ");
 
@@ -44,27 +45,17 @@ public class ResidentService {
             }
 
             else if (choice.equals("2")) {
-                List<Bill> bills = resident.viewMyBills();
-                if(bills.isEmpty()) System.out.println("No pending bills.");
-            
-            }
-
-            else if (choice.equals("3")) {
                 resident.createRepairTicket();
             }
             
-            else if (choice.equals("4")) {
+            else if (choice.equals("3")) {
                 List<RepairTicket> tickets = resident.viewMyTickets();
                 if(tickets.isEmpty()) System.out.println("No repair tickets found.");
             }
-            
-            else if (choice.equals("0")) {
-                if (bills.isEmpty())
-                    System.out.println("No pending bills.");
 
-            } else if (choice.equals("5")) {
+            else if (choice.equals("4")) {
                 facilityMenu(resident, scanner);
-            } else if (choice.equals("6")) {
+            } else if (choice.equals("5")) {
                  System.out.print("Enter License Plate (e.g. กก-9999): ");
                 String plate = scanner.nextLine().trim();
                 
@@ -79,9 +70,11 @@ public class ResidentService {
                     System.out.println(">> Error: Plate and Model cannot be empty.");
                 }
             } 
-            else if (choice.equals("7")) { // << อย่าลืมเชื่อมตรงนี้!
+            else if (choice.equals("6")) { // << อย่าลืมเชื่อมตรงนี้!
                 paymentMenu(resident, scanner);
-            }else if (choice.equals("0")) {
+            } else if (choice.equals("7")) {
+                resident.viewAnnouncements();
+            } else if (choice.equals("0")) {
                 // ถ้ากด 0 ให้ return ออกจาก method นี้ กลับไปที่ Main ทันที
                 return;
             }

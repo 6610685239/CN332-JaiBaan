@@ -50,16 +50,26 @@ public class JuristicService {
                 System.out.println("(System) Saved parcel " + tracking + " to database.");
 
             } else if (choice.equals("2")) {
-                System.out.print("Enter Announcement Content: ");
+                System.out.println("\n--- Create Announcement ---");
+
+                System.out.print("Enter Title: ");
+                String title = scanner.nextLine();
+
+                System.out.print("Enter Content: ");
                 String content = scanner.nextLine();
-                juristic.broadcastAnnouncement(content);
+
+                System.out.println("Choose Category: 1.NEWS  2.MAINTENANCE  3.WARNING");
+                System.out.print("Select: ");
+                String catChoice = scanner.nextLine();
+                String category = "NEWS"; // default
+                if(catChoice.equals("2")) category = "MAINTENANCE";
+                if(catChoice.equals("3")) category = "WARNING";
+
+                juristic.broadcastAnnouncement(title, content, category);
             } 
             
             else if (choice.equals("3")) {
                 juristic.viewAndAssignRepairTickets();
-            }
-
-            else if (choice.equals("0")) {
             }
 
             else if (choice.equals("4")) {
@@ -85,10 +95,9 @@ public class JuristicService {
             String choice = scanner.nextLine();
 
             if (choice.equals("1")) { // LIST
-                System.out.println("\nID\t\tName\t\tCap\tTime");
+                System.out.println("\nID\t\tName\t\t\tCap\t\tTime");
                 for (Facility f : ds.getFacilities()) {
-                    System.out.println(f.getFacilityId() + "\t" + f.getName() + "\t" + f.getCapacity() + "\t"
-                            + f.getOpenTime() + "-" + f.getCloseTime());
+                    System.out.println(f.getFacilityId() + "\t\t" + f.getName() + "\t\t\t" + f.getCapacity() + "\t\t\t" + f.getOpenTime() + "-" + f.getCloseTime());
                 }
 
             } else if (choice.equals("2")) { // ADD
