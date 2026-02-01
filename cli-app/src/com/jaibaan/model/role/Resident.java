@@ -1,5 +1,6 @@
 package com.jaibaan.model.role;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,17 +35,24 @@ public class Resident extends User {
         // ดึงพัสดุจาก DataStore ของจริง
         List<Parcel> allParcels = DataStore.getInstance().getParcels();
 
-        // แสดงผล
-        if (allParcels.isEmpty()) {
-            // ให้ return list ว่าง ถ้าไม่มีของ
-        } else {
-            System.out.println("Found " + allParcels.size() + " parcels in system:");
-            for (Parcel p : allParcels) {
-                System.out.println(" - " + p.getCarrier() + " (Track: " + p.getTrackingNumber() + ") Status: " + p.getStatus());
+        ArrayList<Parcel> myParcels = new ArrayList<>();
+
+        for (Parcel p : allParcels) {
+            if (p.getRecipientUnitNumber().equals(this.unitNumber)) {
+                myParcels.add(p);
             }
         }
 
-        return allParcels;
+        // แสดงผล
+        if (!myParcels.isEmpty()) {
+            System.out.println("Parcels for unit " + this.unitNumber + ":");
+            for (Parcel p : myParcels) {
+                System.out.println(
+                        " - " + p.getCarrier() + " (Track: " + p.getTrackingNumber() + ") Status: " + p.getStatus());
+            }
+        }
+
+        return myParcels;
     }
 
     // +registerVisitorVehicle(plate) Void
