@@ -3,9 +3,12 @@ package com.jaibaan.model.role;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
+
 
 import com.jaibaan.model.coreEntities.Bill;
 import com.jaibaan.model.coreEntities.Parcel;
+import com.jaibaan.model.coreEntities.RepairTicket;
 import com.jaibaan.data.DataStore;
 
 public class Resident extends User {
@@ -55,11 +58,49 @@ public class Resident extends User {
         return myParcels;
     }
 
+    public void createRepairTicket() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Create Repair Ticket...");
+
+        System.out.print("Enter description of the issue: ");
+        String description = scanner.nextLine();
+
+        System.out.print("Enter location of the issue: ");
+        String location = scanner.nextLine();
+
+        
+        String ticketId = "TICKET-" + System.currentTimeMillis(); 
+        RepairTicket newTicket = new RepairTicket(ticketId, description, location, java.time.LocalDateTime.now(), this.unitNumber);
+
+        
+        DataStore.getInstance().addRepairTicket(newTicket);
+
+        System.out.println("Repair Ticket created with ID: " + ticketId);
+    }
+
+    public List<RepairTicket> viewMyTickets() {
+        System.out.println("Viewing repair tickets for unit " + this.unitNumber);
+        List<RepairTicket> allRepairTickets = DataStore.getInstance().getRepairTickets();
+        List<RepairTicket> rt = new ArrayList<RepairTicket>();
+        for (RepairTicket ticket : allRepairTickets) {
+            if (ticket.getReporterId().equals(this.unitNumber)) {
+                rt.add(ticket);
+            }
+        }
+        for (RepairTicket rtItem : rt) {
+            System.out.println(" - Ticket ID: " + rtItem.getTicketId() + ", Status: " + rtItem.getStatus());
+            System.out.println("   Status: " + rtItem.getStatus());
+            System.out.println("   Description: " + rtItem.getDescription());
+        }
+        return rt;
+    }
+
     // +registerVisitorVehicle(plate) Void
     public void registerVisitorVehicle(String plate) {
         // จำลองการลงทะเบียนป้ายทะเบียนรถ
         System.out.println("Registered Visitor Vehicle: " + plate + " for Unit " + this.unitNumber);
     }
+
 
     // Getters/Setters
 
