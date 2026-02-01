@@ -35,6 +35,7 @@ public abstract class User {
     public String getFirstName() { return firstName; }
     public String getLastName() { return lastName; }
     public String getPhoneNumber() { return phoneNumber; }
+    public String getUserId() { return userId; }
 
 
 }

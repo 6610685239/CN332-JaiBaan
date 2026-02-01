@@ -11,6 +11,7 @@ public class RepairTicket {
     private String description;
     private String location;
     private String reporterId;
+    private String assignedTechnicianId;
     private List<String> photoUrls;
     private LocalDateTime createdDate;
     private String status;
@@ -21,13 +22,14 @@ public class RepairTicket {
         this.description = description;
         this.location = location;
         this.reporterId = reporterId;
+        this.assignedTechnicianId = null;
         this.createdDate = createdDate;
         this.photoUrls = new ArrayList<>();
         this.status = "PENDING";
     }
 
     public void assignTechnician(String techId) {
-        // Update logic
+        this.assignedTechnicianId = techId;
         this.status = "ASSIGNED";
         System.out.println("Ticket " + this.ticketId + " has been assigned to Technician ID: " + techId);
     }
@@ -43,6 +45,7 @@ public class RepairTicket {
     public String getLocation() { return location; }
     public String getStatus() { return status; }
     public String getReporterId() { return reporterId; }
+    public String getAssignedTechnicianId() { return assignedTechnicianId; }
     public LocalDateTime getCreatedDate() { return createdDate; }
     public List<String> getPhotoUrls() { return photoUrls; }
 }

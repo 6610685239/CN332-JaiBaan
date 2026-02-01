@@ -89,7 +89,7 @@ public class Resident extends User {
         }
         for (RepairTicket rtItem : rt) {
             System.out.println(" - Ticket ID: " + rtItem.getTicketId() + ", Status: " + rtItem.getStatus());
-            System.out.println("   Status: " + rtItem.getStatus());
+            System.out.println("   Assigned Technician: " + rtItem.getAssignedTechnicianId());
             System.out.println("   Description: " + rtItem.getDescription());
         }
         return rt;

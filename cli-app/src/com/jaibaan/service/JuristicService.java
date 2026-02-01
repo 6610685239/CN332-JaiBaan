@@ -15,6 +15,7 @@ public class JuristicService {
             System.out.println("\n--- Juristic Menu (Staff: " + juristic.getEmployeeId() + ") ---");
             System.out.println("1. Record Parcel Entry");
             System.out.println("2. Broadcast Announcement");
+            System.out.println("3. View and Assign Repair Tickets");
             System.out.println("0. Logout");
             System.out.print("Select: ");
 
@@ -45,7 +46,13 @@ public class JuristicService {
                 System.out.print("Enter Announcement Content: ");
                 String content = scanner.nextLine();
                 juristic.broadcastAnnouncement(content);
-            } else if (choice.equals("0")) {
+            } 
+            
+            else if (choice.equals("3")) {
+                juristic.viewAndAssignRepairTickets();
+            }
+
+            else if (choice.equals("0")) {
                 return;
             }
         }
