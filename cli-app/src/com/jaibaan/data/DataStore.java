@@ -5,24 +5,28 @@ import com.jaibaan.model.coreEntities.*; // Import พวก Parcel, Bill
 import java.util.ArrayList;
 import java.util.List;
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 public class DataStore {
     private static DataStore instance;
-    
+
     // เก็บ User ทุกประเภทใน List เดียว (Polymorphism)
     private List<User> users;
     private List<Parcel> parcels;
     private List<Bill> bills;
+    private List<Facility> facilities;
 
     private DataStore() {
         users = new ArrayList<>();
         parcels = new ArrayList<>();
         bills = new ArrayList<>();
+        facilities = new ArrayList<>();
         seedData();
     }
 
     public static DataStore getInstance() {
-        if (instance == null) instance = new DataStore();
+        if (instance == null)
+            instance = new DataStore();
         return instance;
     }
 
@@ -43,12 +47,50 @@ public class DataStore {
         // 5. Mock Data: Parcel & Bill
         parcels.add(new Parcel("P001", "KER-8888", "Kerry")); // ของใครเดี๋ยวค่อย Link
         bills.add(new Bill("B001", 500.0, LocalDate.now().plusDays(7), "WATER"));
+
+        addFacility(new Facility("F001", "Swimming Pool", 20, LocalTime.of(8, 0), LocalTime.of(20, 0)));
+        addFacility(new Facility("F002", "Fitness Center", 10, LocalTime.of(6, 0), LocalTime.of(22, 0)));
     }
 
-    public List<User> getUsers() { return users; }
-    public List<Parcel> getParcels() { return parcels; }
-    public List<Bill> getBills() { return bills; }
-    
+    public List<User> getUsers() {
+        return users;
+    }
+
+    public List<Parcel> getParcels() {
+        return parcels;
+    }
+
+    public List<Bill> getBills() {
+        return bills;
+    }
+
     // Method ช่วยเพิ่มข้อมูล
-    public void addParcel(Parcel p) { parcels.add(p); }
+    public void addParcel(Parcel p) {
+        parcels.add(p);
+    }
+
+    // Facility Methods
+    public List<Facility> getFacilities() {
+        return facilities;
+    }
+
+    public void addFacility(Facility facility) {
+        if (facilities == null) {
+            facilities = new ArrayList<>();
+        }
+        facilities.add(facility);
+    }
+
+    public void removeFacility(Facility facility) {
+        if (facilities != null) {
+            facilities.remove(facility);
+        }
+
+    }
+    public Facility findFacilityById(String id) {
+        for (Facility f : facilities) {
+            if (f.getFacilityId().equalsIgnoreCase(id)) return f;
+        }
+        return null;
+    }
 }
