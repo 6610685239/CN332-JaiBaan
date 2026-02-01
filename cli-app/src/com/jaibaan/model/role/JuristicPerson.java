@@ -123,7 +123,7 @@ public class JuristicPerson extends User {
         // สำหรับสร้าง object Parcel ใหม่เมื่อของมาถึง
         System.out.println("Recorded new Parcel entry. Tracking: " + tracking);
     }
-
+     
     // Getters
     public String getEmployeeId() {
         return employeeId;
