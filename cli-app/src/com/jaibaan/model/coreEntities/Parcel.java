@@ -8,14 +8,16 @@ public class Parcel {
     private String parcelId;
     private String trackingNumber;
     private String carrier; // บริษัทขนส่ง เช่น Kerry, Flash
+    private String recipientUnitNumber;
     private LocalDateTime arrivalDate;
     private String status; // "ARRIVED", "PICKED_UP"
 
     // Constructor
-    public Parcel(String parcelId, String trackingNumber, String carrier) {
+    public Parcel(String parcelId, String trackingNumber, String carrier,String recipientUnitNumber) {
         this.parcelId = parcelId;
         this.trackingNumber = trackingNumber;
         this.carrier = carrier;
+        this.recipientUnitNumber = recipientUnitNumber; 
         this.arrivalDate = LocalDateTime.now(); // บันทึกเวลาปัจจุบันที่ของมาถึง
         this.status = "ARRIVED"; // สถานะเริ่มต้น
     }
@@ -34,6 +36,7 @@ public class Parcel {
     public String getParcelId() { return parcelId; }
     public String getTrackingNumber() { return trackingNumber; }
     public String getCarrier() { return carrier; }
+    public String getRecipientUnitNumber() { return recipientUnitNumber; }
     public LocalDateTime getArrivalDate() { return arrivalDate; }
     public String getStatus() { return status; }
 }
