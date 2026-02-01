@@ -26,10 +26,13 @@ public class JuristicService {
                 
                 System.out.print("Enter Carrier (e.g. Kerry): ");
                 String carrier = scanner.nextLine();
+
+                System.out.print("Enter Recipient Unit Number (e.g. 101/55): ");
+                String recipientUnitNumber = scanner.nextLine();
                 
                 // สร้าง ID มั่วๆ ขึ้นมา
                 String pid = "P-" + System.currentTimeMillis(); 
-                Parcel newParcel = new Parcel(pid, tracking, carrier);
+                Parcel newParcel = new Parcel(pid, tracking, carrier, recipientUnitNumber);
                 
                 // บันทึกเข้าส่วนกลาง
                 DataStore.getInstance().addParcel(newParcel);
