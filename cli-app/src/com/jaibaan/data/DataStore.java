@@ -17,6 +17,7 @@ public class DataStore {
     private List<User> users;
     private List<Parcel> parcels;
     private List<Bill> bills;
+    private List<RepairTicket> repairTickets;
     private List<Facility> facilities;
     private List<Reservation> reservations;
     private List<Vehicle> registeredVehicles = new ArrayList<>();
@@ -26,6 +27,7 @@ public class DataStore {
         users = new ArrayList<>();
         parcels = new ArrayList<>();
         bills = new ArrayList<>();
+        repairTickets = new ArrayList<>();
         facilities = new ArrayList<>();
         reservations = new ArrayList<>();
         registeredVehicles = new ArrayList<>();
@@ -53,6 +55,18 @@ public class DataStore {
         users.add(new SecurityGuard("U005", "guard", "1234", "Ake", "Secure", "084-444-4444", "GATE-A"));
 
         // 5. Mock Data: Parcel & Bill
+        parcels.add(new Parcel("P001", "KER-8888", "Kerry","101/55")); // ของใครเดี๋ยวค่อย Link
+        bills.add(new Bill("B001", 500.0, LocalDate.now().plusDays(7), "WATER"));
+    }
+
+    public List<User> getUsers() { return users; }
+    public List<Parcel> getParcels() { return parcels; }
+    public List<Bill> getBills() { return bills; }
+    public List<RepairTicket> getRepairTickets() { return repairTickets; }
+    
+    // Method ช่วยเพิ่มข้อมูล
+    public void addParcel(Parcel p) { parcels.add(p); }
+    public void addRepairTicket(RepairTicket rt) {repairTickets.add(rt);
         parcels.add(new Parcel("P001", "KER-8888", "Kerry")); // ของใครเดี๋ยวค่อย Link
         parcels.add(new Parcel("P002", "LZ-9999", "Lazada"));
 

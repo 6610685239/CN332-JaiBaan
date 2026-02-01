@@ -21,7 +21,8 @@ public class JuristicService {
             System.out.println("\n--- Juristic Menu (Staff: " + juristic.getEmployeeId() + ") ---");
             System.out.println("1. Record Parcel Entry");
             System.out.println("2. Broadcast Announcement");
-            System.out.println("3. Manage Facility");
+            System.out.println("3. View and Assign Repair Tickets");
+            System.out.println("4. Manage Facility");
             System.out.println("0. Logout");
             System.out.print("Select: ");
 
@@ -34,10 +35,13 @@ public class JuristicService {
                 System.out.print("Enter Carrier (e.g. Kerry): ");
                 String carrier = scanner.nextLine();
 
+                System.out.print("Enter Recipient Unit Number (e.g. 101/55): ");
+                String recipientUnitNumber = scanner.nextLine();
+                
                 // สร้าง ID มั่วๆ ขึ้นมา
-                String pid = "P-" + System.currentTimeMillis();
-                Parcel newParcel = new Parcel(pid, tracking, carrier);
-
+                String pid = "P-" + System.currentTimeMillis(); 
+                Parcel newParcel = new Parcel(pid, tracking, carrier, recipientUnitNumber);
+                
                 // บันทึกเข้าส่วนกลาง
                 DataStore.getInstance().addParcel(newParcel);
 
@@ -49,9 +53,16 @@ public class JuristicService {
                 System.out.print("Enter Announcement Content: ");
                 String content = scanner.nextLine();
                 juristic.broadcastAnnouncement(content);
+            } 
+            
+            else if (choice.equals("3")) {
+                juristic.viewAndAssignRepairTickets();
             }
 
-            else if (choice.equals("3")) {
+            else if (choice.equals("0")) {
+            }
+
+            else if (choice.equals("4")) {
                 facilityManagement(scanner);
 
             } else if (choice.equals("0")) {

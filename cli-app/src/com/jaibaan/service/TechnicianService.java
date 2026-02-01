@@ -22,23 +22,7 @@ public class TechnicianService {
                 tech.viewAssignedJobs();
                 
             } else if (choice.equals("2")) {
-                System.out.print("Enter Ticket ID: ");
-                String id = scanner.nextLine();
-                
-                // ตรวจสอบว่า id ไม่ว่าง
-                if(id.isEmpty()) { 
-                    System.out.println("Error: Ticket ID cannot be empty.");
-                    continue; 
-                }
-
-                System.out.print("Enter New Status (e.g. DONE): ");
-                String status = scanner.nextLine(); // รับค่า Status ใหม่
-
-                if(status.isEmpty()) {
-                     status = "COMPLETED"; // ค่า Default ถ้า User เผลอกด Enter
-                }
-
-                tech.updateJobStatus(id, status);
+                tech.updateJobStatus();
 
             } else if (choice.equals("0")) {
                 return;
