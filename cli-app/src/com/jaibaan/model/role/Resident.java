@@ -6,6 +6,7 @@ import java.util.List;
 import com.jaibaan.model.coreEntities.Bill;
 import com.jaibaan.model.coreEntities.Parcel;
 import com.jaibaan.data.DataStore;
+import com.jaibaan.model.supportEntities.Vehicle;
 
 public class Resident extends User {
 
@@ -48,9 +49,14 @@ public class Resident extends User {
     }
 
     // +registerVisitorVehicle(plate) Void
-    public void registerVisitorVehicle(String plate) {
-        // จำลองการลงทะเบียนป้ายทะเบียนรถ
-        System.out.println("Registered Visitor Vehicle: " + plate + " for Unit " + this.unitNumber);
+   public void registerVisitorVehicle(String plate, String model) {
+        // 1. สร้าง Object
+       Vehicle v = new Vehicle(plate, model, "CAR");
+        
+        // บันทึกลง DataStore
+        DataStore.getInstance().addRegisteredVehicle(v);
+        
+        System.out.println(">> [System] Registered: " + plate + " (" + model + ") successfully.");
     }
 
     // Getters/Setters
