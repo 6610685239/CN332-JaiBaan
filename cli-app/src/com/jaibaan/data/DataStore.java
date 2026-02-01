@@ -13,11 +13,13 @@ public class DataStore {
     private List<User> users;
     private List<Parcel> parcels;
     private List<Bill> bills;
+    private List<RepairTicket> repairTickets;
 
     private DataStore() {
         users = new ArrayList<>();
         parcels = new ArrayList<>();
         bills = new ArrayList<>();
+        repairTickets = new ArrayList<>();
         seedData();
     }
 
@@ -48,7 +50,10 @@ public class DataStore {
     public List<User> getUsers() { return users; }
     public List<Parcel> getParcels() { return parcels; }
     public List<Bill> getBills() { return bills; }
+    public List<RepairTicket> getRepairTickets() { return repairTickets; }
     
     // Method ช่วยเพิ่มข้อมูล
     public void addParcel(Parcel p) { parcels.add(p); }
+    public void addRepairTicket(RepairTicket rt) {repairTickets.add(rt);
+    }
 }
