@@ -23,24 +23,22 @@ public class Resident extends User {
         this.familyMembers = new ArrayList<>();
     }
 
-    // +viewMyBills() List<Bill>
     public List<Bill> viewMyBills() {
         System.out.println("DEBUG: Fetching bills for unit " + this.unitNumber);
         return new ArrayList<Bill>();
     }
 
-    // +viewMyParcels() List<Parcel>
     public List<Parcel> viewMyParcels() {
         System.out.println("DEBUG: Fetching parcels for unit " + this.unitNumber);
 
-        // ดึงพัสดุจาก DataStore ของจริง!
+        // ดึงพัสดุจาก DataStore ของจริง
         List<Parcel> allParcels = DataStore.getInstance().getParcels();
 
         // แสดงผล
         if (allParcels.isEmpty()) {
             // ให้ return list ว่าง ถ้าไม่มีของ
         } else {
-            System.out.println("📦 Found " + allParcels.size() + " parcels in system:");
+            System.out.println("Found " + allParcels.size() + " parcels in system:");
             for (Parcel p : allParcels) {
                 System.out.println(" - " + p.getCarrier() + " (Track: " + p.getTrackingNumber() + ") Status: " + p.getStatus());
             }
