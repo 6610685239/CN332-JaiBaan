@@ -19,21 +19,16 @@ public class VisitorLog {
         this.fee = 0.0;
     }
 
-    public Double calculateFee() {
-        if (exitTime == null) {
-            // ถ้ายังไม่ออก ให้สมมติว่าออกตอนนี้เพื่อคำนวณ
-            this.exitTime = LocalDateTime.now();
-        }
-
-        // คำนวณชั่วโมงจอด (ตัวอย่างคิดชั่วโมงละ 20 บาท)
-        long hoursParked = ChronoUnit.HOURS.between(entryTime, exitTime);
-        if (hoursParked < 0) {
-            hoursParked = 0;
-        }
+    public Double calculateFee(int hours) {
+        // สมมติค่าปรับ ชั่วโมงละ 50 บาท (หรือแก้ราคาตามใจชอบ)
+        double ratePerHour = 20.0;
         
-        this.fee = hoursParked * 20.0;
+        this.fee = hours * ratePerHour;
         
-        System.out.println("Parking Fee Calculated: " + fee + " THB (" + hoursParked + " hrs)");
+        // บันทึกเวลาออกเป็นปัจจุบัน
+        this.exitTime = LocalDateTime.now();
+        
+        System.out.println(">> Fee Calculated: " + hours + " hrs x " + ratePerHour + " = " + this.fee + " THB");
         return this.fee;
     }
 

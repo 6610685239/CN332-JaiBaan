@@ -24,6 +24,7 @@ public class ResidentService {
             System.out.println("1. View My Parcels");
             System.out.println("2. View My Bills");
             System.out.println("3. Facility Reservation");
+            System.out.println("4. Register Arrival via E-Pass");
             System.out.println("0. Logout");
             System.out.print("Select: ");
 
@@ -43,6 +44,20 @@ public class ResidentService {
 
             } else if (choice.equals("3")) {
                 facilityMenu(resident, scanner);
+            } else if (choice.equals("4")) {
+                 System.out.print("Enter License Plate (e.g. กก-9999): ");
+                String plate = scanner.nextLine().trim();
+                
+                // 2. รับยี่ห้อ/รุ่นรถ (เพิ่มส่วนนี้)
+                System.out.print("Enter Car Model (e.g. Toyota Yaris): ");
+                String model = scanner.nextLine().trim();
+
+                if (!plate.isEmpty() && !model.isEmpty()) {
+                    // ส่งทั้ง 2 ค่าไปที่ Model
+                    resident.registerVisitorVehicle(plate, model);
+                } else {
+                    System.out.println(">> Error: Plate and Model cannot be empty.");
+                }
             } else if (choice.equals("0")) {
                 // ถ้ากด 0 ให้ return ออกจาก method นี้ กลับไปที่ Main ทันที
                 return;
@@ -107,4 +122,5 @@ public class ResidentService {
                 break;
         }
     }
+
 }
