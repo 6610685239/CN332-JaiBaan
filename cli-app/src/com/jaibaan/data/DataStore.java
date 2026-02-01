@@ -54,7 +54,7 @@ public class DataStore {
 
         // 5. Mock Data: Parcel & Bill
         parcels.add(new Parcel("P001", "KER-8888", "Kerry")); // ของใครเดี๋ยวค่อย Link
-        bills.add(new Bill("B001", 500.0, LocalDate.now().plusDays(7), "WATER"));
+        parcels.add(new Parcel("P002", "LZ-9999", "Lazada"));
 
         addFacility(new Facility("F001", "Swimming Pool", 20, LocalTime.of(8, 0), LocalTime.of(20, 0)));
         addFacility(new Facility("F002", "Fitness Center", 10, LocalTime.of(6, 0), LocalTime.of(22, 0)));
@@ -62,6 +62,9 @@ public class DataStore {
         registeredVehicles.add(new Vehicle("กก-555", "Toyota Altis", "CAR"));
         registeredVehicles.add(new Vehicle("ขข-888", "Honda Civic", "CAR"));
 
+        bills.add(new Bill("B001", 2000.0, LocalDate.now().plusDays(5), "Common fee", "101/55"));
+        bills.add(new Bill("B002", 350.0, LocalDate.now().plusDays(5), "Security fee", "101/55"));
+        
     }
 
     public List<User> getUsers() {

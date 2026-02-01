@@ -7,7 +7,9 @@ import com.jaibaan.model.supportEntities.Reservation;
 import com.jaibaan.model.coreEntities.Bill;
 import com.jaibaan.model.coreEntities.Facility;
 import com.jaibaan.model.coreEntities.Parcel;
+import com.jaibaan.model.supportEntities.PaymentTransaction; 
 import java.util.Scanner;
+import java.util.ArrayList;
 import java.util.List;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -25,6 +27,7 @@ public class ResidentService {
             System.out.println("2. View My Bills");
             System.out.println("3. Facility Reservation");
             System.out.println("4. Register Arrival via E-Pass");
+            System.out.println("5. View & Pay Bills"); 
             System.out.println("0. Logout");
             System.out.print("Select: ");
 
@@ -58,7 +61,10 @@ public class ResidentService {
                 } else {
                     System.out.println(">> Error: Plate and Model cannot be empty.");
                 }
-            } else if (choice.equals("0")) {
+            } 
+            else if (choice.equals("5")) { // << อย่าลืมเชื่อมตรงนี้!
+                paymentMenu(resident, scanner);
+            }else if (choice.equals("0")) {
                 // ถ้ากด 0 ให้ return ออกจาก method นี้ กลับไปที่ Main ทันที
                 return;
             }
@@ -123,4 +129,93 @@ public class ResidentService {
         }
     }
 
+    private void paymentMenu(Resident resident, Scanner scanner) {
+    while (true) {
+        System.out.println("\n-------------------------------------------");
+        System.out.println("PAYMENT");
+        System.out.println("-------------------------------------------");
+        
+        // 1. ดึงบิลที่ยังไม่ได้จ่ายของบ้านตัวเอง
+        List<Bill> myUnpaidBills = new ArrayList<>();
+        for (Bill b : DataStore.getInstance().getBills()) {
+            if (b.getUnitNumber().equals(resident.getUnitNumber()) && b.getStatus().equals("UNPAID")) {
+                myUnpaidBills.add(b);
+            }
+        }
+
+        if (myUnpaidBills.isEmpty()) {
+            System.out.println("All bills are paid! No outstanding balances.");
+            return;
+        }
+
+        System.out.println("Outstanding bills:");
+        for (Bill b : myUnpaidBills) {
+            System.out.printf("- %-20s : %.2f THB\n", b.getType(), b.getAmount());
+        }
+
+        System.out.println("\nPayment option:");
+        System.out.println("1) Pay all bills");
+        System.out.println("2) Pay selected bills");
+        System.out.println("0) Back");
+        System.out.print("> ");
+        String option = scanner.nextLine();
+
+        List<Bill> selectedToPay = new ArrayList<>();
+        if (option.equals("1")) {
+            selectedToPay.addAll(myUnpaidBills);
+        } else if (option.equals("2")) {
+            System.out.println("\nSelect bills to pay:");
+            for (Bill b : myUnpaidBills) {
+                System.out.print("Pay " + b.getType() + " (" + b.getAmount() + " THB)? (y/n): ");
+                if (scanner.nextLine().equalsIgnoreCase("y")) {
+                    selectedToPay.add(b);
+                }
+            }
+        } else { return; }
+
+        if (selectedToPay.isEmpty()) continue;
+
+        // 2. แสดงสรุปยอด (Payment Summary)
+        System.out.println("\n-------------------------------------------");
+        System.out.println("PAYMENT SUMMARY");
+        System.out.println("-------------------------------------------");
+        double total = 0;
+        for (Bill b : selectedToPay) {
+            System.out.printf("- %-20s : %.2f THB\n", b.getType(), b.getAmount());
+            total += b.getAmount();
+        }
+        System.out.println("TOTAL AMOUNT         : " + total + " THB");
+
+        System.out.println("\nSelect payment method:");
+        System.out.println("1) PromptPay (Show QR)");
+        System.out.println("2) Bank Transfer");
+        System.out.print("> ");
+        scanner.nextLine(); // ข้ามการเลือกวิธีไปที่ขั้นตอนการจ่ายเลย
+
+        // 3. จำลองการจ่ายเงิน (The Jaibaan Logic)
+        System.out.println("\nGenerating QR Code...");
+        System.out.println("-------------------------------------------");
+        System.out.println("     [ " + selectedToPay.get(0).generateQR() + " ]");
+        System.out.println("-------------------------------------------");
+        
+        System.out.print("Please enter slip image filename to upload (e.g. slip.jpg): ");
+        String slipName = scanner.nextLine();
+
+        if (!slipName.isEmpty()) {
+            System.out.println("\n⏳ Uploading evidence...");
+            // อัปเดตสถานะบิลทุกใบที่เลือกเป็น PENDING
+            for (Bill b : selectedToPay) {
+                b.setStatus("PENDING");
+            }
+            System.out.println(" Evidence submitted successfully!");
+            System.out.println(" Status: PENDING (Waiting for Juristic verification)");
+        } else {
+            System.out.println("Payment cancelled. No slip attached.");
+        }
+        
+        System.out.println("\nPress Enter to continue...");
+        scanner.nextLine();
+        break; // กลับไปเมนูหลัก
+    }
+}
 }
