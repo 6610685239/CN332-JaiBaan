@@ -1,6 +1,7 @@
 package com.jaibaan.data;
 
 import com.jaibaan.model.role.*; // Import จากโฟลเดอร์ role
+import com.jaibaan.model.supportEntities.Reservation;
 import com.jaibaan.model.coreEntities.*; // Import พวก Parcel, Bill
 import java.util.ArrayList;
 import java.util.List;
@@ -15,12 +16,14 @@ public class DataStore {
     private List<Parcel> parcels;
     private List<Bill> bills;
     private List<Facility> facilities;
+    private List<Reservation> reservations;
 
     private DataStore() {
         users = new ArrayList<>();
         parcels = new ArrayList<>();
         bills = new ArrayList<>();
         facilities = new ArrayList<>();
+        reservations = new ArrayList<>();
         seedData();
     }
 
@@ -93,4 +96,18 @@ public class DataStore {
         }
         return null;
     }
+
+    // Reservation Methods
+    public List<Reservation> getReservations() { return reservations; }
+
+public void addReservation(Reservation r) { reservations.add(r); }
+
+// ค้นหาการจองเฉพาะของลูกบ้านคนนี้
+public List<Reservation> findReservationsByResident(String resId) {
+    List<Reservation> myRes = new ArrayList<>();
+    for (Reservation r : reservations) {
+        if (r.getResidentId().equals(resId)) myRes.add(r);
+    }
+    return myRes;
+}
 }

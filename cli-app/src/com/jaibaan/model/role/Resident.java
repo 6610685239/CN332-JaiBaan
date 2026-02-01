@@ -66,4 +66,7 @@ public class Resident extends User {
     public List<String> getFamilyMembers() {
         return familyMembers;
     }
+    public String getUserId() {
+    return super.getUserId();
+}
 }
