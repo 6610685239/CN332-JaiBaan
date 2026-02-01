@@ -184,7 +184,7 @@ public class ResidentService {
             System.out.printf("- %-20s : %.2f THB\n", b.getType(), b.getAmount());
             total += b.getAmount();
         }
-        System.out.println("TOTAL AMOUNT         : " + total + " THB");
+        System.out.println("TOTAL AMOUNT          " + total + " THB");
 
         System.out.println("\nSelect payment method:");
         System.out.println("1) PromptPay (Show QR)");
