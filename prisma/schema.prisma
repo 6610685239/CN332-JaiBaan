@@ -1,15 +1,15 @@
-datasource db {
-  provider = "postgresql"
-}
-
 generator client {
   provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
 }
 
 model User {
   id        Int      @id @default(autoincrement())
   username  String   @unique
-  password  String   
-  role      String   @default("resident") 
+  password  String
+  role      String   @default("resident")
   createdAt DateTime @default(now())
 }
