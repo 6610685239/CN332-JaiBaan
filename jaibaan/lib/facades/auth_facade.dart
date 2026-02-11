@@ -1,5 +1,7 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class AuthFacade {
   final String baseUrl = "https://your-node-api-on-render.com"; //
@@ -23,5 +25,15 @@ class AuthFacade {
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
+  }
+
+  Future<void> signInWithDiscord() async {
+    await Supabase.instance.client.auth.signInWithOAuth(
+      OAuthProvider.discord,
+      redirectTo: kIsWeb ? null : 'io.supabase.jaibaan://login-callback/',
+      authScreenLaunchMode: kIsWeb
+          ? LaunchMode.platformDefault
+          : LaunchMode.externalApplication,
+    );
   }
 }
