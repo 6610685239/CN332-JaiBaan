@@ -54,4 +54,40 @@ app.post('/api/auth/login', async (req, res) => {
     }
 });
 
+app.post('/api/register', async (req, res) => {
+    const { username, password, firstName, lastName, phoneNumber, roomNumber, email } = req.body;
+
+    try {
+        // ตอนนี้จะหาด้วย email ได้แล้วหลังจากรัน migrate
+        const existingUser = await prisma.user.findFirst({
+            where: {
+                OR: [{ username: username } ]
+            }
+        });
+
+        if (existingUser) {
+            return res.status(400).json({ message: "Username หรือ Email นี้ถูกใช้งานแล้ว" });
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        // บันทึกลง RegistrationRequest ตาม Diagram
+        const newRequest = await prisma.registrationRequest.create({
+            data: {
+                email: email,
+                roomNumber: roomNumber || "0",
+                status: "pending",
+                providerType: "Email"
+            }
+        });
+
+        res.status(201).json({ success: true, requestId: newRequest.requestId });
+
+    } catch (error) {
+        console.error("Register Error:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+});
+
 app.listen(3000, () => console.log('🚀 JaiBaan API running on port 3000'));
