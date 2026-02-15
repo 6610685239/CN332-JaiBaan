@@ -22,12 +22,13 @@ class _LoginPageState extends State<LoginPage> {
 
   String get apiUrl {
     const useEmulator = true;
-    const computerIp = '192.168.1.100';
-    
+
+    if (kIsWeb) {
+      return 'http://localhost:3000/api/login';
+    }
+
     if (useEmulator) {
       return 'http://10.0.2.2:3000/api/login';
-    } else {
-      return 'http://$computerIp:3000/api/login';
     }
   }
 
@@ -42,9 +43,9 @@ class _LoginPageState extends State<LoginPage> {
       );
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Error: ${e.toString()}")),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Error: ${e.toString()}")));
       }
     }
   }
@@ -67,17 +68,19 @@ class _LoginPageState extends State<LoginPage> {
     try {
       print('🔍 Attempting login to: $apiUrl');
       print('📤 Username: $username');
-      
-      final response = await http.post(
-        Uri.parse(apiUrl),
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode({'username': username, 'password': password}),
-      ).timeout(
-        const Duration(seconds: 10),
-        onTimeout: () {
-          throw Exception('Connection timeout');
-        },
-      );
+
+      final response = await http
+          .post(
+            Uri.parse(apiUrl),
+            headers: {"Content-Type": "application/json"},
+            body: jsonEncode({'username': username, 'password': password}),
+          )
+          .timeout(
+            const Duration(seconds: 10),
+            onTimeout: () {
+              throw Exception('Connection timeout');
+            },
+          );
 
       print('📥 Response status: ${response.statusCode}');
       print('📥 Response body: ${response.body}');
@@ -96,7 +99,7 @@ class _LoginPageState extends State<LoginPage> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text("Login failed: ${response.body}"),
+              content: Text("Login failed"),
               backgroundColor: Colors.red,
             ),
           );
@@ -125,7 +128,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    
+
     return Scaffold(
       body: Stack(
         children: [
@@ -235,7 +238,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
 
-                 Positioned(
+                Positioned(
                   top: size.height * 0.35,
                   left: size.width * 0.1,
                   child: Container(
@@ -256,9 +259,7 @@ class _LoginPageState extends State<LoginPage> {
                 // Blur Effect ทับทั้งหมด
                 BackdropFilter(
                   filter: ImageFilter.blur(sigmaX: 100, sigmaY: 100),
-                  child: Container(
-                    color: Colors.transparent,
-                  ),
+                  child: Container(color: Colors.transparent),
                 ),
               ],
             ),
@@ -274,14 +275,11 @@ class _LoginPageState extends State<LoginPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const SizedBox(height: 60),
-                      
+
                       // Logo
-                      Image.asset(
-                        'assets/images/logo.png',
-                        height: 100,
-                      ),
+                      Image.asset('assets/images/logo.png', height: 100),
                       const SizedBox(height: 8),
-                      
+
                       // Tagline
                       Text(
                         '"Bringing heart back to the neighborhood."',
@@ -399,11 +397,13 @@ class _LoginPageState extends State<LoginPage> {
                                 height: 20,
                                 child: Checkbox(
                                   value: _rememberMe,
-                                  onChanged: _isLoading ? null : (value) {
-                                    setState(() {
-                                      _rememberMe = value ?? false;
-                                    });
-                                  },
+                                  onChanged: _isLoading
+                                      ? null
+                                      : (value) {
+                                          setState(() {
+                                            _rememberMe = value ?? false;
+                                          });
+                                        },
                                   activeColor: const Color(0xFFF05053),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(4),
@@ -425,13 +425,17 @@ class _LoginPageState extends State<LoginPage> {
                             ],
                           ),
                           TextButton(
-                            onPressed: _isLoading ? null : () {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Forgot password feature coming soon'),
-                                ),
-                              );
-                            },
+                            onPressed: _isLoading
+                                ? null
+                                : () {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                          'Forgot password feature coming soon',
+                                        ),
+                                      ),
+                                    );
+                                  },
                             style: TextButton.styleFrom(
                               padding: EdgeInsets.zero,
                               minimumSize: const Size(0, 0),
@@ -510,13 +514,17 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                           ),
                           TextButton(
-                            onPressed: _isLoading ? null : () {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Sign up feature coming soon'),
-                                ),
-                              );
-                            },
+                            onPressed: _isLoading
+                                ? null
+                                : () {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                          'Sign up feature coming soon',
+                                        ),
+                                      ),
+                                    );
+                                  },
                             style: TextButton.styleFrom(
                               padding: EdgeInsets.zero,
                               minimumSize: const Size(0, 0),
@@ -535,7 +543,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
 
                       const SizedBox(height: 30),
-              
+
                       const Text(
                         "OR",
                         style: TextStyle(color: Colors.grey, fontSize: 12),
@@ -543,7 +551,11 @@ class _LoginPageState extends State<LoginPage> {
                       const SizedBox(height: 20),
                       ElevatedButton.icon(
                         onPressed: () => _loginWithDiscord(context),
-                        icon: const Icon(Icons.discord, color: Colors.white, size: 20),
+                        icon: const Icon(
+                          Icons.discord,
+                          color: Colors.white,
+                          size: 20,
+                        ),
                         label: const Text(
                           "Sign in with Discord",
                           style: TextStyle(
@@ -559,8 +571,7 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                       ),
-                  
-                      
+
                       const SizedBox(height: 40),
                     ],
                   ),
