@@ -55,24 +55,33 @@ app.post('/api/auth/login', async (req, res) => {
 });
 
 app.post('/api/register', async (req, res) => {
+    // 1. รับค่า (ดึง email ออกมาเพื่อใช้กับ RegistrationRequest เท่านั้น)
     const { username, password, firstName, lastName, phoneNumber, roomNumber, email } = req.body;
 
     try {
-        // ตอนนี้จะหาด้วย email ได้แล้วหลังจากรัน migrate
-        const existingUser = await prisma.user.findFirst({
-            where: {
-                OR: [{ username: username } ]
-            }
+        // 2. ตรวจสอบ Username ใน User (ห้ามใส่ email ในนี้เพราะ Schema ไม่มี!)
+        const existingUser = await prisma.user.findUnique({
+            where: { username: username }
         });
 
         if (existingUser) {
-            return res.status(400).json({ message: "Username หรือ Email นี้ถูกใช้งานแล้ว" });
+            return res.status(400).json({ message: "Username นี้ถูกใช้งานแล้ว" });
         }
 
+        // 3. ตรวจสอบ Email ซ้ำในคำขอเดิม (ถ้าต้องการ)
+        const existingRequest = await prisma.registrationRequest.findFirst({
+            where: { email: email, status: "pending" }
+        });
+
+        if (existingRequest) {
+            return res.status(400).json({ message: "Email นี้ส่งคำขอไว้แล้ว" });
+        }
+
+        // 4. เตรียมข้อมูลรหัสผ่าน
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        // บันทึกลง RegistrationRequest ตาม Diagram
+        // 5. บันทึกลง RegistrationRequest
         const newRequest = await prisma.registrationRequest.create({
             data: {
                 email: email,
@@ -82,11 +91,16 @@ app.post('/api/register', async (req, res) => {
             }
         });
 
-        res.status(201).json({ success: true, requestId: newRequest.requestId });
+        // 6. ส่งผลลัพธ์กลับ (ต้องอยู่ในบล็อก try)
+        return res.status(201).json({
+            success: true,
+            message: "ส่งคำขอสำเร็จ",
+            requestId: newRequest.id // ใช้ .id ตาม Schema ของคุณ
+        });
 
     } catch (error) {
         console.error("Register Error:", error);
-        res.status(500).json({ message: "Internal Server Error" });
+        return res.status(500).json({ message: "Internal Server Error" });
     }
 });
 
