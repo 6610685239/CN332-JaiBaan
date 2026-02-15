@@ -77,6 +77,12 @@ app.post('/api/register', async (req, res) => {
             return res.status(400).json({ message: "Email นี้ส่งคำขอไว้แล้ว" });
         }
 
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!emailRegex.test(email)) {
+            return res.status(400).json({ message: "รูปแบบ Email ไม่ถูกต้อง"});
+        }
+
         // 4. เตรียมข้อมูลรหัสผ่าน
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
