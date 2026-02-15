@@ -1,0 +1,175 @@
+@import url('https://fonts.googleapis.com/css2?family=Varela+Round&family=Kanit:wght@300;400;500;600&display=swap');
+
+.jaibaan-sidebar {
+    width: 280px;
+    height: 100vh;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    padding: 25px 15px;
+    border-right: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.02);
+    box-sizing: border-box;
+}
+
+/* --- ส่วน Logo และชื่อแบรนด์ --- */
+.sidebar-brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 0;
+    margin-bottom: 30px;
+    width: 100%;
+}
+
+.brand-icon {
+    width: auto;
+    height: auto;
+    max-width: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sidebar-logo-img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    max-height: 80px;
+}
+
+.brand-name {
+    font-family: 'Varela Round', sans-serif;
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: #ff8a75;
+    line-height: 1;
+}
+
+.brand-name span {
+    color: #ff6b6b;
+}
+
+/* --- รายการเมนู --- */
+.sidebar-nav {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* สำหรับ Chrome, Safari, Opera */
+.sidebar-nav::-webkit-scrollbar {
+    display: none;
+}
+
+.menu-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 18px;
+    margin-bottom: 8px;
+    border-radius: 14px;
+    color: #8e7f7d;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.menu-icon {
+    font-size: 1.3rem;
+    margin-right: 20px;
+    min-width: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.menu-label {
+    font-size: 1rem;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+/* Hover & Active States */
+.menu-item:hover {
+    background: #fff5f3;
+    color: #ff8a75;
+    transform: translateX(5px);
+}
+
+.menu-item.active {
+    background: #fff0ee;
+    color: #ff6b6b;
+    font-weight: 600;
+}
+
+/* --- ส่วนปุ่ม Logout (แก้ไขใหม่) --- */
+.sidebar-footer {
+    margin-top: auto;
+    padding-top: 20px;
+    border-top: 1px solid #fdf2f0;
+}
+
+.logout-card {
+    background: none;
+    border: none;
+    outline: none;
+    font-family: inherit;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 12px;
+    background: linear-gradient(135deg, #fff5f3 0%, #ffefed 100%);
+    border: 1px solid rgba(255, 107, 107, 0.1);
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: left;
+}
+
+.logout-card:hover {
+    background: #ffeae8;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.15);
+}
+
+.logout-icon-wrapper {
+    width: 40px;
+    height: 40px;
+    background: white;
+    color: #ff6b6b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 10px rgba(255, 107, 107, 0.08);
+    flex-shrink: 0;
+}
+
+.logout-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.logout-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #ff6b6b;
+    font-family: 'Kanit', sans-serif;
+    line-height: 1.2;
+}
+
+.logout-subtitle {
+    font-size: 0.75rem;
+    color: #a08c8a;
+    font-family: 'Kanit', sans-serif;
+}

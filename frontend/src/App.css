@@ -1,0 +1,148 @@
+@import url('https://fonts.googleapis.com/css2?family=Varela+Round&display=swap');
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Varela Round', sans-serif;
+}
+
+.jaibaan-bg {
+  min-height: 100vh;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* พื้นหลังไล่สีนวลๆ ตามสไตล์แอปสมัยใหม่ */
+  background: radial-gradient(circle at center, #ffffff 0%, #fdf2f0 100%);
+}
+
+.login-wrapper {
+  width: 100%;
+  max-width: 900px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 20px;
+  gap: 40px;
+}
+
+/* --- ฝั่งซ้าย: Logo --- */
+.logo-section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.login-logo-img {
+  max-width: 80%;      /* ปรับขนาดตามความเหมาะสม */
+  height: auto;
+  object-fit: contain;
+  /* เพิ่มเงาเล็กน้อยเพื่อให้รูปดูมีมิติ (ถ้าต้องการ) */
+  filter: drop-shadow(0 10px 15px rgba(255, 138, 117, 0.2));
+}
+
+/* --- ฝั่งขวา: กล่อง Login --- */
+.form-container {
+  flex: 1;
+  max-width: 400px;
+}
+
+.jaibaan-form {
+  background: white;
+  padding: 40px;
+  border-radius: 30px;
+  box-shadow: 0 15px 35px rgba(255, 107, 107, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.jaibaan-form h2 {
+  color: #ff6b6b;
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+}
+
+/* Input Box ที่มี Icon ด้านหน้า */
+.input-box {
+  display: flex;
+  align-items: center;
+  background: #fdf2f0;
+  border-radius: 50px; /* มนยาวตามรูป */
+  padding: 10px 20px;
+  gap: 12px;
+  transition: 0.3s;
+  border: 1px solid transparent;
+}
+
+.input-box:focus-within {
+  border-color: #ff8a75;
+  background: white;
+  box-shadow: 0 0 0 4px rgba(255, 138, 117, 0.1);
+}
+
+/* ปรับสี Icon */
+.input-box svg {
+  color: #8e7f7d;
+  font-size: 1.2rem;
+}
+
+.input-box input {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 1rem;
+  color: #555;
+}
+
+.input-box input::placeholder {
+  color: #b0b0b0;
+}
+
+/* --- ปุ่ม Login สี Gradient --- */
+.btn-login {
+  background: linear-gradient(to right, #ff9a8b, #ff6b6b);
+  color: white;
+  border: none;
+  padding: 15px;
+  border-radius: 15px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 10px;
+  box-shadow: 0 8px 15px rgba(255, 107, 107, 0.3);
+  transition: all 0.3s ease;
+}
+
+.btn-login:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 20px rgba(255, 107, 107, 0.4);
+  filter: brightness(1.05);
+}
+
+.btn-login:disabled {
+  background: #d1d5db;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.error-text {
+  color: #ef4444;
+  font-size: 0.85rem;
+  background: #fee2e2;
+  padding: 8px 15px;
+  border-radius: 10px;
+}
+
+/* Responsive สำหรับมือถือ */
+@media (max-width: 768px) {
+  .login-wrapper {
+    flex-direction: column;
+    text-align: center;
+  }
+  .logo-text { font-size: 4.5rem; }
+}
