@@ -177,27 +177,27 @@ cli-app
     <tr>
       <td align="center"><b>6610685056</b></td>
       <td>Chonchanan Jitrawang</td>
-      <td>-</td>
+      <td>Full-stack</td>
     </tr>
     <tr>
       <td align="center"><b>6610685098</b></td>
       <td>Kittidet Wichaidit</td>
-      <td>-</td>
+      <td>Backend Developer</td>
     </tr>
     <tr>
       <td align="center"><b>6610685122</b></td>
       <td>Chayawat Kanjanakaew</td>
-      <td>-</td>
+      <td>System Analyst & QA Tester</td>
     </tr>
     <tr>
       <td align="center"><b>6610685205</b></td>
       <td>Nonthapat Boonprasith</td>
-      <td>-</td>
+      <td>Frontend Developer</td>
     </tr>
     <tr>
       <td align="center"><b>6610685239</b></td>
       <td>Parunchai Timklip</td>
-      <td>-</td>
+      <td>DevOps & Database</td>
     </tr>
   </tbody>
 </table>
