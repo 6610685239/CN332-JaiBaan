@@ -4,6 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -40,4 +41,44 @@ model Resident {
   familyMembers String[]
   userId        Int      @unique
   User          User     @relation(fields: [userId], references: [id])
+
+  reservations  Reservation[] 
+}
+
+// ==========================================
+// 1. ตารางเก็บข้อมูลพื้นที่ส่วนกลาง (Facility)
+// ==========================================
+model Facility {
+  id          Int           @id @default(autoincrement())
+  name        String        
+  imageUrl    String?       
+  capacityMin Int?          
+  capacityMax Int?          
+  openTime    String?       
+  closeTime   String?       
+  description String?
+  
+  reservations Reservation[]
+}
+
+// ==========================================
+// 2. ตารางเก็บประวัติการจอง (Reservation)
+// ==========================================
+model Reservation {
+  id            Int       @id @default(autoincrement())
+  bookingCode   String    @unique 
+  
+  residentId    Int
+  resident      Resident  @relation(fields:[residentId], references: [id])
+  
+  facilityId    Int
+  facility      Facility  @relation(fields: [facilityId], references: [id])
+  
+  startTime     DateTime  
+  endTime       DateTime  
+  pax           Int       @default(1) 
+  status        String    @default("CONFIRMED") 
+  note          String?   
+  
+  createdAt     DateTime  @default(now()) 
 }
