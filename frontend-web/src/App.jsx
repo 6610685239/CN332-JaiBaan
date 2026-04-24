@@ -1,22 +1,23 @@
 import React, { useState } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import axios from 'axios';
 import './App.css';
-import Sidebar from './components/Sidebar';
+
+import MainLayout from './layouts/MainLayout';
 import Dashboard from './pages/Dashboard';
+import AnnouncementList from './pages/AnnouncementList';
+import AnnouncementForm from './pages/AnnouncementForm';
 import ForgotPassword from './pages/ForgotPassword';
 import logoImg from './assets/logo.png';
 
 import { FaUser } from 'react-icons/fa';
 import { LuLockKeyhole } from 'react-icons/lu';
 
-function App() {
+function LoginPage({ onLogin }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userData, setUserData] = useState(null);
-  const [activePage, setActivePage] = useState('dashboard');
   const [showForgotPassword, setShowForgotPassword] = useState(false);
 
   const handleLogin = async (e) => {
@@ -25,33 +26,13 @@ function App() {
     setError('');
     try {
       const response = await axios.post('/api/auth/juristic/login', { username, password });
-      setUserData(response.data.user);
-      setIsLoggedIn(true);
+      onLogin(response.data.user);
     } catch (err) {
-      console.error('Login Error:', err);
       setError(err.response?.data?.error || 'Login Failed. ตรวจสอบรหัสผ่านหรือสถานะ Server');
     } finally {
       setLoading(false);
     }
   };
-
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-    setUserData(null);
-    setUsername('');
-    setPassword('');
-  };
-
-  if (isLoggedIn) {
-    return (
-      <div className="main-layout">
-        <Sidebar activePage={activePage} setActivePage={setActivePage} onLogout={handleLogout} />
-        <div className="content-area">
-          {activePage === 'dashboard' && <Dashboard user={userData} />}
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="jaibaan-bg">
@@ -89,11 +70,7 @@ function App() {
               <button type="submit" className="btn-login" disabled={loading}>
                 {loading ? 'VERIFYING...' : 'LOGIN'}
               </button>
-              <button
-                type="button"
-                className="btn-link"
-                onClick={() => setShowForgotPassword(true)}
-              >
+              <button type="button" className="btn-link" onClick={() => setShowForgotPassword(true)}>
                 ลืมรหัสผ่าน?
               </button>
             </form>
@@ -101,6 +78,32 @@ function App() {
         </div>
       </div>
     </div>
+  );
+}
+
+function App() {
+  const [userData, setUserData] = useState(null);
+
+  const handleLogin = (user) => setUserData(user);
+  const handleLogout = () => setUserData(null);
+
+  if (!userData) {
+    return <LoginPage onLogin={handleLogin} />;
+  }
+
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<MainLayout user={userData} onLogout={handleLogout} />}>
+          <Route index element={<Navigate to="/dashboard" replace />} />
+          <Route path="dashboard" element={<Dashboard user={userData} />} />
+          <Route path="announcements" element={<AnnouncementList />} />
+          <Route path="announcements/new" element={<AnnouncementForm />} />
+          <Route path="announcements/:id/edit" element={<AnnouncementForm />} />
+        </Route>
+        <Route path="*" element={<Navigate to="/dashboard" replace />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
