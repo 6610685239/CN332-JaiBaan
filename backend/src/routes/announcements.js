@@ -20,7 +20,7 @@ const announcementValidation = [
 ]
 
 // All routes require auth
-router.use(auth)
+// router.use(auth)
 
 // File upload
 router.post('/upload', upload.single('file'), controller.uploadFile)

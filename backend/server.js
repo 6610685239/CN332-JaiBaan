@@ -17,7 +17,7 @@ app.use((req, res, next) => {
 // 3. Routes
 const authRoutes = require('./src/routes/authRoutes');
 const dashboardRoutes = require('./src/routes/dashboardRoutes');
-const announcementRoutes = require('./routes/announcements')
+const announcementRoutes = require('./src/routes/announcements')
 
 app.use('/api/auth', authRoutes);
 app.use('/api/dashboard', dashboardRoutes);

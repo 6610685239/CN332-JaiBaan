@@ -1,4 +1,6 @@
-const prisma = require('../lib/prisma')
+// const prisma = require('../lib/prisma')
+const prisma = require('../../db');
+
 const { sendAnnouncementNotification } = require('./notificationService')
 const { deleteFile } = require('./fileService')
 

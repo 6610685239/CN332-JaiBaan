@@ -1,0 +1,5 @@
+{
+  "name": "@announcement/shared",
+  "version": "1.0.0",
+  "main": "constants.js"
+}
