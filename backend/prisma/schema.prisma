@@ -7,15 +7,15 @@ datasource db {
 }
 
 model User {
-  id           Int       @id @default(autoincrement())
-  username     String    @unique
-  role         String    @default("resident")
-  createdAt    DateTime  @default(now())
-  avatarUrl    String?
-  facebookId   String?   @unique
-  firstName    String
-  lastName     String
-  passwordHash String
+  id               Int       @id @default(autoincrement())
+  username         String    @unique
+  role             String    @default("resident")
+  createdAt        DateTime  @default(now())
+  avatarUrl        String?
+  facebookId       String?   @unique
+  firstName        String
+  lastName         String
+  passwordHash     String
   phoneNumber      String?
   resetToken       String?
   resetTokenExpiry DateTime?
