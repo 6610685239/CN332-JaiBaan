@@ -26,6 +26,8 @@ function LoginPage({ onLogin }) {
     setError('');
     try {
       const response = await axios.post('/api/auth/juristic/login', { username, password });
+      // store token for api requests and notify app of logged-in user
+      if (response.data.token) localStorage.setItem('token', response.data.token)
       onLogin(response.data.user);
     } catch (err) {
       setError(err.response?.data?.error || 'Login Failed. ตรวจสอบรหัสผ่านหรือสถานะ Server');
@@ -85,7 +87,10 @@ function App() {
   const [userData, setUserData] = useState(null);
 
   const handleLogin = (user) => setUserData(user);
-  const handleLogout = () => setUserData(null);
+  const handleLogout = () => {
+    localStorage.removeItem('token')
+    setUserData(null)
+  };
 
   if (!userData) {
     return <LoginPage onLogin={handleLogin} />;
