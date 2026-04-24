@@ -1,6 +1,9 @@
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const prisma = require('../../db');
+const jwt = require('jsonwebtoken');
+
+
 
 exports.juristicLogin = async (req, res) => {
     try {
@@ -9,6 +12,16 @@ exports.juristicLogin = async (req, res) => {
         const user = await prisma.user.findUnique({
             where: { username }
         });
+        
+        const token = jwt.sign(
+            {
+                id: user.id,
+                role: user.role,
+                name: user.username
+            },
+            process.env.JWT_SECRET,
+            { expiresIn: '1d' }
+        );
 
         if (!user || (user.role !== 'admin' && user.role !== 'juristic')) {
             return res.status(403).json({ error: 'Access Denied: ไม่ใช่เจ้าหน้าที่นิติ' });
@@ -21,6 +34,7 @@ exports.juristicLogin = async (req, res) => {
 
         res.json({
             message: 'Login Successful',
+            token,
             user: {
                 id: user.id,
                 username: user.username,

@@ -1,6 +1,5 @@
 // const prisma = require('../lib/prisma')
 const prisma = require('../../db');
-
 const { sendAnnouncementNotification } = require('./notificationService')
 const { deleteFile } = require('./fileService')
 
@@ -59,7 +58,7 @@ const createAnnouncement = async (data, userId) => {
   return prisma.announcement.create({
     data: {
       ...announcementData,
-      createdBy: userId,
+      createdBy: String(userId),
       attachments: {
         create: attachments,
       },
