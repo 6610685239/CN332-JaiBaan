@@ -16,8 +16,10 @@ model User {
   firstName    String
   lastName     String
   passwordHash String
-  phoneNumber  String?
-  resident     Resident?
+  phoneNumber      String?
+  resetToken       String?
+  resetTokenExpiry DateTime?
+  resident         Resident?
 }
 
 model JuristicPerson {

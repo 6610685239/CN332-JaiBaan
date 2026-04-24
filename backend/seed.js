@@ -2,7 +2,7 @@ const { PrismaClient } = require('@prisma/client');
 const { PrismaPg } = require('@prisma/adapter-pg');
 const { Pool } = require('pg');
 const bcrypt = require('bcryptjs');
-require('dotenv').config();
+require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
 
 
 const connectionString = process.env.DATABASE_URL;
@@ -20,8 +20,10 @@ async function main() {
         update: {},
         create: {
             username: 'admin_test',
-            password: hashedPassword,
+            passwordHash: hashedPassword,
             role: 'admin',
+            firstName: 'Admin',
+            lastName: 'Test',
         },
     });
 

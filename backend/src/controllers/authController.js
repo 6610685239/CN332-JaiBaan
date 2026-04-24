@@ -1,31 +1,24 @@
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 const prisma = require('../../db');
 
 exports.juristicLogin = async (req, res) => {
     try {
         const { username, password } = req.body;
 
-        // 1. ค้นหา User (จากรูป Username คือ 'admin_test')
         const user = await prisma.user.findUnique({
-            where: { username: username } 
+            where: { username }
         });
 
-        // 2. เช็คว่าเจอไหม และ Role ต้องเป็น 'admin' (ตามรูป db ของคุณ)
-        // (ผมเผื่อคำว่า 'juristic' ไว้ให้ด้วย เผื่อในอนาคตมีเพิ่ม)
         if (!user || (user.role !== 'admin' && user.role !== 'juristic')) {
-            return res.status(403).json({ error: 'Access Denied: ไม่ใช่เจ้าหน้าที่นิติ (Role หรือ User ผิด)' });
+            return res.status(403).json({ error: 'Access Denied: ไม่ใช่เจ้าหน้าที่นิติ' });
         }
 
-        // 3. ตรวจสอบรหัสผ่าน
-        // *** สำคัญ: คุณต้องรู้รหัสผ่านจริงๆ ของ admin_test นะครับ ***
-        // (ลองเดาดูน่าจะเป็น: "123456", "password", หรือ "admin")
         const isMatch = await bcrypt.compare(password, user.passwordHash);
-        
         if (!isMatch) {
             return res.status(400).json({ error: 'รหัสผ่านไม่ถูกต้อง' });
         }
 
-        // 4. ผ่านทุกด่าน
         res.json({
             message: 'Login Successful',
             user: {
@@ -36,7 +29,78 @@ exports.juristicLogin = async (req, res) => {
                 lastName: user.lastName
             }
         });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Server Error' });
+    }
+};
 
+exports.forgotPassword = async (req, res) => {
+    try {
+        const { username } = req.body;
+
+        const user = await prisma.user.findUnique({ where: { username } });
+
+        // ไม่เปิดเผยว่า user มีอยู่จริงหรือไม่ถ้าไม่ใช่ admin/juristic
+        if (!user || (user.role !== 'admin' && user.role !== 'juristic')) {
+            return res.status(404).json({ error: 'ไม่พบบัญชีผู้ใช้ในระบบ' });
+        }
+
+        const resetToken = crypto.randomBytes(32).toString('hex');
+        const resetTokenExpiry = new Date(Date.now() + 15 * 60 * 1000); // 15 นาที
+
+        await prisma.user.update({
+            where: { username },
+            data: { resetToken, resetTokenExpiry }
+        });
+
+        // NOTE: ในระบบจริงให้ส่ง token ทาง email ไม่ใช่ return กลับมา
+        res.json({
+            message: 'สร้าง reset token สำเร็จ',
+            resetToken,
+            note: 'Token นี้จะหมดอายุใน 15 นาที — โปรดนำไปใช้รีเซ็ตรหัสผ่านทันที'
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Server Error' });
+    }
+};
+
+exports.resetPassword = async (req, res) => {
+    try {
+        const { resetToken, newPassword } = req.body;
+
+        if (!resetToken || !newPassword) {
+            return res.status(400).json({ error: 'กรุณาระบุ token และรหัสผ่านใหม่' });
+        }
+
+        if (newPassword.length < 6) {
+            return res.status(400).json({ error: 'รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร' });
+        }
+
+        const user = await prisma.user.findFirst({
+            where: {
+                resetToken,
+                resetTokenExpiry: { gt: new Date() }
+            }
+        });
+
+        if (!user) {
+            return res.status(400).json({ error: 'Token ไม่ถูกต้องหรือหมดอายุแล้ว' });
+        }
+
+        const passwordHash = await bcrypt.hash(newPassword, 10);
+
+        await prisma.user.update({
+            where: { id: user.id },
+            data: {
+                passwordHash,
+                resetToken: null,
+                resetTokenExpiry: null
+            }
+        });
+
+        res.json({ message: 'รีเซ็ตรหัสผ่านสำเร็จ กรุณาเข้าสู่ระบบด้วยรหัสผ่านใหม่' });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Server Error' });
