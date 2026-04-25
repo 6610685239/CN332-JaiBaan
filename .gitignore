@@ -12,3 +12,9 @@ node_modules/
 .claude/
 .idea/
 .vscode/
+
+frontend-mobile/linux/flutter/generated_plugin_registrant.*
+frontend-mobile/linux/flutter/generated_plugins.cmake
+frontend-mobile/macos/Flutter/GeneratedPluginRegistrant.swift
+frontend-mobile/windows/flutter/generated_plugin_registrant.*
+frontend-mobile/windows/flutter/generated_plugins.cmake
