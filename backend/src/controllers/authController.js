@@ -3,7 +3,117 @@ const crypto = require('crypto');
 const prisma = require('../../db');
 const jwt = require('jsonwebtoken');
 
+// Register new resident user
+exports.register = async (req, res) => {
+    try {
+        const { username, password, firstName, lastName, phoneNumber, roomNumber } = req.body;
 
+        // Validate required fields
+        if (!username || !password || !firstName || !lastName || !phoneNumber || !roomNumber) {
+            return res.status(400).json({ message: 'กรุณากรอกข้อมูลให้ครบถ้วน' });
+        }
+
+        // Check if username already exists
+        const existingUser = await prisma.user.findUnique({
+            where: { username }
+        });
+
+        if (existingUser) {
+            return res.status(400).json({ message: 'Username นี้ถูกใช้ไปแล้ว' });
+        }
+
+        // Hash password
+        const passwordHash = await bcrypt.hash(password, 10);
+
+        // Create new user with resident profile
+        const newUser = await prisma.user.create({
+            data: {
+                username,
+                passwordHash,
+                firstName,
+                lastName,
+                phoneNumber,
+                role: 'resident',
+                resident: {
+                    create: {
+                        unitNumber: roomNumber
+                    }
+                }
+            },
+            include: {
+                resident: true
+            }
+        });
+
+        res.status(201).json({ 
+            message: 'ลงทะเบียนสำเร็จ',
+            user: {
+                id: newUser.id,
+                username: newUser.username,
+                firstName: newUser.firstName,
+                lastName: newUser.lastName
+            }
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server Error', error: error.message });
+    }
+};
+
+// Resident login
+exports.residentLogin = async (req, res) => {
+    try {
+        const { username, password } = req.body;
+
+        if (!username || !password) {
+            return res.status(400).json({ error: 'กรุณากรอก username และ password' });
+        }
+
+        const user = await prisma.user.findUnique({
+            where: { username }
+        });
+
+        if (!user) {
+            return res.status(401).json({ error: 'Username หรือ password ไม่ถูกต้อง' });
+        }
+
+        // Only allow resident role to login via this endpoint
+        if (user.role !== 'resident') {
+            return res.status(403).json({ error: 'Access Denied' });
+        }
+
+        const isMatch = await bcrypt.compare(password, user.passwordHash);
+        if (!isMatch) {
+            return res.status(401).json({ error: 'Username หรือ password ไม่ถูกต้อง' });
+        }
+
+        const token = jwt.sign(
+            {
+                id: user.id,
+                role: user.role,
+                username: user.username
+            },
+            process.env.JWT_SECRET || 'your_secret_key',
+            { expiresIn: '7d' }
+        );
+
+        res.json({
+            message: 'Login Successful',
+            token,
+            user: {
+                id: user.id,
+                username: user.username,
+                role: user.role,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                phoneNumber: user.phoneNumber
+            }
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Server Error' });
+    }
+};
 
 exports.juristicLogin = async (req, res) => {
     try {
