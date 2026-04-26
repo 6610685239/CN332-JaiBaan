@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'pages/login_page.dart';
 import 'pages/register_page.dart';
+import 'pages/facility_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {
@@ -24,7 +25,7 @@ class JaiBaanApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'JaiBaan',
       theme: ThemeData(primarySwatch: Colors.orange),
-      home: RegisterPage(), // Login First
+      home: FacilityListScreen(), // Login First
     );
   }
 }

@@ -1,14 +1,18 @@
 const express = require('express');
+const path = require('path');
 const { PrismaClient } = require('@prisma/client');
 const { PrismaPg } = require('@prisma/adapter-pg');
 const { Pool } = require('pg');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
+const cors = require('cors');
 
 const app = express();
-app.use(express.json());
 
+app.use(express.json());
+app.use(cors());
+app.use('/public', express.static(path.join(__dirname, 'public'))); // เปิดให้บริการไฟล์ Static เช่น รูปภาพ
 // ตั้งค่า Adapter สำหรับ Prisma 7 (เหมือนใน seed.js)
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const adapter = new PrismaPg(pool);
@@ -109,5 +113,11 @@ app.post('/api/register', async (req, res) => {
         return res.status(500).json({ message: "Internal Server Error" });
     }
 });
+
+// feature/facility
+
+const facilityRoutes = require('./src/FacilityService/facility.routes');
+
+app.use('/api/facilities', facilityRoutes);
 
 app.listen(3000, () => console.log('🚀 JaiBaan API running on port 3000'));
