@@ -86,7 +86,7 @@ class AnnouncementItemCard extends StatelessWidget {
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontWeight:
-                                        isRead ? FontWeight.w500 : FontWeight.w700,
+                                        isRead ? FontWeight.w600 : FontWeight.w700,
                                     color: isRead
                                         ? const Color(0xFF424242)
                                         : const Color(0xFF1A1A1A),

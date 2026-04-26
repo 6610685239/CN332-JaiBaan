@@ -31,7 +31,6 @@ class _AnnouncementListPageState extends State<AnnouncementListPage> {
   int _totalPages = 1;
 
   bool _isLoading = false;
-  bool _isLoadingMore = false;
   String? _errorMessage;
 
   int _navIndex = 0;
@@ -43,16 +42,8 @@ class _AnnouncementListPageState extends State<AnnouncementListPage> {
     super.initState();
     _service = AnnouncementService();
     _searchController = TextEditingController();
-    _scrollController.addListener(_handleScroll);
     _loadReadStatus();
-    _loadAnnouncements();
-  }
-
-  void _handleScroll() {
-    if (_scrollController.position.pixels >=
-        _scrollController.position.maxScrollExtent - 200) {
-      _loadMoreAnnouncements();
-    }
+    _loadAnnouncements(page: 1); // เริ่มโหลดที่หน้า 1
   }
 
   Future<void> _loadReadStatus() async {
@@ -62,15 +53,14 @@ class _AnnouncementListPageState extends State<AnnouncementListPage> {
     } catch (_) {}
   }
 
-  Future<void> _loadAnnouncements({bool isRefresh = false}) async {
+  // ปรับการดึงข้อมูลให้รับค่า page และเคลียร์ลิสต์เก่าทุกครั้งที่เปลี่ยนหน้า
+  Future<void> _loadAnnouncements({required int page}) async {
     if (_isLoading) return;
     setState(() {
       _isLoading = true;
       _errorMessage = null;
-      if (isRefresh) {
-        _currentPage = 1;
-        _announcements = [];
-      }
+      _currentPage = page;
+      _announcements = []; // ล้างข้อมูลเดิมเพื่อให้เห็น Loading ระหว่างเปลี่ยนหน้า
     });
 
     try {
@@ -78,18 +68,24 @@ class _AnnouncementListPageState extends State<AnnouncementListPage> {
         category: _selectedCategory == 'ALL' ? null : _selectedCategory,
         search: _searchController.text.trim(),
         page: _currentPage,
-        limit: 5,
+        limit: 5, // กำหนดให้โหลดหน้าละ 5 การ์ด
         token: widget.token,
       );
+      
       setState(() {
-        if (isRefresh) {
-          _announcements = response.data;
-        } else {
-          _announcements.addAll(response.data);
-        }
+        _announcements = response.data; // แทนที่ข้อมูลเดิมด้วยหน้าใหม่
         _totalPages = response.pagination.totalPages;
         _isLoading = false;
       });
+
+      // เลื่อนหน้าจอกลับไปด้านบนเมื่อเปลี่ยนหน้าเสร็จ
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          0,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
     } catch (e) {
       setState(() {
         _errorMessage = 'เกิดข้อผิดพลาด: ${e.toString()}';
@@ -98,35 +94,10 @@ class _AnnouncementListPageState extends State<AnnouncementListPage> {
     }
   }
 
-  Future<void> _loadMoreAnnouncements() async {
-    if (_isLoadingMore || _currentPage >= _totalPages) return;
-    setState(() => _isLoadingMore = true);
-    _currentPage++;
-    try {
-      final response = await _service.getAnnouncements(
-        category: _selectedCategory == 'ALL' ? null : _selectedCategory,
-        search: _searchController.text.trim(),
-        page: _currentPage,
-        limit: 10,
-        token: widget.token,
-      );
-      setState(() {
-        _announcements.addAll(response.data);
-        _totalPages = response.pagination.totalPages;
-        _isLoadingMore = false;
-      });
-    } catch (_) {
-      setState(() {
-        _currentPage--;
-        _isLoadingMore = false;
-      });
-    }
-  }
-
   void _handleCategoryFilter(String category) {
     if (_selectedCategory == category) return;
     setState(() => _selectedCategory = category);
-    _loadAnnouncements(isRefresh: true);
+    _loadAnnouncements(page: 1); // รีเซ็ตกลับไปหน้า 1 เมื่อเปลี่ยนหมวดหมู่
   }
 
   void _handleReadStatusChanged(String id, bool isRead) async {
@@ -172,7 +143,7 @@ class _AnnouncementListPageState extends State<AnnouncementListPage> {
           // Content
           RefreshIndicator(
             color: const Color(0xFFFF7043),
-            onRefresh: () => _loadAnnouncements(isRefresh: true),
+            onRefresh: () => _loadAnnouncements(page: 1),
             child: CustomScrollView(
               controller: _scrollController,
               slivers: [
@@ -186,8 +157,8 @@ class _AnnouncementListPageState extends State<AnnouncementListPage> {
                 if (_errorMessage != null)
                   SliverToBoxAdapter(child: _buildError()),
 
-                // Loading first page
-                if (_isLoading && _announcements.isEmpty)
+                // Loading
+                if (_isLoading)
                   SliverToBoxAdapter(child: _buildInitialLoader()),
 
                 // Empty state
@@ -212,19 +183,9 @@ class _AnnouncementListPageState extends State<AnnouncementListPage> {
                   ),
                 ),
 
-                // Pagination loader
-                if (_isLoadingMore)
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          color: const Color(0xFFFF7043),
-                          strokeWidth: 2.5,
-                        ),
-                      ),
-                    ),
-                  ),
+                // Pagination (ปุ่มกดเปลี่ยนหน้า)
+                if (!_isLoading && _totalPages > 1)
+                  SliverToBoxAdapter(child: _buildPagination()),
 
                 // Bottom spacing for nav bar
                 const SliverToBoxAdapter(child: SizedBox(height: 90)),
@@ -295,7 +256,7 @@ class _AnnouncementListPageState extends State<AnnouncementListPage> {
           onChanged: (value) {
             Future.delayed(const Duration(milliseconds: 500), () {
               if (mounted && _searchController.text == value) {
-                _loadAnnouncements(isRefresh: true);
+                _loadAnnouncements(page: 1);
               }
             });
           },
@@ -318,7 +279,7 @@ class _AnnouncementListPageState extends State<AnnouncementListPage> {
                         color: Color(0xFFBDBDBD), size: 18),
                     onPressed: () {
                       _searchController.clear();
-                      _loadAnnouncements(isRefresh: true);
+                      _loadAnnouncements(page: 1);
                     },
                   )
                 : null,
@@ -394,6 +355,76 @@ class _AnnouncementListPageState extends State<AnnouncementListPage> {
             );
           }).toList(),
         ),
+      ),
+    );
+  }
+
+  // วิดเจ็ตสร้างปุ่ม Pagination
+  Widget _buildPagination() {
+    List<Widget> pageNodes = [];
+    for (int i = 1; i <= _totalPages; i++) {
+      bool isSelected = i == _currentPage;
+      pageNodes.add(
+        GestureDetector(
+          onTap: () => isSelected ? null : _loadAnnouncements(page: i),
+          child: Container(
+            width: 36,
+            height: 36,
+            margin: const EdgeInsets.symmetric(horizontal: 4),
+            decoration: BoxDecoration(
+              color: isSelected ? const Color(0xFFFF7043) : Colors.white,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: isSelected ? const Color(0xFFFF7043) : Colors.grey[300]!,
+              ),
+            ),
+            alignment: Alignment.center,
+            child: Text(
+              '$i',
+              style: TextStyle(
+                color: isSelected ? Colors.white : Colors.grey[700],
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 24),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // ปุ่ม Previous
+          IconButton(
+            onPressed: _currentPage > 1
+                ? () => _loadAnnouncements(page: _currentPage - 1)
+                : null,
+            icon: const Icon(Icons.arrow_back_ios_rounded, size: 18),
+            color: _currentPage > 1 ? const Color(0xFFFF7043) : Colors.grey[300],
+          ),
+
+          // ตัวเลขหน้า (Scroll ได้ในกรณีที่มีหลายหน้า)
+          Flexible(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: pageNodes,
+              ),
+            ),
+          ),
+
+          // ปุ่ม Next
+          IconButton(
+            onPressed: _currentPage < _totalPages
+                ? () => _loadAnnouncements(page: _currentPage + 1)
+                : null,
+            icon: const Icon(Icons.arrow_forward_ios_rounded, size: 18),
+            color: _currentPage < _totalPages ? const Color(0xFFFF7043) : Colors.grey[300],
+          ),
+        ],
       ),
     );
   }

@@ -1,9 +1,9 @@
 // lib/pages/announcement_detail_page.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart'; // เพิ่ม import นี้
 import '../models/announcement_model.dart';
 import '../services/announcement_service.dart';
 import '../utils/category_colors.dart';
-import '../widgets/category_badge.dart';
 import 'dart:io';
 
 class AnnouncementDetailPage extends StatefulWidget {
@@ -30,17 +30,17 @@ class _AnnouncementDetailPageState extends State<AnnouncementDetailPage> {
     super.initState();
     _service = AnnouncementService();
     _announcement = widget.announcement;
-    
+
     // Mark as read when detail page is opened
     _service.markAsRead(_announcement.id);
-    
+
     // Load full detail if needed
     _loadFullDetail();
   }
 
   Future<void> _loadFullDetail() async {
     setState(() => _isLoading = true);
-    
+
     try {
       final detail = await _service.getAnnouncementDetail(
         _announcement.id,
@@ -52,184 +52,216 @@ class _AnnouncementDetailPageState extends State<AnnouncementDetailPage> {
       });
     } catch (e) {
       setState(() => _isLoading = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error loading announcement: $e')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error loading announcement: $e')),
+        );
+      }
     }
+  }
+
+  // ฟังก์ชันแปลงวันที่ให้อยู่ในรูปแบบ "26 เม.ย. 2026"
+  String _formatThaiDate(DateTime date) {
+    final thaiMonths = [
+      '',
+      'ม.ค.',
+      'ก.พ.',
+      'มี.ค.',
+      'เม.ย.',
+      'พ.ค.',
+      'มิ.ย.',
+      'ก.ค.',
+      'ส.ค.',
+      'ก.ย.',
+      'ต.ค.',
+      'พ.ย.',
+      'ธ.ค.',
+    ];
+    return '${date.day} ${thaiMonths[date.month]} ${date.year}';
   }
 
   @override
   Widget build(BuildContext context) {
-    final categoryColor = CategoryColors.getCategory(_announcement.category);
-    
+    final categoryDef = CategoryColors.getCategory(_announcement.category);
+    // กำหนดสีหลักที่ใช้ในหน้านี้ (ดึงจากหมวดหมู่ หรือจะใช้สีน้ำตาลเทาตามรูปก็ได้)
+    final Color mainThemeColor = categoryDef.color;
+
     return Scaffold(
+      backgroundColor: const Color(0xFFFAFAFA),
+      // เปลี่ยน AppBar ตรงนี้ครับ 👇
       appBar: AppBar(
-        title: const Text('รายละเอียด'),
-        centerTitle: true,
         backgroundColor: Colors.white,
-        foregroundColor: Colors.black87,
         elevation: 0,
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back_ios_new_rounded,
+            size: 20,
+            color: Color(0xFF424242),
+          ),
+          onPressed: () => Navigator.of(context).maybePop(),
+        ),
+        title: const Text(
+          'Announcement Detail',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+            color: Color(0xFF1A1A1A),
+            letterSpacing: 0.2,
+          ),
+        ),
       ),
       body: _isLoading
-          ? Center(
-              child: CircularProgressIndicator(),
-            )
+          ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Header with category badge
-                  Container(
-                    color: Colors.white,
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Category badge
-                        CategoryBadge(
-                          category: _announcement.category,
-                          size: 48,
-                        ),
-                        const SizedBox(height: 12),
-                        
-                        // Title
-                        Text(
-                          _announcement.title,
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        
-                        // Category label and date
-                        Row(
-                          children: [
-                            CategoryBadgeWithLabel(category: _announcement.category),
-                            const SizedBox(width: 12),
-                            Icon(
-                              Icons.access_time_outlined,
-                              size: 14,
-                              color: Colors.grey[600],
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              _formatDateTime(_announcement.createdAt),
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey[600],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20), // ขอบโค้งมนตามรูป
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.04),
+                      blurRadius: 16,
+                      offset: const Offset(0, 4),
                     ),
-                  ),
-                  
-                  const Divider(height: 1),
-                  
-                  // Content
-                  Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // HTML content (simple rendering)
-                        _buildContent(_announcement.content),
-                        
-                        // Attachments section
-                        if (_announcement.attachments.isNotEmpty) ...[
-                          const SizedBox(height: 24),
-                          const Text(
-                            'ไฟล์ที่แนบมา',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black87,
+                  ],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // แถบสีเล็กๆ ด้านบนสุดของการ์ด
+                      Container(
+                        height: 6,
+                        color: mainThemeColor.withOpacity(0.8),
+                      ),
+
+                      Padding(
+                        padding: const EdgeInsets.all(24.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // 1. Header: Badge หมวดหมู่ และ วันที่
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                // Badge แคปซูล
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 14,
+                                    vertical: 6,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: mainThemeColor.withOpacity(0.8),
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Text(
+                                    CategoryColors.getCategoryLabel(
+                                      _announcement.category,
+                                    ),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                ),
+
+                                // วันที่ (ขวาบน)
+                                Text(
+                                  _formatThaiDate(_announcement.createdAt),
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
+                                    color: mainThemeColor.withOpacity(
+                                      0.6,
+                                    ), // สีข้อความวันที่กลืนไปกับธีม
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                          const SizedBox(height: 12),
-                          _buildAttachments(),
-                        ],
-                        
-                        // Published date info
-                        const SizedBox(height: 24),
-                        Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Colors.grey[50],
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: Colors.grey[200]!),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'ข้อมูลเพิ่มเติม',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.grey[700],
+
+                            const SizedBox(height: 20),
+
+                            // 2. Title
+                            Text(
+                              _announcement.title,
+                              style: const TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF2C2C2C),
+                                height: 1.3,
+                              ),
+                            ),
+
+                            const SizedBox(height: 16),
+
+                            // 3. Rich Text Content (HTML)
+                            Html(
+                              data: _announcement.content,
+                              style: {
+                                "body": Style(
+                                  margin: Margins.zero,
+                                  padding: HtmlPaddings.zero,
+                                  fontSize: FontSize(15.0),
+                                  color: const Color(0xFF555555),
+                                  lineHeight: LineHeight(1.6),
                                 ),
-                              ),
-                              const SizedBox(height: 8),
-                              _buildInfoRow(
-                                'ประเภท',
-                                CategoryColors.getLabel(_announcement.category),
-                              ),
-                              _buildInfoRow(
-                                'วันที่มีผล',
-                                _formatDate(_announcement.effectiveDate),
-                              ),
-                              if (_announcement.expiryDate != null)
-                                _buildInfoRow(
-                                  'วันหมดอายุ',
-                                  _formatDate(_announcement.expiryDate!),
-                                ),
-                              _buildInfoRow(
-                                'เผยแพร่เมื่อ',
-                                _formatDateTime(_announcement.createdAt),
+                                "li": Style(lineHeight: LineHeight(1.6)),
+                              },
+                            ),
+
+                            // 4. Attachments (ถ้ามี) - ซ่อนไว้ใต้เนื้อหา
+                            if (_announcement.attachments.isNotEmpty) ...[
+                              const SizedBox(height: 24),
+                              _buildAttachments(),
+                            ],
+
+                            // 5. วันหมดอายุ (ส่วนท้ายสุด)
+                            if (_announcement.expiryDate != null) ...[
+                              const SizedBox(height: 24),
+                              Divider(color: Colors.grey[200], thickness: 1),
+                              const SizedBox(height: 16),
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.access_time_filled,
+                                    size: 16,
+                                    color: mainThemeColor.withOpacity(0.5),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    'หมดอายุ: ${_formatThaiDate(_announcement.expiryDate!)}',
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w500,
+                                      color: mainThemeColor.withOpacity(0.6),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
-                          ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
     );
   }
 
-  Widget _buildContent(String htmlContent) {
-    // Simple HTML rendering - remove tags and decode entities
-    String plainText = htmlContent.replaceAll(RegExp(r'<[^>]*>'), '');
-    plainText = plainText
-        .replaceAll('&lt;', '<')
-        .replaceAll('&gt;', '>')
-        .replaceAll('&amp;', '&')
-        .replaceAll('&quot;', '"')
-        .replaceAll('&#39;', "'")
-        .replaceAll('&nbsp;', ' ')
-        .replaceAll(RegExp(r'\n\s*\n'), '\n'); // Remove multiple newlines
-
-    return SelectableText(
-      plainText,
-      style: TextStyle(
-        fontSize: 14,
-        color: Colors.grey[800],
-        height: 1.6,
-      ),
-    );
-  }
-
+  // ---------------------------------------------------------
+  // ส่วนแสดงไฟล์แนบ (คงระบบเดิมไว้แต่ปรับ Padding นิดหน่อย)
+  // ---------------------------------------------------------
   Widget _buildAttachments() {
     final imageAttachments = _announcement.attachments
         .where((a) => a.isImage())
         .toList();
-    
+
     final otherAttachments = _announcement.attachments
         .where((a) => !a.isImage())
         .toList();
@@ -237,17 +269,18 @@ class _AnnouncementDetailPageState extends State<AnnouncementDetailPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Images gallery
-        if (imageAttachments.isNotEmpty) ...[
-          Text(
-            'รูปภาพ (${imageAttachments.length})',
+        if (imageAttachments.isNotEmpty || otherAttachments.isNotEmpty)
+          const Text(
+            'Attachments',
             style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-              color: Colors.grey[700],
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
             ),
           ),
-          const SizedBox(height: 8),
+        const SizedBox(height: 12),
+
+        if (imageAttachments.isNotEmpty) ...[
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
@@ -261,9 +294,7 @@ class _AnnouncementDetailPageState extends State<AnnouncementDetailPage> {
             itemBuilder: (context, index) {
               final attachment = imageAttachments[index];
               return GestureDetector(
-                onTap: () {
-                  _showImageFullscreen(attachment);
-                },
+                onTap: () => _showImageFullscreen(attachment),
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8),
@@ -286,26 +317,14 @@ class _AnnouncementDetailPageState extends State<AnnouncementDetailPage> {
                               ),
                             );
                           },
-                          loadingBuilder: (context, child, loadingProgress) {
-                            if (loadingProgress == null) return child;
-                            return Center(
-                              child: CircularProgressIndicator(
-                                value: loadingProgress.expectedTotalBytes != null
-                                    ? loadingProgress.cumulativeBytesLoaded /
-                                        loadingProgress.expectedTotalBytes!
-                                    : null,
-                              ),
-                            );
-                          },
                         ),
                       ),
-                      // Tap indicator
                       Positioned(
                         bottom: 8,
                         right: 8,
                         child: Container(
                           padding: const EdgeInsets.all(4),
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             color: Colors.black54,
                             shape: BoxShape.circle,
                           ),
@@ -323,19 +342,9 @@ class _AnnouncementDetailPageState extends State<AnnouncementDetailPage> {
             },
           ),
         ],
-        
-        // Other attachments
+
         if (otherAttachments.isNotEmpty) ...[
           if (imageAttachments.isNotEmpty) const SizedBox(height: 16),
-          Text(
-            'ไฟล์อื่นๆ (${otherAttachments.length})',
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-              color: Colors.grey[700],
-            ),
-          ),
-          const SizedBox(height: 8),
           ListView.separated(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
@@ -343,87 +352,53 @@ class _AnnouncementDetailPageState extends State<AnnouncementDetailPage> {
             separatorBuilder: (context, index) => const SizedBox(height: 8),
             itemBuilder: (context, index) {
               final attachment = otherAttachments[index];
-              return _buildAttachmentTile(attachment);
+              return Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.grey[50],
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.grey[200]!),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      _getFileIcon(attachment.mimeType),
+                      size: 24,
+                      color: Colors.blue,
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            attachment.originalName,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          Text(
+                            _formatFileSize(attachment.size),
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Icon(Icons.download, color: Colors.grey[400], size: 20),
+                  ],
+                ),
+              );
             },
           ),
         ],
       ],
-    );
-  }
-
-  Widget _buildAttachmentTile(Attachment attachment) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey[200]!),
-      ),
-      child: Row(
-        children: [
-          Icon(
-            _getFileIcon(attachment.mimeType),
-            size: 24,
-            color: Colors.blue,
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  attachment.originalName,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black87,
-                  ),
-                ),
-                Text(
-                  _formatFileSize(attachment.size),
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: Colors.grey[600],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Icon(
-            Icons.download,
-            color: Colors.grey[400],
-            size: 20,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildInfoRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey[700],
-            ),
-          ),
-          Text(
-            value,
-            style: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-              color: Colors.black87,
-            ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -441,7 +416,7 @@ class _AnnouncementDetailPageState extends State<AnnouncementDetailPage> {
               child: Image.network(
                 attachment.getFullUrl(_getBaseUrl()),
                 errorBuilder: (context, error, stackTrace) {
-                  return Center(
+                  return const Center(
                     child: Icon(
                       Icons.image_not_supported_rounded,
                       color: Colors.white,
@@ -455,14 +430,6 @@ class _AnnouncementDetailPageState extends State<AnnouncementDetailPage> {
         ),
       ),
     );
-  }
-
-  String _formatDate(DateTime date) {
-    return '${date.day}/${date.month}/${date.year}';
-  }
-
-  String _formatDateTime(DateTime date) {
-    return '${date.day}/${date.month}/${date.year} ${date.hour}:${date.minute.toString().padLeft(2, '0')}';
   }
 
   String _formatFileSize(int bytes) {
@@ -480,60 +447,8 @@ class _AnnouncementDetailPageState extends State<AnnouncementDetailPage> {
   }
 
   String _getBaseUrl() {
-    // Get the API base URL
-    if (Platform.isAndroid) {
-      return 'http://10.0.2.2:3000';
-    } else if (Platform.isIOS) {
-      return 'http://localhost:3000';
-    } else if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
-      return 'http://localhost:3000';
-    }
-    // Default fallback
+    if (Platform.isAndroid) return 'http://10.0.2.2:3000';
+    if (Platform.isIOS) return 'http://localhost:3000';
     return 'http://localhost:3000';
-  }
-}
-
-// Helper widget for category badge with label (reused from utils)
-class CategoryBadgeWithLabel extends StatelessWidget {
-  final String category;
-
-  const CategoryBadgeWithLabel({
-    Key? key,
-    required this.category,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final categoryColor = CategoryColors.getCategory(category);
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: categoryColor.color.withOpacity(0.15),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: categoryColor.color.withOpacity(0.5),
-        ),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            categoryColor.icon,
-            color: categoryColor.color,
-            size: 14,
-          ),
-          const SizedBox(width: 4),
-          Text(
-            categoryColor.label,
-            style: TextStyle(
-              color: categoryColor.color,
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }
