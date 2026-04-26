@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 import '../models/announcement_model.dart';
 import '../utils/category_colors.dart';
-import 'category_badge.dart';
 
 class AnnouncementItemCard extends StatelessWidget {
   final Announcement announcement;
@@ -20,92 +19,98 @@ class AnnouncementItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final categoryColor = CategoryColors.getCategory(announcement.category);
-    
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        color: isRead ? Colors.grey[50] : Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: isRead ? Colors.grey[300]! : categoryColor.color.withOpacity(0.5),
-          width: isRead ? 1 : 2,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () {
-            // Mark as read when tapped
-            if (!isRead) {
-              onReadStatusChanged(true);
-            }
-            onTap();
-          },
-          borderRadius: BorderRadius.circular(12),
-          child: Padding(
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Top row: Category badge + Title + Unread indicator
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+    final category = CategoryColors.getCategory(announcement.category);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          // Card
+          Material(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            elevation: 0,
+            child: InkWell(
+              onTap: () {
+                if (!isRead) onReadStatusChanged(true);
+                onTap();
+              },
+              borderRadius: BorderRadius.circular(16),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.07),
+                      blurRadius: 12,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    // Category badge
-                    CategoryBadge(category: announcement.category, size: 40),
-                    const SizedBox(width: 12),
-                    
-                    // Title and excerpt
+                    // Category icon circle
+                    Container(
+                      width: 52,
+                      height: 52,
+                      decoration: BoxDecoration(
+                        color: category.color.withOpacity(0.12),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        category.icon,
+                        color: category.color,
+                        size: 26,
+                      ),
+                    ),
+                    const SizedBox(width: 14),
+
+                    // Text content
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Title with unread indicator
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  announcement.title,
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: isRead ? FontWeight.w500 : FontWeight.bold,
-                                    color: isRead ? Colors.grey[700] : Colors.black87,
-                                  ),
-                                ),
-                              ),
-                              // Unread indicator dot
-                              if (!isRead)
-                                Container(
-                                  width: 8,
-                                  height: 8,
-                                  margin: const EdgeInsets.only(left: 8),
-                                  decoration: BoxDecoration(
-                                    color: categoryColor.color,
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
-                            ],
+                          // Title
+                          Text(
+                            announcement.title,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight:
+                                  isRead ? FontWeight.w500 : FontWeight.w700,
+                              color: isRead
+                                  ? const Color(0xFF757575)
+                                  : const Color(0xFF1A1A1A),
+                              height: 1.35,
+                            ),
                           ),
-                          const SizedBox(height: 6),
-                          
+                          const SizedBox(height: 5),
+
                           // Excerpt
                           Text(
-                            announcement.getExcerpt(length: 80),
+                            announcement.getExcerpt(length: 70),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               fontSize: 12,
-                              color: Colors.grey[600],
+                              color: Colors.grey[500],
+                              fontWeight: FontWeight.w400,
+                              height: 1.4,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+
+                          // Date
+                          Text(
+                            _formatDate(announcement.createdAt),
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: Colors.grey[400],
                               fontWeight: FontWeight.w400,
                             ),
                           ),
@@ -114,58 +119,44 @@ class AnnouncementItemCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 10),
-                
-                // Bottom row: Date + Category label
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // Date
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.access_time,
-                          size: 12,
-                          color: Colors.grey[500],
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          _formatDate(announcement.createdAt),
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: Colors.grey[500],
-                          ),
-                        ),
-                      ],
-                    ),
-                    
-                    // Category label
-                    CategoryBadgeWithLabel(category: announcement.category),
-                  ],
-                ),
-              ],
+              ),
             ),
           ),
-        ),
+
+          // Unread dot — top right corner of card
+          if (!isRead)
+            Positioned(
+              top: -2,
+              right: -2,
+              child: Container(
+                width: 12,
+                height: 12,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFE53935),
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white, width: 2),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.red.withOpacity(0.3),
+                      blurRadius: 4,
+                      offset: const Offset(0, 1),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }
 
   String _formatDate(DateTime date) {
-    final now = DateTime.now();
-    final difference = now.difference(date);
-
-    if (difference.inMinutes < 1) {
-      return 'ที่แล้ว';
-    } else if (difference.inHours < 1) {
-      return '${difference.inMinutes} นาทีที่แล้ว';
-    } else if (difference.inDays < 1) {
-      return '${difference.inHours} ชั่วโมงที่แล้ว';
-    } else if (difference.inDays < 7) {
-      return '${difference.inDays} วันที่แล้ว';
-    } else {
-      // Format as date: d/M/yyyy H:mm
-      return '${date.day}/${date.month}/${date.year}';
-    }
+    final months = [
+      '', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    ];
+    final hour = date.hour.toString().padLeft(2, '0');
+    final minute = date.minute.toString().padLeft(2, '0');
+    return '${date.day} ${months[date.month]} ${date.year}, $hour:$minute AM';
   }
 }

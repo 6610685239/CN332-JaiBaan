@@ -16,28 +16,28 @@ class CategoryColor {
 class CategoryColors {
   static final Map<String, CategoryColor> categoryMap = {
     'URGENT': CategoryColor(
-      color: Colors.red,
-      icon: Icons.warning_rounded,
+      color: const Color(0xFFE53935),
+      icon: Icons.error_rounded,
       label: 'ด่วน',
     ),
     'GENERAL': CategoryColor(
-      color: Colors.blue,
-      icon: Icons.info_rounded,
+      color: const Color(0xFF1E88E5),
+      icon: Icons.campaign_rounded,
       label: 'ข่าวสาร',
     ),
     'FINANCE': CategoryColor(
-      color: Colors.green,
-      icon: Icons.money_rounded,
+      color: const Color(0xFF43A047),
+      icon: Icons.account_balance_wallet_rounded,
       label: 'การเงิน',
     ),
     'EVENT': CategoryColor(
-      color: Colors.amber,
-      icon: Icons.event_rounded,
+      color: const Color(0xFFFB8C00),
+      icon: Icons.celebration_rounded,
       label: 'กิจกรรม',
     ),
     'MAINTENANCE': CategoryColor(
-      color: Colors.orange,
-      icon: Icons.build_rounded,
+      color: const Color(0xFF8E24AA),
+      icon: Icons.home_repair_service_rounded,
       label: 'ซ่อมบำรุง',
     ),
   };
@@ -46,24 +46,12 @@ class CategoryColors {
     return categoryMap[category] ?? categoryMap['GENERAL']!;
   }
 
-  static Color getColor(String category) {
-    return getCategory(category).color;
-  }
+  static Color getColor(String category) => getCategory(category).color;
+  static IconData getIcon(String category) => getCategory(category).icon;
+  static String getLabel(String category) => getCategory(category).label;
 
-  static IconData getIcon(String category) {
-    return getCategory(category).icon;
-  }
+  static List<String> getAllCategories() => ['ALL', ...categoryMap.keys];
 
-  static String getLabel(String category) {
-    return getCategory(category).label;
-  }
-
-  // Get all categories for filter dropdown
-  static List<String> getAllCategories() {
-    return ['ALL', ...categoryMap.keys];
-  }
-
-  // Get category label for display in filter
   static String getCategoryLabel(String category) {
     if (category == 'ALL') return 'ทุกประเภท';
     return getLabel(category);
