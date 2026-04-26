@@ -37,18 +37,19 @@ model RegistrationRequest {
 }
 
 model Resident {
-  id            Int      @id @default(autoincrement())
+  id            Int           @id @default(autoincrement())
   unitNumber    String
   familyMembers String[]
-  userId        Int      @unique
-  User          User     @relation(fields: [userId], references: [id])
+  userId        Int           @unique
+  User          User          @relation(fields: [userId], references: [id])
+  reservations  Reservation[]
 }
 
 model Announcement {
   id            String       @id @default(uuid())
   title         String
   category      Category
-  content       String       // HTML จาก TipTap
+  content       String
   status        Status       @default(DRAFT)
   effectiveDate DateTime
   expiryDate    DateTime?
@@ -59,7 +60,7 @@ model Announcement {
   notifSent     Boolean      @default(false)
   scheduledAt   DateTime?
   publishedAt   DateTime?
-  createdBy     String       // userId จาก JWT middleware
+  createdBy     String
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
 
@@ -70,14 +71,41 @@ model Announcement {
 
 model Attachment {
   id             String       @id @default(uuid())
-  filename       String       // stored filename (uuid.ext)
-  originalName   String       // ชื่อไฟล์ต้นฉบับ
-  url            String       // /uploads/filename (dev) | GCS URL (prod)
+  filename       String
+  originalName   String
+  url            String
   mimeType       String
-  size           Int          // bytes
+  size           Int
   announcementId String
   announcement   Announcement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
   createdAt      DateTime     @default(now())
+}
+
+model Facility {
+  id           Int           @id @default(autoincrement())
+  name         String
+  imageUrl     String?
+  capacityMin  Int?
+  capacityMax  Int?
+  openTime     String?
+  closeTime    String?
+  description  String?
+  reservations Reservation[]
+}
+
+model Reservation {
+  id          Int      @id @default(autoincrement())
+  bookingCode String   @unique
+  residentId  Int
+  resident    Resident @relation(fields: [residentId], references: [id])
+  facilityId  Int
+  facility    Facility @relation(fields: [facilityId], references: [id])
+  startTime   DateTime
+  endTime     DateTime
+  pax         Int      @default(1)
+  status      String   @default("CONFIRMED")
+  note        String?
+  createdAt   DateTime @default(now())
 }
 
 enum Category {
