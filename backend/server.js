@@ -8,13 +8,16 @@ const port = 3000;
 app.use(cors()); 
 app.use(express.json());
 
-// 2. เพิ่มตัวเช็ค (Logger) ว่ามีใครยิง API เข้ามาไหม
+// 2. Serve static files from uploads directory
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// 3. เพิ่มตัวเช็ค (Logger) ว่ามีใครยิง API เข้ามาไหม
 app.use((req, res, next) => {
   console.log(`[REQUEST] ${req.method} ${req.originalUrl}`);
   next();
 });
 
-// 3. Routes
+// 4. Routes
 const authRoutes = require('./src/routes/authRoutes');
 const dashboardRoutes = require('./src/routes/dashboardRoutes');
 const announcementRoutes = require('./src/routes/announcements')
