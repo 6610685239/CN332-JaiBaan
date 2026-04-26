@@ -49,72 +49,82 @@ class AnnouncementItemCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                padding: const EdgeInsets.only(left: 16, top: 14, right: 16, bottom: 10),
+                child: Stack(
                   children: [
-                    // Category icon circle
-                    Container(
-                      width: 52,
-                      height: 52,
-                      decoration: BoxDecoration(
-                        color: category.color.withOpacity(0.12),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        category.icon,
-                        color: category.color,
-                        size: 26,
-                      ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Category icon circle (left)
+                        Container(
+                          width: 52,
+                          height: 52,
+                          decoration: BoxDecoration(
+                            color: category.color.withOpacity(0.12),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            category.icon,
+                            color: category.color,
+                            size: 26,
+                          ),
+                        ),
+                        const SizedBox(width: 14),
+
+                        // Title
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.only(bottom: 20),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Title
+                                Text(
+                                  announcement.title,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight:
+                                        isRead ? FontWeight.w500 : FontWeight.w700,
+                                    color: isRead
+                                        ? const Color(0xFF424242)
+                                        : const Color(0xFF1A1A1A),
+                                    height: 1.35,
+                                  ),
+                                ),
+                                const SizedBox(height: 5),
+
+                                // Excerpt
+                                Text(
+                                  announcement.getExcerpt(length: 70),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: const Color(0xFF424242),
+                                    fontWeight: FontWeight.w400,
+                                    height: 1.4,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: 14),
 
-                    // Text content
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Title
-                          Text(
-                            announcement.title,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight:
-                                  isRead ? FontWeight.w500 : FontWeight.w700,
-                              color: isRead
-                                  ? const Color(0xFF757575)
-                                  : const Color(0xFF1A1A1A),
-                              height: 1.35,
-                            ),
-                          ),
-                          const SizedBox(height: 5),
-
-                          // Excerpt
-                          Text(
-                            announcement.getExcerpt(length: 70),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey[500],
-                              fontWeight: FontWeight.w400,
-                              height: 1.4,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-
-                          // Date
-                          Text(
-                            _formatDate(announcement.createdAt),
-                            style: TextStyle(
-                              fontSize: 11,
-                              color: Colors.grey[400],
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                        ],
+                    // Date (bottom-right)
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: Text(
+                        _formatDate(announcement.createdAt),
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: const Color(0xFF9E9E9E),
+                          fontWeight: FontWeight.w400,
+                        ),
                       ),
                     ),
                   ],
