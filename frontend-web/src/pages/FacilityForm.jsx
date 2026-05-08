@@ -127,7 +127,7 @@ export default function FacilityForm() {
             <input
               className="facform-input"
               type="text"
-              placeholder="http://192.168.x.x:3000/public/images/facilities/pool.png"
+              placeholder="http://localhost:3000/public/images/facilities/pool.png"
               value={form.imageUrl}
               onChange={set('imageUrl')}
             />
