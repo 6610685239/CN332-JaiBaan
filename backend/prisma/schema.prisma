@@ -1,0 +1,102 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id               Int       @id @default(autoincrement())
+  username         String    @unique
+  role             String    @default("resident")
+  createdAt        DateTime  @default(now())
+  avatarUrl        String?
+  facebookId       String?   @unique
+  firstName        String
+  lastName         String
+  passwordHash     String
+  phoneNumber      String?
+  resetToken       String?
+  resetTokenExpiry DateTime?
+  resident         Resident?
+}
+
+model JuristicPerson {
+  id      Int    @id @default(autoincrement())
+  staffId String @unique
+}
+
+model RegistrationRequest {
+  id           Int      @id @default(autoincrement())
+  email        String
+  providerType String
+  roomNumber   String
+  status       String   @default("pending")
+  submittedAt  DateTime @default(now())
+}
+
+model Resident {
+  id            Int      @id @default(autoincrement())
+  unitNumber    String
+  familyMembers String[]
+  userId        Int      @unique
+  User          User     @relation(fields: [userId], references: [id])
+}
+
+model Announcement {
+  id            String       @id @default(uuid())
+  title         String
+  category      Category
+  content       String       // HTML จาก TipTap
+  status        Status       @default(DRAFT)
+  effectiveDate DateTime
+  expiryDate    DateTime?
+  targetType    TargetType
+  targetZones   String[]     @default([])
+  targetUnits   String[]     @default([])
+  attachments   Attachment[]
+  notifSent     Boolean      @default(false)
+  scheduledAt   DateTime?
+  publishedAt   DateTime?
+  createdBy     String       // userId จาก JWT middleware
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  @@index([status])
+  @@index([category])
+  @@index([createdAt])
+}
+
+model Attachment {
+  id             String       @id @default(uuid())
+  filename       String       // stored filename (uuid.ext)
+  originalName   String       // ชื่อไฟล์ต้นฉบับ
+  url            String       // /uploads/filename (dev) | GCS URL (prod)
+  mimeType       String
+  size           Int          // bytes
+  announcementId String
+  announcement   Announcement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
+  createdAt      DateTime     @default(now())
+}
+
+enum Category {
+  GENERAL
+  MAINTENANCE
+  EVENT
+  FINANCE
+  URGENT
+}
+
+enum Status {
+  DRAFT
+  SCHEDULED
+  PUBLISHED
+  ARCHIVED
+}
+
+enum TargetType {
+  ALL
+  ZONE
+  UNIT
+}

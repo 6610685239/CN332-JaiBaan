@@ -1,0 +1,140 @@
+@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap');
+
+.uploader { position: relative; display: flex; flex-direction: column; gap: 12px; }
+
+/* Toast */
+.uploader-toast {
+  padding: 10px 16px;
+  border-radius: 14px;
+  font-family: 'Kanit', sans-serif;
+  font-size: 0.85rem;
+  animation: fadeIn 0.3s ease;
+}
+.uploader-toast--success { background: #dcfce7; color: #16a34a; }
+.uploader-toast--error   { background: #fee2e2; color: #dc2626; }
+
+/* Drop zone */
+.uploader-zone {
+  border: 2px dashed #ffd6d0;
+  border-radius: 20px;
+  padding: 30px 20px;
+  text-align: center;
+  cursor: pointer;
+  background: #fff8f7;
+  transition: all 0.3s ease;
+}
+
+.uploader-zone:hover,
+.uploader-zone--drag {
+  border-color: #ff8a75;
+  background: #fff0ee;
+  box-shadow: 0 0 0 4px rgba(255, 138, 117, 0.08);
+}
+
+.uploader-input { display: none; }
+
+.uploader-icon {
+  font-size: 2.5rem;
+  color: #ffb3a7;
+  margin-bottom: 10px;
+}
+
+.uploader-hint-main {
+  font-family: 'Kanit', sans-serif;
+  font-size: 0.9rem;
+  color: #8e7f7d;
+  margin-bottom: 4px;
+}
+
+.uploader-hint-sub {
+  font-family: 'Kanit', sans-serif;
+  font-size: 0.78rem;
+  color: #c0aaa8;
+}
+
+/* Loading */
+.uploader-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.uploader-spinner {
+  width: 28px;
+  height: 28px;
+  border: 3px solid #ffd6d0;
+  border-top-color: #ff8a75;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+/* File list */
+.uploader-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.uploader-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  background: #fff8f7;
+  border: 1px solid #ffecea;
+  border-radius: 14px;
+  transition: background 0.2s;
+}
+
+.uploader-item:hover { background: #fff0ee; }
+
+.file-icon { font-size: 1.4rem; flex-shrink: 0; }
+.file-icon--pdf { color: #ff6b6b; }
+.file-icon--img { color: #ff8a75; }
+
+.uploader-item-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.uploader-item-name {
+  font-family: 'Kanit', sans-serif;
+  font-size: 0.85rem;
+  color: #555;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.uploader-item-size {
+  font-family: 'Kanit', sans-serif;
+  font-size: 0.75rem;
+  color: #c0aaa8;
+}
+
+.uploader-remove {
+  background: none;
+  border: none;
+  color: #c0aaa8;
+  cursor: pointer;
+  font-size: 0.85rem;
+  padding: 4px;
+  border-radius: 8px;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.uploader-remove:hover {
+  color: #ff6b6b;
+  background: #fee2e2;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }

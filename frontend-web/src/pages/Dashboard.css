@@ -1,0 +1,107 @@
+/* Dashboard.css - JaiBaan Professional Theme */
+@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap');
+
+.dashboard-page-container {
+  padding: 40px 50px;
+  background-color: #fff5f3;
+  /* สีพื้นหลังชมพูอ่อนที่ต้องการ */
+  min-height: 100%;
+  font-family: 'Kanit', sans-serif;
+}
+
+.dashboard-header-section {
+  margin-bottom: 45px;
+}
+
+.dashboard-header-section h1 {
+  font-size: 2.2rem;
+  color: #2d3436;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.greeting-sparkle {
+  color: #ffb100;
+}
+
+.dashboard-subtitle {
+  color: #8e7f7d;
+  font-size: 1.1rem;
+  margin-top: 5px;
+}
+
+/* Stats Grid Layout */
+.dashboard-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 30px;
+}
+
+/* Individual Card Design */
+.stat-info-card {
+  background: white;
+  padding: 35px;
+  border-radius: 30px;
+  /* มุมโค้งมนตามรูป */
+  box-shadow: 0 10px 25px rgba(255, 107, 107, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  transition: transform 0.3s ease;
+}
+
+.stat-info-card:hover {
+  transform: translateY(-8px);
+}
+
+.stat-card-icon {
+  font-size: 3.5rem;
+  /* ขนาดไอคอนใหญ่ตามรูป */
+  display: flex;
+  align-items: center;
+}
+
+.stat-card-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-card-label {
+  color: #8e7f7d;
+  font-size: 1.2rem;
+  font-weight: 400;
+  margin-bottom: 5px;
+}
+
+.stat-card-value {
+  font-size: 3.2rem;
+  /* ตัวเลขใหญ่ชัดเจน */
+  font-weight: 600;
+  line-height: 1;
+}
+
+/* Loading State Styles */
+.dashboard-loading {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px;
+  color: #ff8a75;
+}
+
+.spin-animate {
+  font-size: 3rem;
+  margin-bottom: 15px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}

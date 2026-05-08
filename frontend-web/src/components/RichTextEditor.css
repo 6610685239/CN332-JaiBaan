@@ -1,0 +1,98 @@
+@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap');
+
+.rte-wrapper {
+  border: 1.5px solid #ffd6d0;
+  border-radius: 20px;
+  overflow: hidden;
+  background: white;
+  transition: box-shadow 0.3s, border-color 0.3s;
+}
+
+.rte-wrapper:focus-within {
+  border-color: #ff8a75;
+  box-shadow: 0 0 0 4px rgba(255, 138, 117, 0.12);
+}
+
+/* Toolbar */
+.rte-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px;
+  padding: 10px 14px;
+  background: #fff8f7;
+  border-bottom: 1px solid #ffecea;
+}
+
+.rte-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
+  height: 30px;
+  padding: 0 6px;
+  border: none;
+  background: transparent;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  color: #8e7f7d;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Kanit', sans-serif;
+}
+
+.rte-btn:hover {
+  background: #ffecea;
+  color: #ff6b6b;
+}
+
+.rte-btn--active {
+  background: #ffd6d0;
+  color: #ff6b6b;
+}
+
+.rte-sep {
+  width: 1px;
+  height: 20px;
+  background: #ffd6d0;
+  margin: 0 4px;
+}
+
+/* Editor area */
+.rte-body {
+  min-height: 220px;
+  padding: 16px 20px;
+  font-family: 'Kanit', sans-serif;
+  font-size: 0.95rem;
+  color: #555;
+  outline: none;
+  line-height: 1.8;
+}
+
+/* Content styles */
+.rte-body h1 { font-size: 1.4rem; font-weight: 600; color: #2d3436; margin: 12px 0 6px; }
+.rte-body h2 { font-size: 1.2rem; font-weight: 600; color: #2d3436; margin: 10px 0 6px; }
+.rte-body p  { margin-bottom: 10px; }
+.rte-body ul { list-style: disc; padding-left: 22px; margin-bottom: 10px; }
+.rte-body ol { list-style: decimal; padding-left: 22px; margin-bottom: 10px; }
+.rte-body li { margin-bottom: 4px; }
+.rte-body strong { font-weight: 600; color: #2d3436; }
+.rte-body em { font-style: italic; }
+.rte-body u  { text-decoration: underline; }
+.rte-body a  { color: #ff8a75; text-decoration: underline; }
+.rte-body blockquote {
+  border-left: 4px solid #ffd6d0;
+  padding-left: 14px;
+  color: #8e7f7d;
+  font-style: italic;
+  margin: 10px 0;
+}
+
+/* Placeholder */
+.rte-body p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  color: #c0aaa8;
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
