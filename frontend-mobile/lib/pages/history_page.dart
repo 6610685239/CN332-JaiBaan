@@ -32,7 +32,7 @@ class _HistoryPageState extends State<HistoryPage> {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F1E9),
       appBar: AppBar(
-        title: const Text('ประวัติการจอง',
+        title: const Text('History',
             style:
                 TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
         backgroundColor: Colors.transparent,

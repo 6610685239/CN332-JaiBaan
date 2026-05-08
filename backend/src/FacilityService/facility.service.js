@@ -1,11 +1,4 @@
-const { PrismaClient } = require('@prisma/client');
-const { PrismaPg } = require('@prisma/adapter-pg');
-const { Pool } = require('pg');
-require('dotenv').config();
-
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-const adapter = new PrismaPg(pool);
-const prisma = new PrismaClient({ adapter });
+const prisma = require('../../db');
 
 class FacilityService {
     // ดึงสถานที่ทั้งหมด
@@ -55,6 +48,25 @@ class FacilityService {
         if (reservation.status !== 'CANCELLED') throw new Error('สามารถลบได้เฉพาะการจองที่ยกเลิกแล้วเท่านั้น');
         return await prisma.reservation.delete({
             where: { id: parseInt(bookingId) }
+        });
+    }
+
+    async createFacility(data) {
+        return await prisma.facility.create({ data });
+    }
+
+    async updateFacility(id, data) {
+        return await prisma.facility.update({ where: { id: parseInt(id) }, data });
+    }
+
+    async deleteFacility(id) {
+        return await prisma.facility.delete({ where: { id: parseInt(id) } });
+    }
+
+    async getAllReservations() {
+        return await prisma.reservation.findMany({
+            include: { facility: true, resident: true },
+            orderBy: { createdAt: 'desc' },
         });
     }
 

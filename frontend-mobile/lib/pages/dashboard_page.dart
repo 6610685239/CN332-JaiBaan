@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'login_page.dart';
+import 'facility_page.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -147,6 +148,66 @@ class _DashboardPageState extends State<DashboardPage> {
                       _buildInfoCard('Username', _userData?['username'] ?? '-'),
                       _buildInfoCard('Role', _userData?['role'] ?? '-'),
                       _buildInfoCard('Phone', _userData?['phoneNumber'] ?? '-'),
+                      const SizedBox(height: 30),
+
+                      // Quick Actions
+                      const Text(
+                        'Services',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 15),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => FacilityListScreen(),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(18),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFFF5F3),
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(color: const Color(0xFFFFD6D0)),
+                          ),
+                          child: const Row(
+                            children: [
+                              Icon(Icons.apartment_rounded,
+                                  color: Color(0xFFFF7B7B), size: 28),
+                              SizedBox(width: 16),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Facilities',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xFF2D3436),
+                                    ),
+                                  ),
+                                  Text(
+                                    'Book common areas',
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Spacer(),
+                              Icon(Icons.chevron_right,
+                                  color: Color(0xFFFF7B7B)),
+                            ],
+                          ),
+                        ),
+                      ),
                       const SizedBox(height: 30),
 
                       // Announcements section
