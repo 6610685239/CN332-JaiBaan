@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'login_page.dart';
 import 'facility_page.dart';
+import 'announcement_list_page.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -35,6 +36,26 @@ class _DashboardPageState extends State<DashboardPage> {
     } catch (e) {
       print('Error loading user data: $e');
       setState(() => _isLoading = false);
+    }
+  }
+
+  Future<String?> _getUserToken() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getString('auth_token');
+    } catch (e) {
+      return null;
+    }
+  }
+
+  void _navigateToAnnouncements() async {
+    final token = await _getUserToken();
+    if (mounted) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => AnnouncementListPage(token: token),
+        ),
+      );
     }
   }
 
@@ -212,24 +233,61 @@ class _DashboardPageState extends State<DashboardPage> {
 
                       // Announcements section
                       const Text(
-                        'Latest Announcements',
+                        'Announcements',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       const SizedBox(height: 15),
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(15),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: Colors.grey[300]!),
-                        ),
-                        child: const Text(
-                          'No announcements yet',
-                          style: TextStyle(color: Colors.grey),
+                      GestureDetector(
+                        onTap: _navigateToAnnouncements,
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: Colors.grey[300]!),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.08),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    'View All Announcements',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    'Check the latest updates',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Icon(
+                                Icons.arrow_forward_ios_rounded,
+                                color: Colors.grey[400],
+                                size: 18,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                       const SizedBox(height: 50),
