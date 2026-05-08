@@ -9,6 +9,7 @@ env/
 .env
 
 node_modules/
+package-lock.json
 .claude/
 .idea/
 .vscode/

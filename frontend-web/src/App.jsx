@@ -7,6 +7,8 @@ import MainLayout from './layouts/MainLayout';
 import Dashboard from './pages/Dashboard';
 import AnnouncementList from './pages/AnnouncementList';
 import AnnouncementForm from './pages/AnnouncementForm';
+import FacilityList from './pages/FacilityList';
+import FacilityForm from './pages/FacilityForm';
 import ForgotPassword from './pages/ForgotPassword';
 import logoImg from './assets/logo.png';
 
@@ -105,6 +107,9 @@ function App() {
           <Route path="announcements" element={<AnnouncementList />} />
           <Route path="announcements/new" element={<AnnouncementForm />} />
           <Route path="announcements/:id/edit" element={<AnnouncementForm />} />
+          <Route path="facilities" element={<FacilityList />} />
+          <Route path="facilities/new" element={<FacilityForm />} />
+          <Route path="facilities/:id/edit" element={<FacilityForm />} />
         </Route>
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
