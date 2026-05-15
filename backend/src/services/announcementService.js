@@ -5,14 +5,53 @@ const { deleteFile } = require('./fileService')
 
 /**
  * ดึงรายการประกาศ + filter + pagination
+ * userId: optional - if provided, will filter announcements based on user's resident info
+ * filterByResident: if true, will filter by targetType and resident's unitNumber
  */
-const getAnnouncements = async ({ status, category, search, page = 1, limit = 10 }) => {
+const getAnnouncements = async ({ 
+  status, 
+  category, 
+  search, 
+  page = 1, 
+  limit = 10,
+  userId = null,
+  filterByResident = false 
+}) => {
   const where = {}
 
   if (status) where.status = status
   if (category) where.category = category
   if (search) {
     where.title = { contains: search, mode: 'insensitive' }
+  }
+
+  // Filter by resident if specified
+  if (filterByResident && userId) {
+    const resident = await prisma.resident.findUnique({
+      where: { userId: parseInt(userId) },
+    })
+
+    if (resident) {
+      // Create filter for announcements that should be visible to this resident
+      where.OR = [
+        // ALL announcements are visible to everyone
+        { targetType: 'ALL' },
+        // UNIT announcements are visible only if resident's unitNumber is in targetUnits
+        {
+          AND: [
+            { targetType: 'UNIT' },
+            { targetUnits: { has: resident.unitNumber } },
+          ],
+        },
+        // ZONE announcements are visible only if resident's zone is in targetZones
+        {
+          AND: [
+            { targetType: 'ZONE' },
+            { targetZones: { has: resident.unitNumber.split('/')[0] } }, // Assuming zone is extracted from unitNumber
+          ],
+        },
+      ]
+    }
   }
 
   const skip = (page - 1) * limit
@@ -37,6 +76,21 @@ const getAnnouncements = async ({ status, category, search, page = 1, limit = 10
       totalPages: Math.ceil(total / limit),
     },
   }
+}
+
+/**
+ * ดึงรายการประกาศสำหรับ resident (รู้ว่ากรองตาม targetType + unitNumber แล้ว)
+ */
+const getAnnouncementsForResident = async (userId, { status, category, search, page = 1, limit = 10 }) => {
+  return getAnnouncements({
+    status,
+    category,
+    search,
+    page,
+    limit,
+    userId,
+    filterByResident: true,
+  })
 }
 
 /**
@@ -163,6 +217,7 @@ const deleteAttachment = async (attachmentId) => {
 
 module.exports = {
   getAnnouncements,
+  getAnnouncementsForResident,
   getAnnouncementById,
   createAnnouncement,
   updateAnnouncement,

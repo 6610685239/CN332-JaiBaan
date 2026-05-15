@@ -15,7 +15,17 @@ const handleValidation = (req, res) => {
 const list = async (req, res) => {
   try {
     const { status, category, search, page, limit } = req.query
-    const result = await service.getAnnouncements({ status, category, search, page, limit })
+    // Use resident filtering for resident role users
+    const filterByResident = req.user.role === 'resident'
+    const result = await service.getAnnouncements({ 
+      status, 
+      category, 
+      search, 
+      page, 
+      limit,
+      userId: req.user.id,
+      filterByResident 
+    })
     res.json({ success: true, ...result })
   } catch (err) {
     console.error(err)
