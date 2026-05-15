@@ -1,7 +1,7 @@
 const multer = require('multer')
 const path = require('path')
 const { v4: uuidv4 } = require('uuid')
-const { UPLOAD_DIR } = require('../services/fileService')
+const { UPLOAD_DIR } = require('../services/announcementFileService')
 
 const ALLOWED_MIME_TYPES = [
   'image/jpeg',

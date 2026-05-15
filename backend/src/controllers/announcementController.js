@@ -1,6 +1,6 @@
 const { validationResult } = require('express-validator')
 const service = require('../services/announcementService')
-const { saveFile } = require('../services/fileService')
+const { saveFile } = require('../services/announcementFileService')
 
 const handleValidation = (req, res) => {
   const errors = validationResult(req)
