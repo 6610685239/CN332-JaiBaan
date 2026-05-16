@@ -50,8 +50,8 @@ function BarChart({ data }) {
   return (
     <div>
       <div className="fin-bar-legend">
-        <span><i className="fin-dot" style={{ background: '#3d68cc' }} /> รายรับ</span>
-        <span><i className="fin-dot" style={{ background: '#ef4444' }} /> รายจ่าย</span>
+        <span><i className="fin-dot" style={{ background: '#6B8AF7' }} /> รายรับ</span>
+        <span><i className="fin-dot" style={{ background: '#F28B82' }} /> รายจ่าย</span>
         {/* <span><i className="fin-dot fin-dot--dash" style={{ background: '#94a3b8' }} /> กำไรสุทธิ</span> */}
       </div>
       <div className="fin-bar-wrap">
@@ -120,8 +120,8 @@ function LineChart({ data }) {
   return (
     <div>
       <div className="fin-bar-legend fin-bar-legend--sm">
-        <span><i className="fin-dot" style={{ background: '#3d68cc' }} /> รายรับ</span>
-        <span><i className="fin-dot" style={{ background: '#ef4444' }} /> รายจ่าย</span>
+        <span><i className="fin-dot" style={{ background: '#6B8AF7' }} /> รายรับ</span>
+        <span><i className="fin-dot" style={{ background: '#F28B82' }} /> รายจ่าย</span>
         {/* <span><i className="fin-dot fin-dot--dash" style={{ background: '#94a3b8' }} /> กำไรสุทธิ</span> */}
       </div>
       <div className="fin-bar-wrap">
@@ -130,15 +130,15 @@ function LineChart({ data }) {
         </div>
         <div style={{ flex: 1 }}>
           <svg width="100%" height={H + 4} style={{ display: 'block', overflow: 'visible' }}>
-            <polyline fill="none" stroke="#3d68cc" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" points={pts('income')} />
-            <polyline fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" points={pts('expense')} />
+            <polyline fill="none" stroke="#6B8AF7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" points={pts('income')} />
+            <polyline fill="none" stroke="#F28B82" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" points={pts('expense')} />
             {/* <polyline fill="none" stroke="#94a3b8" strokeWidth="1.5" strokeDasharray="4,3" strokeLinecap="round" strokeLinejoin="round" points={pts('net')} /> */}
             {data.map((m, i) => {
               const x = data.length < 2 ? 50 : (i / (data.length - 1)) * 100
               return (
                 <g key={i}>
-                  <circle cx={`${x}%`} cy={H - (m.income  / maxVal) * H} r="3" fill="#3d68cc" />
-                  <circle cx={`${x}%`} cy={H - (m.expense / maxVal) * H} r="3" fill="#ef4444" />
+                  <circle cx={`${x}%`} cy={H - (m.income  / maxVal) * H} r="3" fill="#6B8AF7" />
+                  <circle cx={`${x}%`} cy={H - (m.expense / maxVal) * H} r="3" fill="#F28B82" />
                 </g>
               )
             })}
@@ -319,9 +319,11 @@ export default function FinancialDashboard({ dashboard, year, years, onYearChang
             <div className="fin-insight-item">
               <div className="fin-insight-ico fin-insight-ico--green"><FaPercent /></div>
               <div>
-                <p className="fin-insight-lbl">อัตราเก็บค่าส่วนกลาง</p>
-                <strong className="fin-insight-val">{insights?.collectionRate != null ? `${insights.collectionRate}%` : '—'}</strong>
-                <p className="fin-insight-sub">เก็บได้ {insights?.collectedUnits ?? '—'} หลัง</p>
+                <p className="fin-insight-lbl">รายรับ{(insights?.incomeChangePct ?? 0) >= 0 ? 'เพิ่มขึ้น' : 'ลดลง'}</p>
+                <strong className="fin-insight-val">
+                  {insights?.incomeChangePct != null ? `${insights.incomeChangePct >= 0 ? '+' : ''}${insights.incomeChangePct}%` : '—'}
+                </strong>
+                <p className="fin-insight-sub">เทียบกับเดือนก่อน</p>
               </div>
             </div>
             <div className="fin-insight-item">

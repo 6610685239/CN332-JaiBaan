@@ -223,6 +223,10 @@ const getDashboard = async (year) => {
   const prevMonthExpense = getTypeSum(prevMonthGroups, 'EXPENSE')
   const expenseChangeP   = pctChange(currMonthExpense, prevMonthExpense)
 
+  const currMonthIncome = getTypeSum(currMonthGroups, 'INCOME')
+  const prevMonthIncome = getTypeSum(prevMonthGroups, 'INCOME')
+  const incomeChangeP   = pctChange(currMonthIncome, prevMonthIncome)
+
   // อัตราเก็บค่าส่วนกลาง: income COMMON_FEE this month vs total units (stub — ปรับได้)
   // ถ้ายังไม่มีข้อมูล unit จาก DB ส่ง null ไปให้ frontend ซ่อน
   const collectionRate = null // TODO: เชื่อม resident count
@@ -271,6 +275,7 @@ const getDashboard = async (year) => {
     recentTransactions,
     insights: {
       expenseChangePct:    expenseChangeP,
+      incomeChangePct:     incomeChangeP,
       currentMonthExpense: currMonthExpense,
       collectionRate,
       topCategory,

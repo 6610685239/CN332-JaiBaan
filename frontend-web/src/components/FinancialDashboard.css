@@ -51,8 +51,8 @@
   display: flex; align-items: center; justify-content: center;
   font-size: 1.2rem; flex-shrink: 0;
 }
-.fin-sum-ico--in  { background: #fff0e8; color: #3d68cc; }
-.fin-sum-ico--out { background: #fee2e2; color: #ef4444; }
+.fin-sum-ico--in  { background: #c5d6f1; color: #3d68cc; }
+.fin-sum-ico--out { background: #fee2e2; color: #F28B82; }
 .fin-sum-ico--bal { background: #d1fae5; color: #10b981; }
 .fin-sum-ico--cnt { background: #ede9fe; color: #8b5cf6; }
 .fin-sum-info { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
@@ -123,8 +123,8 @@
 .fin-col { flex: 1; display: flex; flex-direction: column; align-items: center; }
 .fin-pair { display: flex; align-items: flex-end; gap: 2px; width: 100%; }
 .fin-bar { flex: 1; border-radius: 6px 6px 0 0; min-height: 0; transition: height .5s ease; }
-.fin-bar--i { background: #3d68cc; }
-.fin-bar--e { background: #ef4444; }
+.fin-bar--i { background: #6B8AF7; }
+.fin-bar--e { background: #F28B82; }
 .fin-lbl { font-size: 0.62rem; color: #c0aaa8; margin-top: 4px; white-space: nowrap; }
 
 /* Net SVG overlay */
@@ -172,8 +172,8 @@
   padding: 3px 10px; border-radius: 20px;
   font-size: 0.72rem; font-weight: 600;
 }
-.fin-type--in  { background: #dcfce7; color: #16a34a; }
-.fin-type--out { background: #fee2e2; color: #dc2626; }
+.fin-type--in  { background: #d1fae5; color: #2aa858; }
+.fin-type--out { background: #ffe9e9; color: #fd674c; }
 
 .fin-cat-tag {
   display: inline-block; padding: 2px 8px;
