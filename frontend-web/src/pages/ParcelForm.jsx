@@ -85,7 +85,7 @@ export default function ParcelForm() {
 
       <header className="pform-header">
         <button className="btn-back" onClick={() => navigate('/parcels')}>
-          <FaArrowLeft /> กลับ
+          <FaArrowLeft />
         </button>
         <div>
           <h1 className="pform-title"><FaBox className="pform-title-icon" /> ลงทะเบียนพัสดุ</h1>
@@ -203,7 +203,14 @@ export default function ParcelForm() {
         </div>
 
         <div className="pform-actions">
-          <button type="button" className="btn-cancel" onClick={() => navigate('/parcels')}>
+          <button
+            type="button"
+            className="btn-cancel"
+            onClick={() => {
+              if (form.photoUrl) parcelApi.deletePhoto(form.photoUrl).catch(() => {});
+              navigate('/parcels');
+            }}
+          >
             ยกเลิก
           </button>
           <button type="submit" className="btn-save" disabled={saving || uploading}>

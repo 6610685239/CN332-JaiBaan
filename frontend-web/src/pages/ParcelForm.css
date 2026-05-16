@@ -36,17 +36,17 @@
 .btn-back {
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
   background: white;
   border: 1.5px solid #ffd6d0;
   color: #8e7f7d;
-  padding: 10px 18px;
-  border-radius: 14px;
-  font-family: 'Kanit', sans-serif;
-  font-size: 0.9rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  font-size: 1rem;
   cursor: pointer;
   transition: all 0.2s;
-  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .btn-back:hover { border-color: #ff8a75; color: #ff6b6b; background: #fff8f7; }
@@ -69,6 +69,8 @@
   flex-direction: column;
   gap: 20px;
   max-width: 700px;
+  width: 100%;
+  margin: 0 auto;
 }
 
 .pform-error {
@@ -244,6 +246,8 @@
   display: flex;
   gap: 12px;
   max-width: 700px;
+  width: 100%;
+  margin: 0 auto;
 }
 
 .btn-cancel {
