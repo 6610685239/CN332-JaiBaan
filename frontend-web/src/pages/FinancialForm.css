@@ -1,5 +1,8 @@
 .financial-form-page {
-  padding: 24px;
+  padding: 40px 50px;
+  background-color: #fff5f3;
+  min-height: 100%;
+  font-family: 'Kanit', sans-serif;
 }
 
 .financial-form-header {
@@ -7,17 +10,20 @@
   flex-wrap: wrap;
   justify-content: space-between;
   gap: 18px;
-  align-items: center;
-  margin-bottom: 24px;
+  align-items: flex-start;
+  margin-bottom: 32px;
 }
 
 .financial-form-header h1 {
   margin: 0 0 8px;
+  font-family: 'Varela Round', sans-serif;
+  font-size: 1.8rem;
+  color: #2d3436;
 }
 
 .financial-form-header p {
   margin: 0;
-  color: #6b7280;
+  color: #8e7f7d;
 }
 
 .financial-btn-back,
@@ -26,19 +32,41 @@
   align-items: center;
   gap: 8px;
   border: none;
-  border-radius: 10px;
-  padding: 10px 16px;
+  border-radius: 15px;
+  padding: 12px 22px;
   cursor: pointer;
+  font-family: 'Kanit', sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
 }
 
 .financial-btn-back {
-  background: #f3f4f6;
-  color: #111827;
+  background: white;
+  color: #2d3436;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.financial-btn-back:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
 }
 
 .financial-btn-primary {
-  background: #2563eb;
+  background: linear-gradient(to right, #2563eb, #1d4ed8);
   color: #fff;
+  box-shadow: 0 8px 15px rgba(37, 99, 235, 0.25);
+}
+
+.financial-btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 20px rgba(37, 99, 235, 0.35);
+  filter: brightness(1.05);
+}
+
+.financial-btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .financial-form-grid {
@@ -55,17 +83,19 @@
 }
 
 .financial-card {
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 18px;
-  padding: 20px;
+  background: white;
+  border: none;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.06);
 }
 
 .financial-card label {
   display: block;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   font-weight: 600;
-  color: #374151;
+  color: #2d3436;
+  font-size: 0.95rem;
 }
 
 .financial-card input,
@@ -73,13 +103,23 @@
 .financial-card select,
 .financial-datepicker {
   width: 100%;
-  border: 1px solid #d1d5db;
+  border: 1.5px solid #e5e7eb;
   border-radius: 12px;
   padding: 12px 14px;
   outline: none;
   font-size: 1rem;
-  color: #111827;
-  background: #fff;
+  color: #333;
+  background: white;
+  font-family: 'Kanit', sans-serif;
+  transition: all 0.3s;
+}
+
+.financial-card input:focus,
+.financial-card textarea:focus,
+.financial-card select:focus,
+.financial-datepicker:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
 }
 
 .financial-card textarea {
@@ -109,18 +149,34 @@
 }
 
 .financial-summary-card h2 {
-  margin: 0 0 16px;
+  margin: 0 0 18px;
+  font-size: 1.1rem;
+  color: #2d3436;
+  font-weight: 700;
 }
 
 .financial-summary-row {
   display: flex;
   justify-content: space-between;
   gap: 16px;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.financial-summary-row:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.financial-summary-row span {
+  color: #666;
 }
 
 .financial-summary-row strong {
-  color: #111827;
+  color: #2563eb;
+  font-weight: 700;
 }
 
 .financial-form-loading {
@@ -129,13 +185,16 @@
   align-items: center;
   justify-content: center;
   min-height: 300px;
-  color: #6b7280;
+  color: #666;
+  background: white;\n  border-radius: 20px;
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.06);
+  padding: 40px;
 }
 
 .financial-form-spinner {
   width: 48px;
   height: 48px;
-  border: 4px solid #d1d5db;
+  border: 4px solid #e5e7eb;
   border-top-color: #2563eb;
   border-radius: 999px;
   animation: spin 1s linear infinite;
@@ -144,19 +203,29 @@
 
 .financial-toast {
   margin-bottom: 16px;
-  padding: 14px 16px;
+  padding: 16px 18px;
   border-radius: 14px;
   font-weight: 600;
+  font-family: 'Kanit', sans-serif;
+  animation: slideIn 0.3s ease;
+  border-left: 4px solid;
 }
 
 .financial-toast--success {
   background: #ecfdf5;
   color: #166534;
+  border-left-color: #10b981;
 }
 
 .financial-toast--error {
   background: #fee2e2;
   color: #991b1b;
+  border-left-color: #ef4444;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @media (max-width: 900px) {

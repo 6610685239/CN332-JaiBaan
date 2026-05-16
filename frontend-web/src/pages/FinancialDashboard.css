@@ -1,5 +1,6 @@
 .fin-dashboard {
-  padding: 24px;
+  padding: 0;
+  font-family: 'Kanit', sans-serif;
 }
 
 .fin-dashboard-header {
@@ -7,11 +8,19 @@
   justify-content: space-between;
   align-items: center;
   gap: 16px;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
 }
 
 .fin-dashboard-header h2 {
   margin: 0;
+  font-family: 'Varela Round', sans-serif;
+  font-size: 1.6rem;
+  color: #1f2937;
+}
+
+.fin-dashboard-header p {
+  margin: 4px 0 0;
+  color: #475569;
 }
 
 .fin-summary-grid {
@@ -42,13 +51,15 @@
 
 .fin-summary-card span {
   display: block;
-  color: #6b7280;
+  color: #334155;
   margin-bottom: 8px;
+  font-weight: 600;
 }
 
 .fin-summary-card strong {
   display: block;
   font-size: 1.5rem;
+  color: #0f172a;
 }
 
 .fin-chart-grid {
@@ -59,15 +70,18 @@
 }
 
 .fin-chart-card {
-  padding: 20px;
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 4px 15px rgba(15, 23, 42, 0.08);
+  padding: 24px;
+  background: white;
+  border-radius: 18px;
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.08);
+  border: none;
 }
 
 .fin-card-title {
   margin-bottom: 16px;
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #0f172a;
 }
 
 .fin-monthly-chart {
@@ -121,6 +135,15 @@
   justify-content: space-between;
   align-items: center;
   gap: 12px;
+  color: #334155;
+}
+
+.fin-pie-info strong {
+  color: #0f172a;
+}
+
+.fin-pie-info span {
+  color: #475569;
 }
 
 .fin-pie-bar {
@@ -142,20 +165,35 @@
   gap: 8px;
   padding: 16px 20px;
   border-radius: 14px;
-  background: #eef2ff;
-  color: #1e40af;
+  background: linear-gradient(135deg, #e0f0ff 0%, #f0f8ff 100%);
+  color: #1d4ed8;
   font-weight: 600;
+  font-family: 'Kanit', sans-serif;
+  border: 1px solid #c5e0ff;
 }
 
 .fin-empty {
-  color: #6b7280;
+  color: #334155;
+  text-align: center;
+  padding: 24px;
+  font-weight: 500;
 }
 
 .fin-select {
-  padding: 10px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 10px;
-  background: #fff;
+  padding: 10px 14px;
+  border: 1.5px solid transparent;
+  border-radius: 12px;
+  background: white;
+  font-family: 'Kanit', sans-serif;
+  color: #333;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.fin-select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
 }
 
 @media (max-width: 950px) {

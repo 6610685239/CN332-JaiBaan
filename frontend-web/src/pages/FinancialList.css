@@ -1,5 +1,11 @@
 .financial-list-page {
-  padding: 24px;
+  padding: 40px 50px;
+  background-color: #fff5f3;
+  min-height: 100%;
+  font-family: 'Kanit', sans-serif;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
 .financial-list-header {
@@ -8,6 +14,17 @@
   flex-wrap: wrap;
   gap: 16px;
   margin-bottom: 20px;
+  align-items: center;
+}
+
+.financial-list-header h2 {
+  margin: 0;
+  color: #1f2937;
+}
+
+.financial-list-header p {
+  margin: 4px 0 0;
+  color: #475569;
 }
 
 .financial-filter-group {
@@ -25,46 +42,70 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 16px;
+  padding: 12px 22px;
   border: none;
-  border-radius: 10px;
-  background: #2563eb;
+  border-radius: 15px;
+  background: linear-gradient(to right, #2563eb, #1d4ed8);
   color: #fff;
+  font-weight: 600;
+  font-family: 'Kanit', sans-serif;
   cursor: pointer;
+  box-shadow: 0 8px 15px rgba(37, 99, 235, 0.25);
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+}
+
+.financial-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 20px rgba(37, 99, 235, 0.35);
+  filter: brightness(1.05);
 }
 
 .financial-filter-group select,
 .fin-select {
   padding: 10px 12px;
-  border: 1px solid #d8d8d8;
-  border-radius: 8px;
+  border: 1.5px solid transparent;
+  border-radius: 12px;
   min-width: 150px;
-  background: #fff;
+  background: white;
+  font-family: 'Kanit', sans-serif;
+  color: #333;
+  transition: all 0.3s;
+}
+
+.financial-filter-group select:focus,
+.fin-select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
 }
 
 .financial-table-wrapper {
   overflow-x: auto;
-  background: #fff;
-  border: 1px solid #e7e7e7;
-  border-radius: 12px;
+  background: white;
+  border: none;
+  border-radius: 20px;
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.06);
 }
 
 .financial-table {
   width: 100%;
   border-collapse: collapse;
   min-width: 860px;
+  font-family: 'Kanit', sans-serif;
 }
 
 .financial-table th,
 .financial-table td {
   padding: 14px 16px;
   text-align: left;
-  border-bottom: 1px solid #f1f1f1;
+  border-bottom: 1px solid #f0f0f0;
+  color: #333;
 }
 
 .financial-table th {
   font-weight: 600;
-  background: #fafafa;
+  background: linear-gradient(135deg, #f0f8ff 0%, #e0f0ff 100%);
+  color: #2563eb;
 }
 
 .financial-table-amount {
@@ -74,7 +115,8 @@
 .financial-empty {
   padding: 32px;
   text-align: center;
-  color: #777;
+  color: #666;
+  font-size: 0.95rem;
 }
 
 .fin-dashboard {

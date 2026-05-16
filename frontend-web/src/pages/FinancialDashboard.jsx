@@ -82,10 +82,6 @@ export default function FinancialDashboard({ dashboard, year, years, onYearChang
         </div>
       </div>
 
-      <div className="fin-report-cta">
-        <span>รายงานการเงินสามารถใช้เป็นข้อมูลประกอบการตรวจสอบและประชุมบริหาร</span>
-        <FaArrowRight />
-      </div>
     </div>
   )
 }
