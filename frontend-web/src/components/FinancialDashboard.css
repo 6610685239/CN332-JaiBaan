@@ -1,0 +1,307 @@
+@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&family=Varela+Round&display=swap');
+
+.fin-dashboard {
+  font-family: 'Kanit', sans-serif;
+}
+
+/* ── Header ─────────────────────────────────── */
+.fin-dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.fin-dashboard-header h2 {
+  margin: 0;
+  font-family: 'Varela Round', sans-serif;
+  font-size: 2rem;
+  color: #2d3436;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.fin-dashboard-header p {
+  margin: 4px 0 0;
+  color: #8e7f7d;
+  font-size: 0.95rem;
+}
+
+.fin-select {
+  padding: 10px 16px;
+  border: 1.5px solid #ffd6d0;
+  border-radius: 50px;
+  background: white;
+  font-family: 'Kanit', sans-serif;
+  font-size: 0.9rem;
+  color: #555;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.3s;
+  flex-shrink: 0;
+}
+.fin-select:focus {
+  border-color: #ff8a75;
+  box-shadow: 0 0 0 4px rgba(255, 138, 117, 0.12);
+}
+
+/* ── Summary Cards ───────────────────────────── */
+.fin-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.fin-summary-card {
+  padding: 22px 24px;
+  border-radius: 22px;
+  background: white;
+  box-shadow: 0 6px 20px rgba(255, 107, 107, 0.07);
+}
+
+.fin-summary-card--income  { border-left: 5px solid #ff8a75; }
+.fin-summary-card--expense { border-left: 5px solid #ef4444; }
+.fin-summary-card--balance { border-left: 5px solid #10b981; }
+.fin-summary-card--negative{ border-left: 5px solid #f59e0b !important; }
+
+.fin-summary-card span {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #8e7f7d;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.fin-summary-card strong {
+  display: block;
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: #2d3436;
+  font-family: 'Varela Round', sans-serif;
+}
+
+/* ── Chart Grid ──────────────────────────────── */
+.fin-chart-grid {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.fin-chart-card {
+  padding: 24px;
+  background: white;
+  border-radius: 22px;
+  box-shadow: 0 6px 20px rgba(255, 107, 107, 0.07);
+}
+
+.fin-card-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #2d3436;
+  margin-bottom: 16px;
+}
+
+/* ── Bar Chart ───────────────────────────────── */
+.fin-bar-legend {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 14px;
+  font-size: 0.8rem;
+  color: #8e7f7d;
+}
+
+.fin-bar-legend span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.fin-bar-chart-wrap {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+}
+
+/* Y-axis */
+.fin-y-axis {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-bottom: 22px; /* align with month labels */
+  font-size: 0.7rem;
+  color: #c0aaa8;
+  text-align: right;
+  min-width: 32px;
+  flex-shrink: 0;
+}
+
+/* Bars area */
+.fin-bars-area {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.fin-month-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.fin-bar-group {
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.fin-bar {
+  flex: 1;
+  border-radius: 6px 6px 0 0;
+  min-height: 0;
+  transition: height 0.6s ease;
+}
+
+.fin-bar--income  { background: #ff8a75; }
+.fin-bar--expense { background: #ef4444; }
+
+.fin-month-label {
+  font-size: 0.65rem;
+  color: #c0aaa8;
+  white-space: nowrap;
+}
+
+/* ── Donut Pie Chart ─────────────────────────── */
+.fin-pie-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.fin-donut-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fin-donut-center {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  pointer-events: none;
+}
+
+.fin-donut-center span {
+  font-size: 0.72rem;
+  color: #8e7f7d;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 2px;
+}
+
+.fin-donut-center strong {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #2d3436;
+  font-family: 'Varela Round', sans-serif;
+  max-width: 80px;
+  word-break: break-all;
+}
+
+/* Legend */
+.fin-pie-legend {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.fin-pie-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.fin-pie-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.fin-pie-legend-info {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.fin-pie-legend-label {
+  font-size: 0.82rem;
+  color: #555;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fin-pie-legend-val {
+  font-size: 0.78rem;
+  color: #8e7f7d;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
+.fin-pie-legend-val em {
+  font-style: normal;
+  background: #fff5f3;
+  color: #ff8a75;
+  padding: 1px 6px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.72rem;
+}
+
+/* ── Empty ───────────────────────────────────── */
+.fin-empty {
+  color: #c0aaa8;
+  font-size: 0.88rem;
+  text-align: center;
+  padding: 32px 16px;
+}
+
+.fac-title-spark { color: #ffb100; font-size: 1.6rem; }
+
+/* ── Responsive ──────────────────────────────── */
+@media (max-width: 1100px) {
+  .fin-chart-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 760px) {
+  .fin-summary-grid { grid-template-columns: 1fr; }
+  .fin-dashboard-header { flex-direction: column; align-items: stretch; }
+  .fin-select { width: 100%; }
+}

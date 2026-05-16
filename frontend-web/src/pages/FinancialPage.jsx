@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { financialApi } from '../api/financial'
-import FinancialDashboard from './FinancialDashboard'
+import FinancialDashboard from '../components/FinancialDashboard'
 import './FinancialPage.css'
 
 export default function FinancialPage() {
