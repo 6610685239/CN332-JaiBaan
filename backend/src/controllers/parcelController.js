@@ -120,6 +120,16 @@ const updateStatus = async (req, res) => {
   }
 }
 
+// GET /api/parcels/stats  (admin dashboard)
+const stats = async (req, res) => {
+  try {
+    const data = await service.getStats()
+    res.json({ success: true, data })
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message })
+  }
+}
+
 // DELETE /api/parcels/photo  (juristic — remove orphaned upload)
 const removePhoto = async (req, res) => {
   try {
@@ -134,4 +144,4 @@ const removePhoto = async (req, res) => {
   }
 }
 
-module.exports = { uploadPhoto, list, listMine, listByUnit, getById, create, pickup, returned, updateStatus, removePhoto, remove }
+module.exports = { uploadPhoto, list, listMine, listByUnit, getById, create, pickup, returned, updateStatus, removePhoto, remove, stats }

@@ -79,4 +79,30 @@ const deleteParcel = async (id) => {
   return prisma.parcel.delete({ where: { id: parseInt(id) } })
 }
 
-module.exports = { createParcel, getParcels, getResidentParcels, getParcelById, markPickedUp, markReturned, updateStatus, deleteParcel }
+const getStats = async () => {
+  const now = new Date()
+  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  const overdueDate = new Date(todayStart.getTime() - 3 * 24 * 60 * 60 * 1000)
+
+  const [totalPending, pickedUpToday, overdue, carrierGroups] = await Promise.all([
+    prisma.parcel.count({ where: { status: 'ARRIVED' } }),
+    prisma.parcel.count({ where: { status: 'PICKED_UP', pickedUpAt: { gte: todayStart } } }),
+    prisma.parcel.count({ where: { status: 'ARRIVED', arrivedAt: { lte: overdueDate } } }),
+    prisma.parcel.groupBy({
+      by: ['carrier'],
+      _count: { carrier: true },
+      where: { status: 'ARRIVED' },
+      orderBy: { _count: { carrier: 'desc' } },
+      take: 4,
+    }),
+  ])
+
+  return {
+    totalPending,
+    pickedUpToday,
+    overdue,
+    carrierDistribution: carrierGroups.map((g) => ({ carrier: g.carrier, count: g._count.carrier })),
+  }
+}
+
+module.exports = { createParcel, getParcels, getResidentParcels, getParcelById, markPickedUp, markReturned, updateStatus, deleteParcel, getStats }

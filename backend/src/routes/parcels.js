@@ -16,6 +16,7 @@ router.get('/my', controller.listMine)
 router.get('/unit/:unitNumber', controller.listByUnit)
 
 // Admin/Juristic: full list with filters
+router.get('/stats', controller.stats)
 router.get('/', controller.list)
 router.get('/:id', controller.getById)
 
