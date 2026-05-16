@@ -35,12 +35,6 @@ export default function FinancialPage() {
 
   return (
     <div className="financial-page-wrapper">
-      {loading && (
-        <div className="financial-page-loading">
-          <p>กำลังโหลดข้อมูลการเงิน...</p>
-        </div>
-      )}
-
       {!loading && !dashboard && (
         <div className="financial-page-empty">
           <h2>ยังไม่มีข้อมูลการเงิน</h2>
