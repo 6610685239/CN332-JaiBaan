@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'login_page.dart';
 import 'facility_page.dart';
 import 'announcement_list_page.dart';
+import 'financial_list_page.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -54,6 +55,17 @@ class _DashboardPageState extends State<DashboardPage> {
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => AnnouncementListPage(token: token),
+        ),
+      );
+    }
+  }
+
+  void _navigateToFinancial() async {
+    final token = await _getUserToken();
+    if (mounted) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => FinancialListPage(token: token),
         ),
       );
     }
@@ -274,6 +286,58 @@ class _DashboardPageState extends State<DashboardPage> {
                                   const SizedBox(height: 4),
                                   Text(
                                     'Check the latest updates',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Icon(
+                                Icons.arrow_forward_ios_rounded,
+                                color: Colors.grey[400],
+                                size: 18,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+
+                      GestureDetector(
+                        onTap: _navigateToFinancial,
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: Colors.grey[300]!),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.08),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    'Financial Records',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    'ดูรายการและไฟล์แนบ',
                                     style: TextStyle(
                                       fontSize: 12,
                                       color: Colors.grey[600],

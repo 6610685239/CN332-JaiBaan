@@ -1,0 +1,372 @@
+import 'dart:io';
+import 'package:flutter/material.dart';
+import '../models/financial_model.dart';
+import '../services/financial_service.dart';
+
+class FinancialDetailPage extends StatefulWidget {
+  final FinancialTransaction transaction;
+  final String? token;
+
+  const FinancialDetailPage({
+    Key? key,
+    required this.transaction,
+    this.token,
+  }) : super(key: key);
+
+  @override
+  State<FinancialDetailPage> createState() => _FinancialDetailPageState();
+}
+
+class _FinancialDetailPageState extends State<FinancialDetailPage> {
+  late FinancialService _service;
+  late FinancialTransaction _transaction;
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _service = FinancialService();
+    _transaction = widget.transaction;
+    _loadTransactionDetail();
+  }
+
+  Future<void> _loadTransactionDetail() async {
+    setState(() => _isLoading = true);
+    try {
+      final detail = await _service.getTransactionById(
+        _transaction.id,
+        token: widget.token,
+      );
+      setState(() {
+        _transaction = detail;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() => _isLoading = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error loading transaction: $e')),
+        );
+      }
+    }
+  }
+
+  String _formatThaiDate(DateTime date) {
+    const thaiMonths = [
+      '', 'ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.',
+      'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.',
+    ];
+    return '${date.day} ${thaiMonths[date.month]} ${date.year}';
+  }
+
+  Color get _accentColor {
+    return _transaction.type == 'INCOME'
+        ? const Color(0xFF43A047)
+        : const Color(0xFFD32F2F);
+  }
+
+  IconData get _typeIcon {
+    return _transaction.type == 'INCOME'
+        ? Icons.arrow_downward_rounded
+        : Icons.arrow_upward_rounded;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFFAFAFA),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back_ios_new_rounded,
+            size: 20,
+            color: Color(0xFF424242),
+          ),
+          onPressed: () => Navigator.of(context).maybePop(),
+        ),
+        title: const Text(
+          'Transaction Detail',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+            color: Color(0xFF1A1A1A),
+            letterSpacing: 0.2,
+          ),
+        ),
+      ),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator(color: Color(0xFFFF7043)))
+          : SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.04),
+                          blurRadius: 16,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Container(
+                            height: 6,
+                            color: _accentColor.withOpacity(0.9),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(22.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 14,
+                                        vertical: 8,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: _accentColor.withOpacity(0.15),
+                                        borderRadius: BorderRadius.circular(16),
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Icon(_typeIcon, size: 16, color: _accentColor),
+                                          const SizedBox(width: 8),
+                                          Text(
+                                            _transaction.typeLabel,
+                                            style: TextStyle(
+                                              color: _accentColor,
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Text(
+                                      _formatThaiDate(_transaction.transactionDate),
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w600,
+                                        color: _accentColor.withOpacity(0.7),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 18),
+                                Text(
+                                  _transaction.categoryLabel,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: Color(0xFF666666),
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                                Text(
+                                  _transaction.amountLabel,
+                                  style: TextStyle(
+                                    fontSize: 30,
+                                    fontWeight: FontWeight.w800,
+                                    color: _accentColor,
+                                  ),
+                                ),
+                                const SizedBox(height: 22),
+                                const Text(
+                                  'รายละเอียด',
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                Text(
+                                  _transaction.description.isNotEmpty
+                                      ? _transaction.description
+                                      : '-',
+                                  style: const TextStyle(
+                                    fontSize: 15,
+                                    color: Color(0xFF4D4D4D),
+                                    height: 1.6,
+                                  ),
+                                ),
+                                if (_transaction.attachments.isNotEmpty) ...[
+                                  const SizedBox(height: 24),
+                                  const Text(
+                                    'ไฟล์แนบ',
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  _buildAttachments(),
+                                ],
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+    );
+  }
+
+  Widget _buildAttachments() {
+    final imageAttachments = _transaction.attachments.where((a) => a.isImage()).toList();
+    final otherAttachments = _transaction.attachments.where((a) => !a.isImage()).toList();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (imageAttachments.isNotEmpty) ...[
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 10,
+              childAspectRatio: 1.2,
+            ),
+            itemCount: imageAttachments.length,
+            itemBuilder: (context, index) {
+              final attachment = imageAttachments[index];
+              return GestureDetector(
+                onTap: () => _showImageFullscreen(attachment),
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.grey[200]!),
+                    color: Colors.grey[100],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.network(
+                      attachment.getFullUrl(_getBaseUrl()),
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Center(
+                        child: Icon(
+                          Icons.broken_image_rounded,
+                          color: Colors.grey[400],
+                          size: 32,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 16),
+        ],
+        if (otherAttachments.isNotEmpty)
+          ListView.separated(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: otherAttachments.length,
+            separatorBuilder: (_, __) => const SizedBox(height: 10),
+            itemBuilder: (context, index) {
+              final attachment = otherAttachments[index];
+              return Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                decoration: BoxDecoration(
+                  color: Colors.grey[50],
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: Colors.grey[200]!),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.insert_drive_file_rounded,
+                      size: 24,
+                      color: Colors.blueGrey[400],
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            attachment.originalName,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black87,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '${attachment.mimeType} • ${_formatFileSize(attachment.size)}',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+      ],
+    );
+  }
+
+  void _showImageFullscreen(FinancialAttachment attachment) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => Scaffold(
+          backgroundColor: Colors.black,
+          appBar: AppBar(backgroundColor: Colors.black, foregroundColor: Colors.white),
+          body: Center(
+            child: InteractiveViewer(
+              child: Image.network(
+                attachment.getFullUrl(_getBaseUrl()),
+                errorBuilder: (context, error, stackTrace) => const Center(
+                  child: Icon(Icons.image_not_supported_rounded, color: Colors.white, size: 48),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  String _formatFileSize(int bytes) {
+    if (bytes < 1024) return '$bytes B';
+    if (bytes < 1024 * 1024) return '${(bytes / 1024).toStringAsFixed(1)} KB';
+    return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
+  }
+
+  String _getBaseUrl() {
+    if (Platform.isAndroid) {
+      return 'http://10.0.2.2:3000';
+    }
+    return 'http://localhost:3000';
+  }
+}
