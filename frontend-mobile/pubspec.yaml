@@ -44,6 +44,11 @@ dependencies:
   table_calendar: ^3.1.0
   intl: ^0.19.0
   qr_flutter: ^4.1.0
+  camera: ^0.11.0
+  firebase_core: ^4.9.0
+  firebase_messaging: ^16.2.2
+  google_sign_in: ^6.2.1
+  image_picker: ^1.1.2
 
 dev_dependencies:
   flutter_test:
@@ -69,7 +74,22 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/logo.png
-  #   - images/a_dot_ham.jpeg
+    - assets/images/background.png
+    - assets/images/shape1.png
+    - assets/images/shape2.png
+    - assets/images/shape3.png
+    - assets/images/logo.png
+    - assets/images/banner1.png
+    - assets/images/banner2.png
+    - assets/images/banner3.png
+    - assets/images/LPR_icon.png
+    - assets/images/lpr_bg1.png
+    - assets/images/lpr_bg2.png
+    - assets/images/repair.png
+    - assets/images/package.png
+    - assets/images/annouce.png
+    - assets/images/finance.png
+    - assets/images/setting_bg.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

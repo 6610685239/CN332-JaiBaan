@@ -11,6 +11,8 @@ const ALLOWED_MIME_TYPES = [
   'application/pdf',
 ]
 
+const ALLOWED_IMAGE_EXTS = ['.jpg', '.jpeg', '.png', '.gif', '.webp']
+
 const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
 
 const storage = multer.diskStorage({
@@ -18,13 +20,16 @@ const storage = multer.diskStorage({
     cb(null, UPLOAD_DIR)
   },
   filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname)
+    const ext = path.extname(file.originalname) || '.jpg'
     cb(null, `${uuidv4()}${ext}`)
   },
 })
 
 const fileFilter = (req, file, cb) => {
-  if (ALLOWED_MIME_TYPES.includes(file.mimetype)) {
+  const ext = path.extname(file.originalname).toLowerCase()
+  const isAllowedMime = ALLOWED_MIME_TYPES.includes(file.mimetype)
+  const isOctetStreamImage = file.mimetype === 'application/octet-stream' && ALLOWED_IMAGE_EXTS.includes(ext)
+  if (isAllowedMime || isOctetStreamImage) {
     cb(null, true)
   } else {
     cb(new Error(`ไม่รองรับไฟล์ประเภท ${file.mimetype}`), false)

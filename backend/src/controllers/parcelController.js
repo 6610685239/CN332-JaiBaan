@@ -61,11 +61,11 @@ const getById = async (req, res) => {
 // POST /api/parcels  (juristic registers inbound parcel)
 const create = async (req, res) => {
   try {
-    const { trackingNumber, carrier, unitNumber, storageLocation, photoUrl, notes } = req.body
+    const { trackingNumber, carrier, unitNumber, recipientName, storageLocation, photoUrl, notes } = req.body
     if (!trackingNumber || !carrier || !unitNumber) {
       return res.status(400).json({ success: false, message: 'trackingNumber, carrier, unitNumber ห้ามว่าง' })
     }
-    const item = await service.createParcel({ trackingNumber, carrier, unitNumber, storageLocation, photoUrl, notes })
+    const item = await service.createParcel({ trackingNumber, carrier, unitNumber, recipientName, storageLocation, photoUrl, notes })
     res.status(201).json({ success: true, data: item })
   } catch (err) {
     if (err.code === 'P2002') {

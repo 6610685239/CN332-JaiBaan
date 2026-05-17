@@ -10,6 +10,7 @@ const EMPTY = {
   trackingNumber: '',
   carrier: '',
   unitNumber: '',
+  recipientName: '',
   storageLocation: '',
   notes: '',
   photoUrl: '',
@@ -69,6 +70,7 @@ export default function ParcelForm() {
         trackingNumber: form.trackingNumber.trim(),
         carrier: form.carrier.trim(),
         unitNumber: form.unitNumber.trim(),
+        recipientName: form.recipientName.trim() || undefined,
         storageLocation: form.storageLocation.trim() || undefined,
         photoUrl: form.photoUrl || undefined,
         notes: form.notes.trim() || undefined,
@@ -101,6 +103,17 @@ export default function ParcelForm() {
 
         <div className="pform-card">
           <div className="pform-section-title">ข้อมูลพัสดุ</div>
+
+          <div className="pform-field">
+            <label className="pform-label">ชื่อผู้รับ</label>
+            <input
+              className="pform-input"
+              type="text"
+              placeholder="เช่น นายสมชาย ใจดี"
+              value={form.recipientName}
+              onChange={set('recipientName')}
+            />
+          </div>
 
           <div className="pform-field">
             <label className="pform-label">Tracking Number <span className="required">*</span></label>
@@ -157,18 +170,19 @@ export default function ParcelForm() {
             />
           </div>
 
+          <div className="pform-field">
+            <label className="pform-label">เลขห้อง <span className="required">*</span></label>
+            <input
+              className="pform-input"
+              type="text"
+              placeholder="เช่น 12/5"
+              value={form.unitNumber}
+              onChange={set('unitNumber')}
+              required
+            />
+          </div>
+
           <div className="pform-row">
-            <div className="pform-field">
-              <label className="pform-label">เลขห้อง <span className="required">*</span></label>
-              <input
-                className="pform-input"
-                type="text"
-                placeholder="เช่น 12/5"
-                value={form.unitNumber}
-                onChange={set('unitNumber')}
-                required
-              />
-            </div>
             <div className="pform-field">
               <label className="pform-label">ที่เก็บ</label>
               <input
