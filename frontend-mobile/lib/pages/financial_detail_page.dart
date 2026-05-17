@@ -1,5 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
+import 'package:flutter_pdfview/flutter_pdfview.dart';
 import '../models/financial_model.dart';
 import '../services/financial_service.dart';
 
@@ -301,47 +304,64 @@ class _FinancialDetailPageState extends State<FinancialDetailPage> {
             separatorBuilder: (_, __) => const SizedBox(height: 10),
             itemBuilder: (context, index) {
               final attachment = otherAttachments[index];
-              return Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                decoration: BoxDecoration(
-                  color: Colors.grey[50],
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: Colors.grey[200]!),
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.insert_drive_file_rounded,
-                      size: 24,
-                      color: Colors.blueGrey[400],
+              final isPdf = attachment.mimeType == 'application/pdf' ||
+                  attachment.originalName.toLowerCase().endsWith('.pdf');
+              return GestureDetector(
+                onTap: isPdf ? () => _openPdf(attachment) : null,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                  decoration: BoxDecoration(
+                    color: isPdf ? const Color(0xFFFFF3E0) : Colors.grey[50],
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(
+                      color: isPdf ? const Color(0xFFFFB300).withOpacity(0.4) : Colors.grey[200]!,
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            attachment.originalName,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black87,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            '${attachment.mimeType} • ${_formatFileSize(attachment.size)}',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                        ],
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: isPdf ? const Color(0xFFFFB300).withOpacity(0.15) : Colors.blueGrey[50],
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Icon(
+                          isPdf ? Icons.picture_as_pdf_rounded : Icons.insert_drive_file_rounded,
+                          size: 22,
+                          color: isPdf ? const Color(0xFFE65100) : Colors.blueGrey[400],
+                        ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              attachment.originalName,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black87,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              '${attachment.mimeType} • ${_formatFileSize(attachment.size)}',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      if (isPdf)
+                        Icon(Icons.open_in_new_rounded, size: 18, color: Colors.grey[500]),
+                    ],
+                  ),
                 ),
               );
             },
@@ -371,6 +391,44 @@ class _FinancialDetailPageState extends State<FinancialDetailPage> {
     );
   }
 
+  Future<void> _openPdf(FinancialAttachment attachment) async {
+    final url = attachment.getFullUrl(_getBaseUrl());
+    final fileName = attachment.originalName;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const Center(
+        child: CircularProgressIndicator(color: Color(0xFFFF7043)),
+      ),
+    );
+
+    try {
+      final response = await http.get(Uri.parse(url));
+      final dir = await getTemporaryDirectory();
+      final file = File('${dir.path}/$fileName');
+      await file.writeAsBytes(response.bodyBytes);
+
+      if (!mounted) return;
+      Navigator.of(context).pop(); // close loading
+
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => _PdfViewerPage(
+            filePath: file.path,
+            title: fileName,
+          ),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      Navigator.of(context).pop(); // close loading
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('ไม่สามารถเปิดไฟล์ PDF ได้: $e')),
+      );
+    }
+  }
+
   String _formatFileSize(int bytes) {
     if (bytes < 1024) return '$bytes B';
     if (bytes < 1024 * 1024) return '${(bytes / 1024).toStringAsFixed(1)} KB';
@@ -382,5 +440,85 @@ class _FinancialDetailPageState extends State<FinancialDetailPage> {
       return 'http://10.0.2.2:3000';
     }
     return 'http://localhost:3000';
+  }
+}
+
+class _PdfViewerPage extends StatefulWidget {
+  final String filePath;
+  final String title;
+
+  const _PdfViewerPage({required this.filePath, required this.title});
+
+  @override
+  State<_PdfViewerPage> createState() => _PdfViewerPageState();
+}
+
+class _PdfViewerPageState extends State<_PdfViewerPage> {
+  int _currentPage = 0;
+  int _totalPages = 0;
+  bool _isReady = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFF2C2C2C),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20, color: Color(0xFF424242)),
+          onPressed: () => Navigator.of(context).maybePop(),
+        ),
+        title: Text(
+          widget.title,
+          style: const TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w700,
+            color: Color(0xFF1A1A1A),
+          ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        bottom: _isReady && _totalPages > 0
+            ? PreferredSize(
+                preferredSize: const Size.fromHeight(28),
+                child: Container(
+                  color: Colors.white,
+                  padding: const EdgeInsets.only(bottom: 6),
+                  child: Text(
+                    'หน้า ${_currentPage + 1} / $_totalPages',
+                    style: const TextStyle(fontSize: 12, color: Color(0xFF9E9E9E)),
+                  ),
+                ),
+              )
+            : null,
+      ),
+      body: Stack(
+        children: [
+          PDFView(
+            filePath: widget.filePath,
+            enableSwipe: true,
+            swipeHorizontal: false,
+            autoSpacing: true,
+            pageFling: true,
+            onRender: (pages) => setState(() {
+              _totalPages = pages ?? 0;
+              _isReady = true;
+            }),
+            onPageChanged: (page, total) => setState(() {
+              _currentPage = page ?? 0;
+            }),
+            onError: (error) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('เกิดข้อผิดพลาด: $error')),
+              );
+            },
+          ),
+          if (!_isReady)
+            const Center(child: CircularProgressIndicator(color: Color(0xFFFF7043))),
+        ],
+      ),
+    );
   }
 }
