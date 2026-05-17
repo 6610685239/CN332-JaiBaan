@@ -4,7 +4,10 @@ const path = require('path')
 let initialized = false
 
 const initFirebase = () => {
-  if (initialized) return
+  if (initialized || admin.apps.length > 0) {
+    initialized = true
+    return
+  }
   try {
     const serviceAccount = require(path.resolve(process.env.FIREBASE_SERVICE_ACCOUNT || './firebase-service-account.json'))
     admin.initializeApp({
@@ -74,4 +77,4 @@ const stripHtml = (html = '') => html.replace(/<[^>]*>/g, '').replace(/\s+/g, ' 
 // Initialize on module load
 initFirebase()
 
-module.exports = { sendAnnouncementNotification }
+module.exports = { sendAnnouncementNotification, initFirebase }

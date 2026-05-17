@@ -3,7 +3,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'pages/login_page.dart';
 import 'pages/main_dashboard.dart';
 
-void main() {
+final themeNotifier = ValueNotifier<ThemeMode>(ThemeMode.light);
+final userNotifier = ValueNotifier<Map<String, dynamic>>({});
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final prefs = await SharedPreferences.getInstance();
+  final isDark = prefs.getBool('isDarkMode') ?? false;
+  themeNotifier.value = isDark ? ThemeMode.dark : ThemeMode.light;
   runApp(const JaiBaanApp());
 }
 
@@ -12,11 +19,24 @@ class JaiBaanApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'JaiBaan',
-      theme: ThemeData(primarySwatch: Colors.orange),
-      home: const AuthWrapper(),
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: themeNotifier,
+      builder: (_, mode, __) => MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'JaiBaan',
+        themeMode: mode,
+        theme: ThemeData(
+          brightness: Brightness.light,
+          primarySwatch: Colors.orange,
+          scaffoldBackgroundColor: const Color(0xFFFDF0E7),
+        ),
+        darkTheme: ThemeData(
+          brightness: Brightness.dark,
+          primarySwatch: Colors.orange,
+          scaffoldBackgroundColor: const Color(0xFF1A1A1A),
+        ),
+        home: const AuthWrapper(),
+      ),
     );
   }
 }
@@ -30,12 +50,8 @@ class AuthWrapper extends StatelessWidget {
       future: _getStoredToken(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
+          return const Scaffold(body: Center(child: CircularProgressIndicator()));
         }
-
-        // If token exists, go to dashboard; otherwise go to login
         if (snapshot.hasData && snapshot.data != null) {
           return const MainDashboardPage();
         }

@@ -2,6 +2,8 @@ const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const prisma = require('../../db');
 const jwt = require('jsonwebtoken');
+const admin = require('firebase-admin');
+require('../services/notificationService');
 
 // Register new resident user
 exports.register = async (req, res) => {
@@ -9,7 +11,7 @@ exports.register = async (req, res) => {
         const { username, password, firstName, lastName, phoneNumber, roomNumber } = req.body;
 
         // Validate required fields
-        if (!username || !password || !firstName || !lastName || !phoneNumber || !roomNumber) {
+        if (!username || !password || !roomNumber) {
             return res.status(400).json({ message: 'กรุณากรอกข้อมูลให้ครบถ้วน' });
         }
 
@@ -30,9 +32,9 @@ exports.register = async (req, res) => {
             data: {
                 username,
                 passwordHash,
-                firstName,
-                lastName,
-                phoneNumber,
+                firstName: firstName || '',
+                lastName: lastName || '',
+                phoneNumber: phoneNumber || '',
                 role: 'resident',
                 resident: {
                     create: {
@@ -106,7 +108,9 @@ exports.residentLogin = async (req, res) => {
                 role: user.role,
                 firstName: user.firstName,
                 lastName: user.lastName,
-                phoneNumber: user.phoneNumber
+                phoneNumber: user.phoneNumber,
+                email: user.email,
+                avatarUrl: user.avatarUrl
             }
         });
     } catch (error) {
@@ -156,6 +160,113 @@ exports.juristicLogin = async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Server Error' });
+    }
+};
+
+// Google Sign-In — verify token, check if user exists
+exports.googleLogin = async (req, res) => {
+    try {
+        const { idToken } = req.body;
+        if (!idToken) return res.status(400).json({ message: 'idToken is required' });
+
+        // Verify Google OAuth token via Google's tokeninfo endpoint
+        const googleRes = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${idToken}`);
+        const decoded = await googleRes.json();
+        if (decoded.error) return res.status(401).json({ message: 'Invalid Google token' });
+
+        const uid = decoded.sub;
+        const email = decoded.email;
+        const name = decoded.name;
+        const picture = decoded.picture;
+
+        const existingUser = await prisma.user.findFirst({ where: { socialId: uid } });
+
+        if (existingUser) {
+            const token = jwt.sign(
+                { id: existingUser.id, role: existingUser.role, username: existingUser.username },
+                process.env.JWT_SECRET || 'your_secret_key',
+                { expiresIn: '7d' }
+            );
+            return res.json({
+                needsSetup: false,
+                token,
+                user: {
+                    id: existingUser.id,
+                    username: existingUser.username,
+                    role: existingUser.role,
+                    firstName: existingUser.firstName,
+                    lastName: existingUser.lastName,
+                },
+            });
+        }
+
+        // New user — needs room setup
+        return res.json({
+            needsSetup: true,
+            googleId: uid,
+            email: email || '',
+            name: name || '',
+            picture: picture || '',
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Google login failed', error: error.message });
+    }
+};
+
+// Google Sign-In — complete setup with room number
+exports.googleComplete = async (req, res) => {
+    try {
+        const { googleId, email, name, picture, roomNumber } = req.body;
+        if (!googleId || !roomNumber) {
+            return res.status(400).json({ message: 'googleId and roomNumber are required' });
+        }
+
+        const existingUser = await prisma.user.findFirst({ where: { socialId: googleId } });
+        if (existingUser) {
+            return res.status(400).json({ message: 'User already registered' });
+        }
+
+        const nameParts = (name || '').split(' ');
+        const firstName = nameParts[0] || 'Google';
+        const lastName = nameParts.slice(1).join(' ') || 'User';
+        const username = email ? email.split('@')[0] : googleId.substring(0, 10);
+
+        const newUser = await prisma.user.create({
+            data: {
+                username,
+                passwordHash: '',
+                firstName,
+                lastName,
+                phoneNumber: '',
+                role: 'resident',
+                socialId: googleId,
+                avatarUrl: picture || null,
+                resident: { create: { unitNumber: roomNumber } },
+            },
+            include: { resident: true },
+        });
+
+        const token = jwt.sign(
+            { id: newUser.id, role: newUser.role, username: newUser.username },
+            process.env.JWT_SECRET || 'your_secret_key',
+            { expiresIn: '7d' }
+        );
+
+        res.status(201).json({
+            message: 'Registration successful',
+            token,
+            user: {
+                id: newUser.id,
+                username: newUser.username,
+                role: newUser.role,
+                firstName: newUser.firstName,
+                lastName: newUser.lastName,
+            },
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Setup failed', error: error.message });
     }
 };
 

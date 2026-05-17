@@ -44,6 +44,8 @@ dependencies:
   table_calendar: ^3.1.0
   intl: ^0.19.0
   qr_flutter: ^4.1.0
+  google_sign_in: ^6.2.1
+  image_picker: ^1.1.2
 
 dev_dependencies:
   flutter_test:
@@ -82,6 +84,7 @@ flutter:
     - assets/images/package.png
     - assets/images/annouce.png
     - assets/images/finance.png
+    - assets/images/setting_bg.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

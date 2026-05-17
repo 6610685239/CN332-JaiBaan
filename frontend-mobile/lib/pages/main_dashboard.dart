@@ -1,5 +1,8 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'jaibaan_background.dart';
 import 'login_page.dart';
@@ -20,6 +23,7 @@ class _MainPageState extends State<MainDashboardPage> {
   int _currentAd = 0;
   int _currentNav = 0;
   Timer? _adTimer;
+  Map<String, dynamic> _userData = {};
 
   // ── เปลี่ยนเป็น path รูปแทน ──────────────────────────────────────────────
   final List<String> _adImages = [
@@ -76,10 +80,39 @@ class _MainPageState extends State<MainDashboardPage> {
     },
   ];
 
+  String? _cachedToken;
+
+  String get _baseUrl {
+    if (Platform.isAndroid) return 'http://10.0.2.2:3000';
+    return 'http://localhost:3000';
+  }
+
   @override
   void initState() {
     super.initState();
     _startAdTimer();
+    _getUserToken().then((t) {
+      setState(() => _cachedToken = t);
+      _loadUserData(t);
+    });
+  }
+
+  Future<void> _loadUserData(String? token) async {
+    final prefs = await SharedPreferences.getInstance();
+    final cached = prefs.getString('user_data');
+    if (cached != null) setState(() => _userData = jsonDecode(cached));
+    if (token == null) return;
+    try {
+      final res = await http.get(
+        Uri.parse('$_baseUrl/api/user/me'),
+        headers: {'Authorization': 'Bearer $token'},
+      );
+      if (res.statusCode == 200) {
+        final fresh = jsonDecode(res.body) as Map<String, dynamic>;
+        await prefs.setString('user_data', jsonEncode(fresh));
+        if (mounted) setState(() => _userData = fresh);
+      }
+    } catch (_) {}
   }
 
   @override
@@ -121,115 +154,80 @@ class _MainPageState extends State<MainDashboardPage> {
     }
   }
 
-  void _navigateToSettings() async {
-    final token = await _getUserToken();
-    if (!mounted) return;
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (ctx) => _buildSettingsSheet(ctx, token),
-    );
-  }
-
-  Widget _buildSettingsSheet(BuildContext ctx, String? token) {
-    return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Handle bar
-          Container(
-            width: 40,
-            height: 4,
-            decoration: BoxDecoration(
-              color: Colors.grey[300],
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-          const SizedBox(height: 20),
-          const Text(
-            'Settings',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: Color(0xFF1A1A1A)),
-          ),
-          const SizedBox(height: 16),
-          // Account Settings
-          ListTile(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-            tileColor: const Color(0xFFFFF5F3),
-            leading: Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFFFF6B35), Color(0xFFFF4D2E)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: const Icon(Icons.manage_accounts_rounded, color: Colors.white, size: 22),
-            ),
-            title: const Text('Account Settings',
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: Color(0xFF1A1A1A))),
-            subtitle: const Text('Profile, password & preferences',
-                style: TextStyle(fontSize: 12, color: Color(0xFF999999))),
-            trailing: const Icon(Icons.chevron_right_rounded, color: Color(0xFFAAAAAA)),
-            onTap: () {
-              Navigator.pop(ctx);
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => UserSettingsPage(token: token)),
-              );
-            },
-          ),
-          const SizedBox(height: 12),
-          // Logout
-          ListTile(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-            tileColor: const Color(0xFFFFF0F0),
-            leading: Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: const Color(0xFFFFDDDD),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: const Icon(Icons.logout_rounded, color: Color(0xFFFF4D2E), size: 22),
-            ),
-            title: const Text('Logout',
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: Color(0xFFFF4D2E))),
-            subtitle: const Text('Sign out of your account',
-                style: TextStyle(fontSize: 12, color: Color(0xFF999999))),
-            onTap: () {
-              Navigator.pop(ctx);
-              _handleLogout();
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
   Future<void> _handleLogout() async {
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Logout'),
-        content: const Text('Are you sure you want to logout?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel'),
+      barrierColor: Colors.black.withOpacity(0.4),
+      builder: (ctx) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        backgroundColor: Colors.white,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(24, 32, 24, 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 64, height: 64,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFFF0F0),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.logout_rounded, color: Color(0xFFF05053), size: 30),
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                'Log Out',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF1A1A1A)),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'Are you sure you want to log out?',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 14, color: Color(0xFF888888), height: 1.4),
+              ),
+              const SizedBox(height: 28),
+              Row(
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => Navigator.pop(ctx, false),
+                      child: Container(
+                        height: 48,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF4F6FA),
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        alignment: Alignment.center,
+                        child: const Text(
+                          'Cancel',
+                          style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: Color(0xFF555555)),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => Navigator.pop(ctx, true),
+                      child: Container(
+                        height: 48,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF05053),
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        alignment: Alignment.center,
+                        child: const Text(
+                          'Log Out',
+                          style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Logout'),
-          ),
-        ],
+        ),
       ),
     );
     if (confirmed == true && mounted) {
@@ -252,34 +250,42 @@ class _MainPageState extends State<MainDashboardPage> {
 
   @override
   Widget build(BuildContext context) {
-    return JaiBaanBackground(
-      child: SafeArea(
-        child: Column(
-          children: [
-            _buildAppBar(),
-            Expanded(
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 8),
-                    _buildAdBanner(),
-                    const SizedBox(height: 14),
-                    _buildLicensePlateCard(),
-                    const SizedBox(height: 14),
-                    _buildMenuGrid(),
-                    const SizedBox(height: 20),
-                    // _buildMyBooking(),
-                    // const SizedBox(height: 24),
-                  ],
-                ),
+    return Scaffold(
+      body: IndexedStack(
+        index: _currentNav == 3 ? 1 : 0,
+        children: [
+          // ── Home ──────────────────────────────────────────────────────────
+          JaiBaanBackground(
+            child: SafeArea(
+              child: Column(
+                children: [
+                  _buildAppBar(),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 8),
+                          _buildAdBanner(),
+                          const SizedBox(height: 14),
+                          _buildLicensePlateCard(),
+                          const SizedBox(height: 14),
+                          _buildMenuGrid(),
+                          const SizedBox(height: 20),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-            _buildBottomNav(),
-          ],
-        ),
+          ),
+          // ── Settings ──────────────────────────────────────────────────────
+          UserSettingsPage(token: _cachedToken, showBackButton: false),
+        ],
       ),
+      bottomNavigationBar: _buildBottomNav(),
     );
   }
 
@@ -290,49 +296,71 @@ class _MainPageState extends State<MainDashboardPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.08),
-                  blurRadius: 12,
-                  offset: const Offset(0, 2),
-                ),
-              ],
+          GestureDetector(
+            onTap: _handleLogout,
+            child: Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.08),
+                    blurRadius: 12,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: const Icon(Icons.logout_rounded, size: 20, color: Color(0xFF555555)),
             ),
-            child: const Icon(Icons.notifications_outlined, size: 20, color: Color(0xFF555555)),
           ),
           Image.asset(
             'assets/images/logo.png',
             height: 42,
             fit: BoxFit.fitHeight,
           ),
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: const LinearGradient(
-                colors: [Color(0xFFFF6B35), Color(0xFFFF4D2E)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFFFF4D2E).withOpacity(0.4),
-                  blurRadius: 12,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: const Icon(Icons.person_rounded, color: Colors.white, size: 22),
-          ),
+          _buildAvatarChip(),
         ],
       ),
+    );
+  }
+
+  Widget _buildAvatarChip() {
+    final rawUrl = _userData['avatarUrl'] as String?;
+    final avatarUrl = (rawUrl != null && rawUrl.isNotEmpty) ? rawUrl : null;
+
+    final firstName = (_userData['firstName'] ?? '').toString().trim();
+    final lastName  = (_userData['lastName']  ?? '').toString().trim();
+    final username  = (_userData['username']  ?? '').toString().trim();
+    final hasName = firstName.isNotEmpty || username.isNotEmpty;
+    final initial = firstName.isNotEmpty
+        ? (lastName.isNotEmpty ? '${firstName[0]}${lastName[0]}'.toUpperCase() : firstName[0].toUpperCase())
+        : (username.isNotEmpty ? username[0].toUpperCase() : '');
+
+    Widget fallback = Container(
+      width: 40, height: 40,
+      decoration: const BoxDecoration(color: Color(0xFFF9A082), shape: BoxShape.circle),
+      alignment: Alignment.center,
+      child: hasName
+          ? Text(initial, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white))
+          : const Icon(Icons.person_rounded, size: 22, color: Colors.white),
+    );
+
+    return GestureDetector(
+      onTap: () => setState(() => _currentNav = 3),
+      child: avatarUrl != null
+          ? ClipOval(
+              child: Image.network(
+                avatarUrl,
+                width: 40, height: 40,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => fallback,
+                loadingBuilder: (_, child, progress) =>
+                    progress == null ? child : fallback,
+              ),
+            )
+          : fallback,
     );
   }
 
@@ -768,8 +796,6 @@ class _MainPageState extends State<MainDashboardPage> {
                 onTap: () {
                   if (i == 1) {
                     Navigator.push(context, MaterialPageRoute(builder: (_) => FacilityListScreen()));
-                  } else if (i == 3) {
-                    _navigateToSettings();
                   } else {
                     setState(() => _currentNav = i);
                   }
