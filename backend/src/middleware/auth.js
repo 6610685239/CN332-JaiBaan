@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken')
-
+const prisma = require('../../db');
 /**
  * Auth middleware — ต่อกับระบบ JWT เดิม
  * คาดว่า token จะอยู่ใน Authorization: Bearer <token>
