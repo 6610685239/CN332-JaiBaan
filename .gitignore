@@ -7,6 +7,10 @@ __pycache__/
 venv/
 env/
 .env
+*.env.*
+firebase-service-account.json
+CLAUDE.md
+HANDOFF.md
 
 node_modules/
 package-lock.json
@@ -15,6 +19,8 @@ package-lock.json
 .vscode/
 claude.md
 
+frontend/jaibaan/build/
+frontend-mobile/build/
 frontend-mobile/linux/flutter/generated_plugin_registrant.*
 frontend-mobile/linux/flutter/generated_plugins.cmake
 frontend-mobile/macos/Flutter/GeneratedPluginRegistrant.swift

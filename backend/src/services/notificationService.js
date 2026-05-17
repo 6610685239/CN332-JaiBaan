@@ -71,7 +71,19 @@ const sendAnnouncementNotification = async (announcement, tokens = []) => {
 // strip HTML tags for notification body preview
 const stripHtml = (html = '') => html.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim()
 
+const sendPushNotification = async (token, title, body, data = {}) => {
+  if (!initialized) return { success: false, reason: 'Firebase not initialized' }
+  if (!token) return { success: false, reason: 'No token' }
+  try {
+    await admin.messaging().send({ token, notification: { title, body }, data })
+    return { success: true }
+  } catch (err) {
+    console.error('FCM send error:', err)
+    return { success: false, reason: err.message }
+  }
+}
+
 // Initialize on module load
 initFirebase()
 
-module.exports = { sendAnnouncementNotification }
+module.exports = { sendAnnouncementNotification, sendPushNotification }

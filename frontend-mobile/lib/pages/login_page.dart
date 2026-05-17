@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'register_page.dart';
 import 'main_dashboard.dart';
 
@@ -78,6 +79,10 @@ class _LoginPageState extends State<LoginPage> {
         await prefs.setString('auth_token', token);
         await prefs.setString('user_data', jsonEncode(user));
 
+        // Save FCM token to backend
+        _saveFcmToken(user['id']);
+
+        // Navigate to Dashboard
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -117,6 +122,24 @@ class _LoginPageState extends State<LoginPage> {
           _isLoading = false;
         });
       }
+    }
+  }
+
+  Future<void> _saveFcmToken(dynamic userId) async {
+    try {
+      await FirebaseMessaging.instance.requestPermission();
+      final token = await FirebaseMessaging.instance.getToken();
+      if (token == null) return;
+      final baseUrl = kIsWeb || !Platform.isAndroid
+          ? 'http://localhost:3000/api/auth/fcm-token'
+          : 'http://10.0.2.2:3000/api/auth/fcm-token';
+      await http.post(
+        Uri.parse(baseUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'userId': userId, 'token': token}),
+      );
+    } catch (e) {
+      debugPrint('FCM token save failed: $e');
     }
   }
 
