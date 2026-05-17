@@ -210,6 +210,34 @@
   font-size: 0.62rem; color: #c0aaa8;
 }
 
+/* ── Tooltip ──────────────────────────────────────────── */
+.fin-tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #2d3436;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  margin-bottom: 8px;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  pointer-events: none;
+  font-family: 'Kanit', sans-serif;
+}
+.fin-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: #2d3436;
+}
+
 /* ── Responsive ───────────────────────────────────────── */
 @media (max-width: 1280px) {
   .fin-sum-grid        { grid-template-columns: repeat(2, 1fr); }

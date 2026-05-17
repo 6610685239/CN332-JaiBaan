@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { HiOutlineSparkles } from 'react-icons/hi2'
 import {
@@ -7,19 +8,19 @@ import {
 } from 'react-icons/fa'
 import './FinancialDashboard.css'
 
-const MONTH_LABELS = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.']
+const MONTH_LABELS = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.']
 
 const CATEGORY_COLORS = {
   OTHER_EXPENSE: '#a78bfa', MAINTENANCE: '#fb923c',
-  ELECTRICITY:   '#f87171', WATER:       '#38bdf8',
-  COMMON_FEE:    '#34d399', RENTAL:      '#60a5fa',
-  OTHER_INCOME:  '#a3e635',
+  ELECTRICITY: '#f87171', WATER: '#38bdf8',
+  COMMON_FEE: '#34d399', RENTAL: '#60a5fa',
+  OTHER_INCOME: '#a3e635',
 }
 const CATEGORY_ICONS = {
   OTHER_EXPENSE: <FaBoxOpen />, MAINTENANCE: <FaWrench />,
-  ELECTRICITY:   <FaBolt />,   WATER:       <FaTint />,
-  COMMON_FEE:    <FaWallet />, RENTAL:      <FaWallet />,
-  OTHER_INCOME:  <FaWallet />,
+  ELECTRICITY: <FaBolt />, WATER: <FaTint />,
+  COMMON_FEE: <FaWallet />, RENTAL: <FaWallet />,
+  OTHER_INCOME: <FaWallet />,
 }
 
 const fmtTHB = (n) =>
@@ -43,16 +44,16 @@ const PctBadge = ({ value }) => {
 
 // ── Bar Chart ──────────────────────────────────────────────────
 function BarChart({ data }) {
+  const [hovered, setHovered] = useState(null)
   const H = 160
   const maxVal = Math.max(...data.map((m) => Math.max(m.income, m.expense)), 1)
-  const fmtK   = (n) => n >= 1000 ? `${Math.round(n / 1000)}k` : `${Math.round(n)}`
+  const fmtK = (n) => n >= 1000 ? `${Math.round(n / 1000)}k` : `${Math.round(n)}`
 
   return (
     <div>
       <div className="fin-bar-legend">
         <span><i className="fin-dot" style={{ background: '#6B8AF7' }} /> รายรับ</span>
         <span><i className="fin-dot" style={{ background: '#F28B82' }} /> รายจ่าย</span>
-        {/* <span><i className="fin-dot fin-dot--dash" style={{ background: '#94a3b8' }} /> กำไรสุทธิ</span> */}
       </div>
       <div className="fin-bar-wrap">
         {/* Y-axis */}
@@ -68,10 +69,28 @@ function BarChart({ data }) {
           {/* Bars */}
           <div className="fin-bars-row" style={{ height: H }}>
             {data.map((m, i) => {
-              const iH = Math.max((m.income  / maxVal) * H, m.income  > 0 ? 4 : 0)
+              const iH = Math.max((m.income / maxVal) * H, m.income > 0 ? 4 : 0)
               const eH = Math.max((m.expense / maxVal) * H, m.expense > 0 ? 4 : 0)
               return (
-                <div key={i} className="fin-col">
+                <div
+                  key={i}
+                  className="fin-col"
+                  style={{ position: 'relative', cursor: 'pointer' }}
+                  onMouseEnter={() => setHovered(i)}
+                  onMouseLeave={() => setHovered(null)}
+                >
+                  {/* แสดง Tooltip เมื่อเอาเมาส์ชี้ */}
+                  {hovered === i && (
+                    <div className="fin-tooltip">
+                      <div style={{ display: 'flex', gap: '12px', justifyContent: 'space-between' }}>
+                        <span style={{ color: '#8ca6ff' }}>รับ</span> <strong>฿{fmtTHB(m.income)}</strong>
+                      </div>
+                      <div style={{ display: 'flex', gap: '12px', justifyContent: 'space-between', marginTop: '2px' }}>
+                        <span style={{ color: '#ffb3ac' }}>จ่าย</span> <strong>฿{fmtTHB(m.expense)}</strong>
+                      </div>
+                    </div>
+                  )}
+
                   <div className="fin-pair" style={{ height: H }}>
                     <div className="fin-bar fin-bar--i" style={{ height: iH }} />
                     <div className="fin-bar fin-bar--e" style={{ height: eH }} />
@@ -81,25 +100,6 @@ function BarChart({ data }) {
               )
             })}
           </div>
-          {/* Net line */}
-          {/* <svg className="fin-net-svg" style={{ height: H }} preserveAspectRatio="none">
-            <polyline
-              fill="none" stroke="#94a3b8" strokeWidth="2" strokeDasharray="5,3"
-              strokeLinecap="round" strokeLinejoin="round"
-              points={data.map((m, i) => {
-                const x = ((i + 0.5) / data.length) * 100
-                const net = m.income - m.expense
-                const y = H - Math.max(Math.min((net / maxVal) * H, H), 0)
-                return `${x}%,${y}`
-              }).join(' ')}
-            />
-            {data.map((m, i) => {
-              const x = ((i + 0.5) / data.length) * 100
-              const net = m.income - m.expense
-              const y = H - Math.max(Math.min((net / maxVal) * H, H), 0)
-              return <circle key={i} cx={`${x}%`} cy={y} r="3" fill="#94a3b8" />
-            })}
-          </svg> */}
         </div>
       </div>
     </div>
@@ -110,11 +110,11 @@ function BarChart({ data }) {
 function LineChart({ data }) {
   const H = 100
   const maxVal = Math.max(...data.flatMap((m) => [m.income, m.expense]), 1)
-  const fmtK   = (n) => n >= 1000 ? `${Math.round(n / 1000)}k` : `${Math.round(n)}`
+  const fmtK = (n) => n >= 1000 ? `${Math.round(n / 1000)}k` : `${Math.round(n)}`
   const pts = (key) => data.map((m, i) => {
     const x = data.length < 2 ? 50 : (i / (data.length - 1)) * 100
     const y = H - (m[key] / maxVal) * H
-    return `${x}%,${y}`
+    return `${x},${y}`
   }).join(' ')
 
   return (
@@ -129,21 +129,31 @@ function LineChart({ data }) {
           {[maxVal, maxVal * 0.5, 0].map((v, i) => <span key={i}>{fmtK(v)}</span>)}
         </div>
         <div style={{ flex: 1 }}>
-          <svg width="100%" height={H + 4} style={{ display: 'block', overflow: 'visible' }}>
-            <polyline fill="none" stroke="#6B8AF7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" points={pts('income')} />
-            <polyline fill="none" stroke="#F28B82" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" points={pts('expense')} />
-            {/* <polyline fill="none" stroke="#94a3b8" strokeWidth="1.5" strokeDasharray="4,3" strokeLinecap="round" strokeLinejoin="round" points={pts('net')} /> */}
+          <div style={{ position: 'relative', height: H }}>
+            {/* SVG สำหรับวาดเส้น: ใช้ viewBox ร่วมกับ preserveAspectRatio="none" */}
+            <svg
+              viewBox={`0 0 100 ${H}`}
+              preserveAspectRatio="none"
+              style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', overflow: 'visible' }}
+            >
+              <polyline fill="none" stroke="#6B8AF7" strokeWidth="2" vectorEffect="non-scaling-stroke" strokeLinecap="round" strokeLinejoin="round" points={pts('income')} />
+              <polyline fill="none" stroke="#F28B82" strokeWidth="2" vectorEffect="non-scaling-stroke" strokeLinecap="round" strokeLinejoin="round" points={pts('expense')} />
+            </svg>
+
+            {/* การวาดจุดด้วย HTML Div วางซ้อนทับ SVG เพื่อป้องกันจุดเบี้ยวเป็นวงรีจากการขยายของ Flexbox */}
             {data.map((m, i) => {
               const x = data.length < 2 ? 50 : (i / (data.length - 1)) * 100
+              const yInc = H - (m.income / maxVal) * H
+              const yExp = H - (m.expense / maxVal) * H
               return (
-                <g key={i}>
-                  <circle cx={`${x}%`} cy={H - (m.income  / maxVal) * H} r="3" fill="#6B8AF7" />
-                  <circle cx={`${x}%`} cy={H - (m.expense / maxVal) * H} r="3" fill="#F28B82" />
-                </g>
+                <div key={i}>
+                  <div style={{ position: 'absolute', left: `${x}%`, top: yInc, width: 6, height: 6, background: '#6B8AF7', borderRadius: '50%', transform: 'translate(-50%, -50%)' }} />
+                  <div style={{ position: 'absolute', left: `${x}%`, top: yExp, width: 6, height: 6, background: '#F28B82', borderRadius: '50%', transform: 'translate(-50%, -50%)' }} />
+                </div>
               )
             })}
-          </svg>
-          <div className="fin-x-axis">
+          </div>
+          <div className="fin-x-axis" style={{ marginTop: '8px' }}>
             {data.map((m, i) => <span key={i}>{MONTH_LABELS[m.label - 1]}</span>)}
           </div>
         </div>
