@@ -182,6 +182,7 @@ model Parcel {
   unitNumber      String
   storageLocation String?
   photoUrl        String?
+  notes           String?
   status          ParcelStatus @default(ARRIVED)
   arrivedAt       DateTime     @default(now())
   pickedUpAt      DateTime?

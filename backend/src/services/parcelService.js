@@ -3,9 +3,9 @@ const { sendParcelArrivalNotification } = require('./parcelNotificationService')
 
 const LIMIT = 10
 
-const createParcel = async ({ trackingNumber, carrier, unitNumber, storageLocation, photoUrl }) => {
+const createParcel = async ({ trackingNumber, carrier, unitNumber, storageLocation, photoUrl, notes }) => {
   const parcel = await prisma.parcel.create({
-    data: { trackingNumber, carrier, unitNumber, storageLocation, photoUrl },
+    data: { trackingNumber, carrier, unitNumber, storageLocation, photoUrl, notes },
   })
   // Fire notification (stub) — non-blocking
   sendParcelArrivalNotification(unitNumber, parcel).catch(console.error)
