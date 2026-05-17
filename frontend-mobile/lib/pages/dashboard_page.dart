@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'login_page.dart';
 import 'facility_page.dart';
 import 'announcement_list_page.dart';
+import 'user_settings_page.dart';
 import 'parcel_page.dart';
 import 'financial_list_page.dart';
 
@@ -28,7 +29,7 @@ class _DashboardPageState extends State<DashboardPage> {
     try {
       final prefs = await SharedPreferences.getInstance();
       final userJson = prefs.getString('user_data');
-      
+
       if (userJson != null) {
         setState(() {
           _userData = jsonDecode(userJson);
@@ -87,12 +88,12 @@ class _DashboardPageState extends State<DashboardPage> {
           TextButton(
             onPressed: () async {
               Navigator.pop(context); // Close dialog
-              
+
               // Clear stored data
               final prefs = await SharedPreferences.getInstance();
               await prefs.remove('auth_token');
               await prefs.remove('user_data');
-              
+
               // Navigate back to login
               if (mounted) {
                 Navigator.pushReplacement(
@@ -117,6 +118,11 @@ class _DashboardPageState extends State<DashboardPage> {
         elevation: 0,
         foregroundColor: Colors.black,
         actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: _navigateToSettings,
+            tooltip: 'Settings',
+          ),
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: _handleLogout,
@@ -212,8 +218,11 @@ class _DashboardPageState extends State<DashboardPage> {
                           ),
                           child: const Row(
                             children: [
-                              Icon(Icons.apartment_rounded,
-                                  color: Color(0xFFFF7B7B), size: 28),
+                              Icon(
+                                Icons.apartment_rounded,
+                                color: Color(0xFFFF7B7B),
+                                size: 28,
+                              ),
                               SizedBox(width: 16),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -236,8 +245,10 @@ class _DashboardPageState extends State<DashboardPage> {
                                 ],
                               ),
                               Spacer(),
-                              Icon(Icons.chevron_right,
-                                  color: Color(0xFFFF7B7B)),
+                              Icon(
+                                Icons.chevron_right,
+                                color: Color(0xFFFF7B7B),
+                              ),
                             ],
                           ),
                         ),
@@ -438,13 +449,19 @@ class _DashboardPageState extends State<DashboardPage> {
           const SizedBox(height: 5),
           Text(
             value,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-            ),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
           ),
         ],
       ),
     );
+  }
+
+  void _navigateToSettings() async {
+    final token = await _getUserToken();
+    if (mounted) {
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => UserSettingsPage(token: token)),
+      );
+    }
   }
 }

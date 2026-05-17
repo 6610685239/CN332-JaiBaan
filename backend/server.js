@@ -22,6 +22,7 @@ const authRoutes = require('./src/routes/authRoutes');
 const dashboardRoutes = require('./src/routes/dashboardRoutes');
 const announcementRoutes = require('./src/routes/announcements');
 const facilityRoutes = require('./src/FacilityService/facility.routes');
+const userSettingsRoutes = require('./src/routes/userSettingsRoutes');
 const parcelRoutes = require('./src/routes/parcels');
 const financialRoutes = require('./src/routes/financial');
 
@@ -29,6 +30,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/announcements', announcementRoutes);
 app.use('/api/facilities', facilityRoutes);
+app.use('/api/user', userSettingsRoutes);
 app.use('/api/parcels', parcelRoutes);
 app.use('/api/financial', financialRoutes);
 
@@ -49,3 +51,4 @@ app.use((err, req, res, next) => {
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
+
