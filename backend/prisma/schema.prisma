@@ -154,37 +154,6 @@ model Reservation {
   resident    Resident @relation(fields: [residentId], references: [id])
 }
 
-model FinancialAttachment {
-  id                   String               @id
-  transactionId        String
-  filename             String
-  originalName         String
-  url                  String
-  mimeType             String
-  size                 Int
-  createdAt            DateTime             @default(now())
-  FinancialTransaction FinancialTransaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
-}
-
-model FinancialTransaction {
-  id                  String                @id
-  type                TxType
-  category            TxCategory
-  amount              Decimal               @db.Decimal(12, 2)
-  description         String
-  transactionDate     DateTime
-  year                Int
-  month               Int
-  createdBy           String
-  createdAt           DateTime              @default(now())
-  updatedAt           DateTime
-  FinancialAttachment FinancialAttachment[]
-
-  @@index([category])
-  @@index([type])
-  @@index([year, month])
-}
-
 enum Category {
   GENERAL
   MAINTENANCE
@@ -204,21 +173,6 @@ enum TargetType {
   ALL
   ZONE
   UNIT
-}
-
-enum TxCategory {
-  COMMON_FEE
-  RENTAL
-  OTHER_INCOME
-  ELECTRICITY
-  WATER
-  MAINTENANCE
-  OTHER_EXPENSE
-}
-
-enum TxType {
-  INCOME
-  EXPENSE
 }
 
 model Parcel {
