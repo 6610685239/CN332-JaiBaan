@@ -20,6 +20,8 @@ class FinancialService {
     int limit = 10,
     String? search,
     String? type,
+    int? month,
+    int? year,
     String? category,
     String? token,
   }) async {
@@ -30,6 +32,12 @@ class FinancialService {
       }
       if (type != null && type.isNotEmpty) {
         buffer.write('&type=${Uri.encodeComponent(type)}');
+      }
+      if (month != null && month > 0) {
+        buffer.write('&month=$month');
+      }
+      if (year != null && year > 0) {
+        buffer.write('&year=$year');
       }
       if (category != null && category.isNotEmpty) {
         buffer.write('&category=${Uri.encodeComponent(category)}');

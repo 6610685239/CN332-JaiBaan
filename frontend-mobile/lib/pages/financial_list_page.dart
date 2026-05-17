@@ -27,11 +27,20 @@ class _FinancialListPageState extends State<FinancialListPage> {
   bool _isLoading = false;
   String? _errorMessage;
 
+  String? _selectedType;
+  late int _selectedMonth;
+  late int _selectedYear;
+  late final List<int> _years;
+
   @override
   void initState() {
     super.initState();
     _service = FinancialService();
     _searchController = TextEditingController();
+    final now = DateTime.now();
+    _selectedMonth = now.month;
+    _selectedYear = now.year;
+    _years = List<int>.generate(5, (index) => now.year - index);
     _loadTransactions(page: 1);
   }
 
@@ -49,6 +58,9 @@ class _FinancialListPageState extends State<FinancialListPage> {
         page: _currentPage,
         limit: 8,
         search: _searchController.text.trim(),
+        type: _selectedType,
+        month: _selectedMonth,
+        year: _selectedYear,
         token: widget.token,
       );
       setState(() {
@@ -126,6 +138,11 @@ class _FinancialListPageState extends State<FinancialListPage> {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: _buildSearchBar(),
             ),
+            const SizedBox(height: 12),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: _buildFilterRow(),
+            ),
             const SizedBox(height: 16),
             if (_errorMessage != null) Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -201,6 +218,117 @@ class _FinancialListPageState extends State<FinancialListPage> {
               : null,
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFilterRow() {
+    const monthNames = [
+      '', 'ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.',
+      'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.',
+    ];
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Expanded(
+          child: Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              _buildTypeChip('ALL', 'ทั้งหมด'),
+              _buildTypeChip('INCOME', 'รายรับ'),
+              _buildTypeChip('EXPENSE', 'รายจ่าย'),
+            ],
+          ),
+        ),
+        const SizedBox(width: 12),
+        Row(
+          children: [
+            _buildDropdown<int>(
+              value: _selectedMonth,
+              items: List.generate(12, (index) {
+                final month = index + 1;
+                return DropdownMenuItem<int>(
+                  value: month,
+                  child: Text(monthNames[month]),
+                );
+              }),
+              onChanged: (value) {
+                if (value != null) {
+                  setState(() => _selectedMonth = value);
+                  _loadTransactions(page: 1);
+                }
+              },
+            ),
+            const SizedBox(width: 8),
+            _buildDropdown<int>(
+              value: _selectedYear,
+              items: _years.map((year) {
+                return DropdownMenuItem<int>(
+                  value: year,
+                  child: Text('$year'),
+                );
+              }).toList(),
+              onChanged: (value) {
+                if (value != null) {
+                  setState(() => _selectedYear = value);
+                  _loadTransactions(page: 1);
+                }
+              },
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTypeChip(String type, String label) {
+    final isSelected = _selectedType == type || (type == 'ALL' && _selectedType == null);
+    return ChoiceChip(
+      label: Text(label),
+      selected: isSelected,
+      selectedColor: const Color(0xFFFF7043),
+      backgroundColor: Colors.white,
+      labelStyle: TextStyle(
+        color: isSelected ? Colors.white : const Color(0xFF424242),
+        fontWeight: FontWeight.w600,
+      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      elevation: 0,
+      side: BorderSide(
+        color: isSelected ? const Color(0xFFFF7043) : const Color(0xFFE0E0E0),
+      ),
+      onSelected: (_) {
+        setState(() {
+          _selectedType = type == 'ALL' ? null : type;
+        });
+        _loadTransactions(page: 1);
+      },
+    );
+  }
+
+  Widget _buildDropdown<T>({
+    required T value,
+    required List<DropdownMenuItem<T>> items,
+    required ValueChanged<T?> onChanged,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFFE0E0E0)),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<T>(
+          value: value,
+          items: items,
+          onChanged: onChanged,
+          icon: const Icon(Icons.keyboard_arrow_down_rounded, color: Color(0xFF616161)),
+          style: const TextStyle(fontSize: 14, color: Color(0xFF424242)),
+          dropdownColor: Colors.white,
         ),
       ),
     );
