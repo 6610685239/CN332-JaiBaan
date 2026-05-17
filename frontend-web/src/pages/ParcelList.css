@@ -632,6 +632,12 @@
   font-weight: 500;
 }
 
+.parcel-recipient {
+  font-size: 0.78rem;
+  color: #8e7f7d;
+  margin-top: 4px;
+}
+
 .parcel-location { color: #8e7f7d; font-size: 0.85rem; }
 .parcel-date { color: #8e7f7d; font-size: 0.85rem; }
 

@@ -5,9 +5,9 @@ const KNOWN_CARRIERS = ['Kerry', 'Flash', 'J&T', 'Thailand Post', 'DHL', 'Lazada
 
 const LIMIT = 10
 
-const createParcel = async ({ trackingNumber, carrier, unitNumber, storageLocation, photoUrl, notes }) => {
+const createParcel = async ({ trackingNumber, carrier, unitNumber, recipientName, storageLocation, photoUrl, notes }) => {
   const parcel = await prisma.parcel.create({
-    data: { trackingNumber, carrier, unitNumber, storageLocation, photoUrl, notes },
+    data: { trackingNumber, carrier, unitNumber, recipientName, storageLocation, photoUrl, notes },
   })
   // Fire notification (stub) — non-blocking
   sendParcelArrivalNotification(unitNumber, parcel).catch(console.error)
@@ -46,9 +46,10 @@ const getParcels = async ({ status, unitNumber, carrier, search, sortOrder = 'de
   if (unitNumber) where.unitNumber = { contains: unitNumber, mode: 'insensitive' }
   if (search) {
     where.OR = [
-      { trackingNumber: { contains: search, mode: 'insensitive' } },
-      { carrier: { contains: search, mode: 'insensitive' } },
-      { unitNumber: { contains: search, mode: 'insensitive' } },
+      { trackingNumber:  { contains: search, mode: 'insensitive' } },
+      { carrier:         { contains: search, mode: 'insensitive' } },
+      { unitNumber:      { contains: search, mode: 'insensitive' } },
+      { recipientName:   { contains: search, mode: 'insensitive' } },
     ]
   }
 
