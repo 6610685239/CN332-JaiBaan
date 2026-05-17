@@ -81,6 +81,52 @@ model Attachment {
   announcement   Announcement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
 }
 
+model FinancialTransaction {
+  id              String                    @id @default(uuid())
+  type            TxType
+  category        TxCategory
+  amount          Decimal                   @db.Decimal(12, 2)
+  description     String
+  transactionDate DateTime
+  year            Int
+  month           Int
+  attachments     FinancialAttachment[]
+  createdBy       String
+  createdAt       DateTime                  @default(now())
+  updatedAt       DateTime                  @updatedAt
+
+  @@index([year, month])
+  @@index([type])
+  @@index([category])
+}
+
+model FinancialAttachment {
+  id               String               @id @default(uuid())
+  transactionId    String
+  transaction      FinancialTransaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  filename         String
+  originalName     String
+  url              String
+  mimeType         String
+  size             Int
+  createdAt        DateTime             @default(now())
+}
+
+enum TxType {
+  INCOME
+  EXPENSE
+}
+
+enum TxCategory {
+  COMMON_FEE
+  RENTAL
+  OTHER_INCOME
+  ELECTRICITY
+  WATER
+  MAINTENANCE
+  OTHER_EXPENSE
+}
+
 model Facility {
   id           Int           @id @default(autoincrement())
   name         String

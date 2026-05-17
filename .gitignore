@@ -13,6 +13,7 @@ package-lock.json
 .claude/
 .idea/
 .vscode/
+claude.md
 
 frontend-mobile/linux/flutter/generated_plugin_registrant.*
 frontend-mobile/linux/flutter/generated_plugins.cmake

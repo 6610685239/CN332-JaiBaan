@@ -11,6 +11,9 @@ import FacilityList from './pages/FacilityList';
 import FacilityForm from './pages/FacilityForm';
 import ParcelList from './pages/ParcelList';
 import ParcelForm from './pages/ParcelForm';
+import FinancialPage from './pages/FinancialPage';
+import FinancialList from './pages/FinancialList';
+import FinancialForm from './pages/FinancialForm';
 import ForgotPassword from './pages/ForgotPassword';
 import logoImg from './assets/logo.png';
 
@@ -114,6 +117,10 @@ function App() {
           <Route path="facilities/:id/edit" element={<FacilityForm />} />
           <Route path="parcels" element={<ParcelList />} />
           <Route path="parcels/new" element={<ParcelForm />} />
+          <Route path="financial" element={<FinancialPage />} />
+          <Route path="financial/transactions" element={<FinancialList />} />
+          <Route path="financial/transactions/new" element={<FinancialForm />} />
+          <Route path="financial/transactions/:id/edit" element={<FinancialForm />} />
         </Route>
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>

@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 import logoImg from '../assets/logo.png';
 import {
   FaChartPie, FaUsers, FaBox, FaWrench,
-  FaClipboardList, FaSignOutAlt, FaBullhorn, FaBuilding,
+  FaClipboardList, FaSignOutAlt, FaBullhorn, FaBuilding, FaWallet,
 } from 'react-icons/fa';
 import './Sidebar.css';
 
@@ -13,8 +13,9 @@ const menuItems = [
   { to: '/parcels',        label: 'Parcels',      icon: <FaBox /> },
   { to: '/repairs',        label: 'Repairs',      icon: <FaWrench /> },
   { to: '/records',        label: 'Records',      icon: <FaClipboardList /> },
-  { to: '/announcements',  label: 'Announcements',icon: <FaBullhorn /> },
+  { to: '/announcements',  label: 'Announcements', icon: <FaBullhorn /> },
   { to: '/facilities',     label: 'Facilities',   icon: <FaBuilding /> },
+  { to: '/financial',      label: 'Financial',    icon: <FaWallet /> },
 ];
 
 const Sidebar = ({ user, onLogout }) => {
