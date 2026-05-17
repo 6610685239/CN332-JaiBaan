@@ -23,6 +23,8 @@
 
 .brand-icon {
   max-width: 180px;
+  cursor: pointer;
+  display: block;
 }
 
 .sidebar-logo-img {
