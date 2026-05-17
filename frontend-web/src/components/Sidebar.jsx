@@ -19,9 +19,9 @@ const Sidebar = ({ user, onLogout }) => {
   return (
     <aside className="jaibaan-sidebar">
       <div className="sidebar-brand">
-        <div className="brand-icon">
+        <NavLink to="/home" className="brand-icon">
           <img src={logoImg} alt="JaiBaan Logo" className="sidebar-logo-img" />
-        </div>
+        </NavLink>
       </div>
 
       <nav className="sidebar-nav">

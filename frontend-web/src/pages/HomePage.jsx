@@ -1,12 +1,24 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaBox, FaBullhorn, FaBuilding, FaWallet, FaSignOutAlt, FaArrowRight } from 'react-icons/fa';
+import { FaBox, FaBullhorn, FaBuilding, FaWallet, FaSignOutAlt, FaArrowRight, FaChartPie } from 'react-icons/fa';
 import { parcelApi } from '../api/parcels';
 import { announcementApi } from '../api/announcements';
 import { facilityApi } from '../api/facilities';
 import { financialApi } from '../api/financial';
 import logoImg from '../assets/logo.png';
 import './HomePage.css';
+
+const DASHBOARD_MOD = {
+  key: 'dashboard',
+  name: 'Dashboard',
+  desc: 'ภาพรวมและสรุปข้อมูลทั้งระบบ',
+  path: '/dashboard',
+  Icon: FaChartPie,
+  color: '#f97316',
+  bg: '#fff7ed',
+  border: '#fed7aa',
+  iconBg: '#ffedd5',
+};
 
 const MODULES = [
   {
@@ -55,11 +67,11 @@ const MODULES = [
   },
 ];
 
-const WEEKDAYS = ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์'];
-const MONTHS   = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+const WEEKDAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const MONTHS   = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
-function thaiDate(d) {
-  return `วัน${WEEKDAYS[d.getDay()]}ที่ ${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear() + 543}`;
+function formatDate(d) {
+  return `${WEEKDAYS[d.getDay()]}, ${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
 }
 
 export default function HomePage({ user, onLogout }) {
@@ -144,12 +156,12 @@ export default function HomePage({ user, onLogout }) {
       {/* Header */}
       <header className="hp-header">
         <div className="hp-brand">
-          <img src={logoImg} alt="JaiBaan" className="hp-logo" />
-          <p className="hp-date">{thaiDate(today)}</p>
+          <img src={logoImg} alt="JaiBaan" className="hp-logo" style={{ cursor: 'pointer' }} onClick={() => navigate('/home')} />
+          <p className="hp-date">{formatDate(today)}</p>
         </div>
         <div className="hp-header-right">
           <div className="hp-welcome-wrap">
-            <p className="hp-welcome">สวัสดี, <strong>{user?.name || user?.username || 'Admin'}</strong></p>
+            <p className="hp-welcome">Hello, <strong>{user?.name || user?.username || 'Admin'}</strong></p>
           </div>
           <button className="hp-logout" onClick={onLogout}>
             <FaSignOutAlt /> Sign Out
@@ -161,6 +173,26 @@ export default function HomePage({ user, onLogout }) {
       <main className="hp-main">
         <div className="hp-inner">
           <p className="hp-subtitle">Select a module to get started</p>
+
+          {/* Dashboard — full-width banner card */}
+          <div
+            className="hp-dashboard-card"
+            style={{ '--c': DASHBOARD_MOD.color, '--bg': DASHBOARD_MOD.bg, '--bd': DASHBOARD_MOD.border, '--ibg': DASHBOARD_MOD.iconBg }}
+            onClick={() => navigate(DASHBOARD_MOD.path)}
+          >
+            <div className="hp-dc-left">
+              <div className="hp-dc-icon-wrap"><DASHBOARD_MOD.Icon /></div>
+              <div>
+                <h3 className="hp-dc-name">{DASHBOARD_MOD.name}</h3>
+                <p className="hp-dc-desc">{DASHBOARD_MOD.desc}</p>
+              </div>
+            </div>
+            <div className="hp-dc-right">
+              <FaArrowRight className="hp-dc-arrow" />
+            </div>
+          </div>
+
+          {/* 4 module cards — 2×2 grid */}
           <div className="hp-grid">
             {MODULES.map((mod) => {
               const stats = getStats(mod.key);
