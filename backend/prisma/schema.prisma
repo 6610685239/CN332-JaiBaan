@@ -13,8 +13,14 @@ model User {
   createdAt        DateTime  @default(now())
   avatarUrl        String?
   facebookId       String?   @unique
+  socialId         String?   @unique
   firstName        String
   lastName         String
+  email            String?
+  nickname         String?
+  gender           String?
+  country          String?
+  address          String?
   passwordHash     String
   phoneNumber      String?
   resetToken       String?

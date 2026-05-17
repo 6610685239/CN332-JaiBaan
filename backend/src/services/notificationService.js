@@ -4,7 +4,10 @@ const path = require('path')
 let initialized = false
 
 const initFirebase = () => {
-  if (initialized) return
+  if (initialized || admin.apps.length > 0) {
+    initialized = true
+    return
+  }
   try {
     const serviceAccount = require(path.resolve(process.env.FIREBASE_SERVICE_ACCOUNT || './firebase-service-account.json'))
     admin.initializeApp({
@@ -86,4 +89,4 @@ const sendPushNotification = async (token, title, body, data = {}) => {
 // Initialize on module load
 initFirebase()
 
-module.exports = { sendAnnouncementNotification, sendPushNotification }
+module.exports = { sendAnnouncementNotification, initFirebase }

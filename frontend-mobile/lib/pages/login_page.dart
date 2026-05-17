@@ -7,8 +7,10 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'register_page.dart';
 import 'main_dashboard.dart';
+import 'room_setup_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -23,6 +25,86 @@ class _LoginPageState extends State<LoginPage> {
   bool _rememberMe = false;
   bool _isPasswordVisible = false;
   bool _isLoading = false;
+  bool _isGoogleLoading = false;
+
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
+    scopes: ['email', 'profile'],
+    serverClientId: '384716873013-kkg9efi8ttj6k0fqdjpqgrjisfrmhktr.apps.googleusercontent.com',
+  );
+
+  String get googleApiUrl {
+    if (kIsWeb || Platform.isLinux || Platform.isWindows || Platform.isMacOS) {
+      return 'http://localhost:3000/api/auth/google';
+    }
+    if (Platform.isAndroid) return 'http://10.0.2.2:3000/api/auth/google';
+    return 'http://localhost:3000/api/auth/google';
+  }
+
+  Future<void> _handleGoogleSignIn() async {
+    setState(() => _isGoogleLoading = true);
+    try {
+      final account = await _googleSignIn.signIn();
+      if (account == null) return;
+
+      final auth = await account.authentication;
+      final idToken = auth.idToken;
+      if (idToken == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to get Google token'), backgroundColor: Colors.red),
+        );
+        return;
+      }
+
+      final response = await http
+          .post(
+            Uri.parse(googleApiUrl),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({'idToken': idToken}),
+          )
+          .timeout(const Duration(seconds: 10));
+
+      if (!mounted) return;
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        if (data['needsSetup'] == true) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => RoomSetupPage(
+                googleId: data['googleId'],
+                email: data['email'],
+                name: data['name'],
+                picture: data['picture'],
+              ),
+            ),
+          );
+        } else {
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('auth_token', data['token']);
+          await prefs.setString('user_data', jsonEncode(data['user']));
+          if (mounted) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (_) => const MainDashboardPage()),
+            );
+          }
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(data['message'] ?? 'Google sign-in failed'), backgroundColor: Colors.red),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isGoogleLoading = false);
+    }
+  }
 
   String get apiUrl {
     if (kIsWeb || Platform.isLinux || Platform.isWindows || Platform.isMacOS) {
@@ -485,6 +567,68 @@ class _LoginPageState extends State<LoginPage> {
                                     fontSize: 16,
                                     letterSpacing: 1,
                                   ),
+                                ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Divider
+                      Row(
+                        children: [
+                          Expanded(child: Divider(color: Colors.grey[300], thickness: 1)),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            child: Text('or', style: TextStyle(color: Colors.grey[400], fontSize: 12)),
+                          ),
+                          Expanded(child: Divider(color: Colors.grey[300], thickness: 1)),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Google Sign-In Button
+                      Container(
+                        width: double.infinity,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(25),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.08),
+                              blurRadius: 10,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: ElevatedButton(
+                          onPressed: (_isLoading || _isGoogleLoading) ? null : _handleGoogleSignIn,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                            disabledBackgroundColor: Colors.transparent,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+                          ),
+                          child: _isGoogleLoading
+                              ? const SizedBox(width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 2.5))
+                              : Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Image.network(
+                                      'https://www.google.com/favicon.ico',
+                                      width: 20,
+                                      height: 20,
+                                      errorBuilder: (_, __, ___) => const Icon(Icons.g_mobiledata, size: 22, color: Color(0xFF4285F4)),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Text(
+                                      'Continue with Google',
+                                      style: TextStyle(
+                                        color: Colors.grey[700],
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                         ),
                       ),

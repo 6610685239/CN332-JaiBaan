@@ -12,7 +12,20 @@
           "package_name": "com.example.jaibaan"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "384716873013-sqp9shfkkjjbpk9qtb2vqmrmcn429chg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.jaibaan",
+            "certificate_hash": "2a5b27df28fcf05fd2b597c148ce094e82e10b1f"
+          }
+        },
+        {
+          "client_id": "384716873013-kkg9efi8ttj6k0fqdjpqgrjisfrmhktr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCkDN3yRQhvvFstMp0478Y6kA8ZWDJlEmg"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "384716873013-kkg9efi8ttj6k0fqdjpqgrjisfrmhktr.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "384716873013-ar48102vdkej9dngqeuu6pco7a854arh.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.jaibaan"
+              }
+            }
+          ]
         }
       }
     }

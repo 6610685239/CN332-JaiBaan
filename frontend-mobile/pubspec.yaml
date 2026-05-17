@@ -47,6 +47,8 @@ dependencies:
   camera: ^0.11.0
   firebase_core: ^4.9.0
   firebase_messaging: ^16.2.2
+  google_sign_in: ^6.2.1
+  image_picker: ^1.1.2
 
 dev_dependencies:
   flutter_test:
@@ -87,6 +89,7 @@ flutter:
     - assets/images/package.png
     - assets/images/annouce.png
     - assets/images/finance.png
+    - assets/images/setting_bg.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
