@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'login_page.dart';
 import 'facility_page.dart';
 import 'announcement_list_page.dart';
+import 'license_plate_screen.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -225,6 +226,51 @@ class _DashboardPageState extends State<DashboardPage> {
                               Spacer(),
                               Icon(Icons.chevron_right,
                                   color: Color(0xFFFF7B7B)),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const LicensePlateScreen(),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(18),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFFF5F3),
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(color: const Color(0xFFFFD6D0)),
+                          ),
+                          child: const Row(
+                            children: [
+                              Icon(Icons.directions_car, color: Color(0xFFE8845C), size: 28),
+                              SizedBox(width: 16),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'License Plate',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xFF2D3436),
+                                    ),
+                                  ),
+                                  Text(
+                                    'Manage vehicles & visitor passes',
+                                    style: TextStyle(fontSize: 13, color: Colors.grey),
+                                  ),
+                                ],
+                              ),
+                              Spacer(),
+                              Icon(Icons.chevron_right, color: Color(0xFFE8845C)),
                             ],
                           ),
                         ),

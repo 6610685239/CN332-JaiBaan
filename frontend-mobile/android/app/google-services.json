@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "384716873013",
+    "project_id": "jaibaan-84699",
+    "storage_bucket": "jaibaan-84699.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:384716873013:android:f20d1939c0bc82d560807c",
+        "android_client_info": {
+          "package_name": "com.example.jaibaan"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCkDN3yRQhvvFstMp0478Y6kA8ZWDJlEmg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
