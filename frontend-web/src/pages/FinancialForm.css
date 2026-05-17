@@ -28,17 +28,22 @@
 
 .financial-btn-back,
 .financial-btn-primary {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 8px;
+  background: linear-gradient(to right, #ff9a8b, #ff6b6b);
+  color: white;
   border: none;
-  border-radius: 15px;
   padding: 12px 22px;
-  cursor: pointer;
-  font-family: 'Kanit', sans-serif;
-  font-weight: 600;
+  border-radius: 15px;
   font-size: 0.95rem;
+  font-family: 'Kanit', sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 8px 15px rgba(255, 107, 107, 0.25);
   transition: all 0.3s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .financial-btn-back {
@@ -52,15 +57,15 @@
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
 }
 
-.financial-btn-primary {
+/* .financial-btn-primary {
   background: linear-gradient(to right, #2563eb, #1d4ed8);
   color: #fff;
   box-shadow: 0 8px 15px rgba(37, 99, 235, 0.25);
-}
+} */
 
 .financial-btn-primary:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 12px 20px rgba(37, 99, 235, 0.35);
+  box-shadow: 0 12px 20px rgba(255, 107, 107, 0.35);
   filter: brightness(1.05);
 }
 

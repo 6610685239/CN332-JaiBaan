@@ -53,11 +53,6 @@ export default function FinancialPage() {
             years={years}
             onYearChange={setYear}
           />
-          <div className="financial-cta-row">
-            <Link to="/financial/transactions" className="financial-cta-button">
-              ดูรายการทั้งหมด
-            </Link>
-          </div>
         </>
       )}
     </div>

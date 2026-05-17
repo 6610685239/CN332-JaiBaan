@@ -128,14 +128,14 @@ export default function FinancialForm() {
     }
   }
 
-  if (loading) {
-    return (
-      <div className="financial-form-page financial-form-loading">
-        <div className="financial-form-spinner" />
-        <p>กำลังโหลดข้อมูล...</p>
-      </div>
-    )
-  }
+  // if (loading) {
+  //   return (
+  //     <div className="financial-form-page financial-form-loading">
+  //       <div className="financial-form-spinner" />
+  //       <p>กำลังโหลดข้อมูล...</p>
+  //     </div>
+  //   )
+  // }
 
   return (
     <div className="financial-form-page">
