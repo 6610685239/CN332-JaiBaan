@@ -392,7 +392,10 @@ export default function ParcelList() {
                     {item.notes && <div className="parcel-notes">{item.notes}</div>}
                   </td>
                   <td>{item.carrier}</td>
-                  <td><span className="parcel-unit">{item.unitNumber}</span></td>
+                  <td>
+                    <span className="parcel-unit">{item.unitNumber}</span>
+                    {item.recipientName && <div className="parcel-recipient">{item.recipientName}</div>}
+                  </td>
                   <td className="parcel-location">{item.storageLocation || '—'}</td>
                   <td>
                     <span className={`badge ${STATUS_CLASS[item.status] || ''}`}>
