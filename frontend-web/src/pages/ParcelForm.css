@@ -43,7 +43,7 @@
   width: 40px;
   height: 40px;
   border-radius: 12px;
-  font-size: 1rem;
+  font-size: 5rem;
   cursor: pointer;
   transition: all 0.2s;
   flex-shrink: 0;
@@ -52,7 +52,8 @@
 .btn-back:hover { border-color: #ff8a75; color: #ff6b6b; background: #fff8f7; }
 
 .pform-title {
-  font-family: 'Varela Round', sans-serif;
+  font-family: 'Kanit', sans-serif;
+  font-weight: 600;
   font-size: 1.8rem;
   color: #2d3436;
   display: flex;
@@ -93,7 +94,7 @@
 }
 
 .pform-section-title {
-  font-family: 'Varela Round', sans-serif;
+  font-family: 'Kanit', sans-serif;
   font-size: 1rem;
   color: #ff8a75;
   font-weight: 600;
@@ -238,10 +239,10 @@
 
 .pform-photo-remove {
   position: absolute;
-  top: -8px;
-  right: -8px;
-  width: 28px;
-  height: 28px;
+  top: -10px;
+  right: -10px;
+  width: 32px;
+  height: 32px;
   background: #ff6b6b;
   color: white;
   border: none;
@@ -250,7 +251,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 0.75rem;
+  font-size: 1rem;
   box-shadow: 0 2px 8px rgba(255, 107, 107, 0.4);
   transition: transform 0.2s;
 }

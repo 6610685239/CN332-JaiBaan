@@ -1,6 +1,8 @@
 const prisma = require('../../db')
 const { sendParcelArrivalNotification } = require('./parcelNotificationService')
 
+const KNOWN_CARRIERS = ['Kerry', 'Flash', 'J&T', 'Thailand Post', 'DHL', 'Lazada', 'Shopee', 'Amazon']
+
 const LIMIT = 10
 
 const createParcel = async ({ trackingNumber, carrier, unitNumber, storageLocation, photoUrl, notes }) => {
@@ -34,7 +36,13 @@ const getParcels = async ({ status, unitNumber, carrier, search, sortOrder = 'de
     }
   }
 
-  if (carrier) where.carrier = { equals: carrier, mode: 'insensitive' }
+  if (carrier) {
+    if (carrier === '__OTHER__') {
+      where.NOT = { carrier: { in: KNOWN_CARRIERS } }
+    } else {
+      where.carrier = { equals: carrier, mode: 'insensitive' }
+    }
+  }
   if (unitNumber) where.unitNumber = { contains: unitNumber, mode: 'insensitive' }
   if (search) {
     where.OR = [
@@ -115,7 +123,8 @@ const getStats = async () => {
   const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate())
   const overdueDate = new Date(todayStart.getTime() - 3 * 24 * 60 * 60 * 1000)
 
-  const [totalPending, pickedUpToday, overdue, carrierGroups] = await Promise.all([
+  const [total, totalPending, pickedUpToday, overdue, carrierGroups] = await Promise.all([
+    prisma.parcel.count(),
     prisma.parcel.count({ where: { status: 'ARRIVED' } }),
     prisma.parcel.count({ where: { status: 'PICKED_UP', pickedUpAt: { gte: todayStart } } }),
     prisma.parcel.count({ where: { status: 'ARRIVED', arrivedAt: { lte: overdueDate } } }),
@@ -124,11 +133,11 @@ const getStats = async () => {
       _count: { carrier: true },
       where: { status: 'ARRIVED' },
       orderBy: { _count: { carrier: 'desc' } },
-      take: 4,
     }),
   ])
 
   return {
+    total,
     totalPending,
     pickedUpToday,
     overdue,

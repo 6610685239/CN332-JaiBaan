@@ -32,6 +32,7 @@ export default function ParcelList() {
   const [dateTo, setDateTo] = useState('');
   const [overdue, setOverdue] = useState(false);
   const [page, setPage] = useState(1);
+  const [showCarrierPopup, setShowCarrierPopup] = useState(false);
   const [openMenu, setOpenMenu] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [photoPreview, setPhotoPreview] = useState(null);
@@ -161,6 +162,14 @@ export default function ParcelList() {
         </div>
 
         <div className="parcel-hero-stats">
+          <div className="hero-stat hero-stat--total">
+            <div className="hero-stat-icon-wrap"><FaBox /></div>
+            <div>
+              <div className="hero-stat-value">{statsData?.total ?? '—'}</div>
+              <div className="hero-stat-label">พัสดุทั้งหมด</div>
+            </div>
+          </div>
+
           <div className="hero-stat hero-stat--pending">
             <div className="hero-stat-icon-wrap"><FaClock /></div>
             <div>
@@ -185,10 +194,13 @@ export default function ParcelList() {
             </div>
           </div>
 
-          <div className="hero-stat hero-stat--carrier">
+          <div
+            className={`hero-stat hero-stat--carrier hero-stat--clickable ${showCarrierPopup ? 'hero-stat--active' : ''}`}
+            onClick={() => setShowCarrierPopup((v) => !v)}
+          >
             <div className="hero-stat-icon-wrap"><FaTruck /></div>
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div className="hero-stat-label" style={{ marginBottom: 6 }}>ขนส่งที่รอรับ</div>
+              <div className="hero-stat-label" style={{ marginBottom: 5 }}>ขนส่งที่รอรับ</div>
               {!statsData || statsData.carrierDistribution.length === 0 ? (
                 <span className="hero-carrier-empty">ไม่มีข้อมูล</span>
               ) : (
@@ -198,9 +210,24 @@ export default function ParcelList() {
                       {c.carrier} <strong>{c.count}</strong>
                     </span>
                   ))}
+                  {statsData.carrierDistribution.length > 3 && (
+                    <span className="hero-carrier-more">
+                      +{statsData.carrierDistribution.length - 3}
+                    </span>
+                  )}
                 </div>
               )}
             </div>
+            {showCarrierPopup && statsData && statsData.carrierDistribution.length > 0 && (
+              <div className="carrier-dropdown" onClick={(e) => e.stopPropagation()}>
+                {statsData.carrierDistribution.map((c) => (
+                  <div key={c.carrier} className="carrier-dropdown-item">
+                    <span className="carrier-dropdown-name">{c.carrier}</span>
+                    <span className="carrier-dropdown-count">{c.count} ชิ้น</span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -217,17 +244,23 @@ export default function ParcelList() {
               className="filter-input"
             />
           </div>
-          <select
-            value={overdue ? '' : statusFilter}
-            onChange={(e) => { setStatusFilter(e.target.value); setOverdue(false); setPage(1); }}
-            className="filter-select"
-            disabled={overdue}
-          >
-            <option value="">ทุกสถานะ</option>
-            {Object.entries(STATUS_LABEL).map(([k, v]) => (
-              <option key={k} value={k}>{v}</option>
+          <div className={`filter-status-pills ${overdue ? 'filter-status-pills--disabled' : ''}`}>
+            {[
+              { value: '', label: 'ทั้งหมด', mod: 'all' },
+              { value: 'ARRIVED',   label: 'รอรับ',   mod: 'arrived' },
+              { value: 'PICKED_UP', label: 'รับแล้ว', mod: 'pickedup' },
+              { value: 'RETURNED',  label: 'คืนแล้ว', mod: 'returned' },
+            ].map(({ value, label, mod }) => (
+              <button
+                key={mod}
+                className={`filter-status-pill filter-status-pill--${mod}${!overdue && statusFilter === value ? ' filter-status-pill--active' : ''}`}
+                onClick={() => { setStatusFilter(value); setOverdue(false); setPage(1); }}
+              >
+                {mod !== 'all' && <span className="status-dot" />}
+                {label}
+              </button>
             ))}
-          </select>
+          </div>
           <select
             value={carrierFilter}
             onChange={(e) => { setCarrierFilter(e.target.value); setPage(1); }}
@@ -235,6 +268,7 @@ export default function ParcelList() {
           >
             <option value="">ทุกขนส่ง</option>
             {CARRIERS.map((c) => <option key={c} value={c}>{c}</option>)}
+            <option value="__OTHER__">อื่นๆ</option>
           </select>
           <button
             className={`filter-toggle-btn ${overdue ? 'filter-toggle-btn--active' : ''}`}
@@ -502,6 +536,10 @@ export default function ParcelList() {
             </div>
           </div>
         </div>
+      )}
+
+      {showCarrierPopup && (
+        <div className="carrier-backdrop" onClick={() => setShowCarrierPopup(false)} />
       )}
     </div>
   );

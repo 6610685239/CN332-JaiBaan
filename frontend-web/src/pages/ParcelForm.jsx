@@ -219,9 +219,7 @@ export default function ParcelForm() {
               style={{ display: 'none' }}
               onChange={handleFileChange}
             />
-            {!form.photoUrl && (
-              <p className="pform-photo-hint">รูปจะถูกอัพโหลดไปยัง Supabase Storage อัตโนมัติ</p>
-            )}
+            {!form.photoUrl }
           </div>
         </div>
 
