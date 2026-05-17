@@ -15,8 +15,8 @@ const uploadPhoto = async (req, res) => {
 // GET /api/parcels  (admin)
 const list = async (req, res) => {
   try {
-    const { status, unitNumber, carrier, search, page, limit } = req.query
-    const result = await service.getParcels({ status, unitNumber, carrier, search, page, limit })
+    const { status, unitNumber, carrier, search, sortOrder, dateFrom, dateTo, overdue, page, limit } = req.query
+    const result = await service.getParcels({ status, unitNumber, carrier, search, sortOrder, dateFrom, dateTo, overdue, page, limit })
     res.json({ success: true, ...result })
   } catch (err) {
     res.status(500).json({ success: false, message: err.message })

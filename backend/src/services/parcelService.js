@@ -12,9 +12,28 @@ const createParcel = async ({ trackingNumber, carrier, unitNumber, storageLocati
   return parcel
 }
 
-const getParcels = async ({ status, unitNumber, carrier, search, page = 1, limit = LIMIT }) => {
+const getParcels = async ({ status, unitNumber, carrier, search, sortOrder = 'desc', dateFrom, dateTo, overdue, page = 1, limit = LIMIT }) => {
   const where = {}
-  if (status) where.status = status
+
+  // Overdue takes priority: force ARRIVED + arrivedAt < 3 days ago
+  if (overdue === 'true' || overdue === true) {
+    const cutoff = new Date()
+    cutoff.setDate(cutoff.getDate() - 3)
+    where.status = 'ARRIVED'
+    where.arrivedAt = { lt: cutoff }
+  } else {
+    if (status) where.status = status
+    if (dateFrom || dateTo) {
+      where.arrivedAt = {}
+      if (dateFrom) where.arrivedAt.gte = new Date(dateFrom)
+      if (dateTo) {
+        const end = new Date(dateTo)
+        end.setHours(23, 59, 59, 999)
+        where.arrivedAt.lte = end
+      }
+    }
+  }
+
   if (carrier) where.carrier = { equals: carrier, mode: 'insensitive' }
   if (unitNumber) where.unitNumber = { contains: unitNumber, mode: 'insensitive' }
   if (search) {
@@ -29,7 +48,7 @@ const getParcels = async ({ status, unitNumber, carrier, search, page = 1, limit
   const [data, total] = await Promise.all([
     prisma.parcel.findMany({
       where,
-      orderBy: { arrivedAt: 'desc' },
+      orderBy: { arrivedAt: sortOrder === 'asc' ? 'asc' : 'desc' },
       skip,
       take: parseInt(limit),
     }),

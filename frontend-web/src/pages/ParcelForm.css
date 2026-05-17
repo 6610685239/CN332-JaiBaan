@@ -132,7 +132,20 @@
   box-shadow: 0 0 0 4px rgba(255, 138, 117, 0.1);
 }
 
-.pform-input--mono { font-family: 'Varela Round', monospace; letter-spacing: 0.03em; }
+.pform-input::placeholder { color: #d4c4c2; }
+
+.pform-input--locked {
+  background: #fdf8f7;
+  color: #a08e8c;
+  border-color: #ffecea;
+  cursor: default;
+}
+
+.pform-textarea {
+  resize: vertical;
+  min-height: 72px;
+  line-height: 1.5;
+}
 
 .pform-select {
   padding: 11px 16px;
@@ -147,6 +160,8 @@
   transition: border-color 0.2s;
   min-width: 140px;
 }
+
+.pform-select option[value=""] { color: #d4c4c2; }
 
 .pform-select:focus { border-color: #ff8a75; }
 

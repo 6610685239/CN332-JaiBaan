@@ -4,13 +4,14 @@ import { FaArrowLeft, FaBox, FaSave, FaCamera, FaTimes } from 'react-icons/fa';
 import { parcelApi } from '../api/parcels';
 import './ParcelForm.css';
 
-const CARRIERS = ['Kerry', 'Flash', 'J&T', 'Thailand Post', 'DHL', 'Lazada', 'Shopee', 'Amazon', 'Other'];
+const CARRIERS = ['Kerry', 'Flash', 'J&T', 'Thailand Post', 'DHL', 'Lazada', 'Shopee', 'Amazon'];
 
 const EMPTY = {
   trackingNumber: '',
   carrier: '',
   unitNumber: '',
   storageLocation: '',
+  notes: '',
   photoUrl: '',
 };
 
@@ -19,6 +20,7 @@ export default function ParcelForm() {
   const fileRef = useRef(null);
 
   const [form, setForm] = useState(EMPTY);
+  const [isOtherCarrier, setIsOtherCarrier] = useState(false);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
@@ -69,6 +71,7 @@ export default function ParcelForm() {
         unitNumber: form.unitNumber.trim(),
         storageLocation: form.storageLocation.trim() || undefined,
         photoUrl: form.photoUrl || undefined,
+        notes: form.notes.trim() || undefined,
       });
       navigate('/parcels');
     } catch (err) {
@@ -102,7 +105,7 @@ export default function ParcelForm() {
           <div className="pform-field">
             <label className="pform-label">Tracking Number <span className="required">*</span></label>
             <input
-              className="pform-input pform-input--mono"
+              className="pform-input"
               type="text"
               placeholder="เช่น TH123456789"
               value={form.trackingNumber}
@@ -116,22 +119,42 @@ export default function ParcelForm() {
             <div className="pform-carrier-row">
               <select
                 className="pform-select"
-                value={CARRIERS.includes(form.carrier) ? form.carrier : ''}
+                value={isOtherCarrier ? '__OTHER__' : form.carrier}
                 onChange={(e) => {
-                  if (e.target.value) setForm((prev) => ({ ...prev, carrier: e.target.value }));
+                  if (e.target.value === '__OTHER__') {
+                    setIsOtherCarrier(true);
+                    setForm((prev) => ({ ...prev, carrier: '' }));
+                  } else {
+                    setIsOtherCarrier(false);
+                    setForm((prev) => ({ ...prev, carrier: e.target.value }));
+                  }
                 }}
               >
                 <option value="">เลือก...</option>
                 {CARRIERS.map((c) => <option key={c} value={c}>{c}</option>)}
+                <option value="__OTHER__">อื่นๆ</option>
               </select>
               <input
-                className="pform-input"
+                className={`pform-input${!isOtherCarrier ? ' pform-input--locked' : ''}`}
                 type="text"
-                placeholder="หรือพิมพ์ชื่อ"
+                placeholder="ระบุชื่อขนส่ง"
                 value={form.carrier}
+                readOnly={!isOtherCarrier}
                 onChange={set('carrier')}
+                autoFocus={isOtherCarrier}
               />
             </div>
+          </div>
+
+          <div className="pform-field">
+            <label className="pform-label">หมายเหตุ</label>
+            <textarea
+              className="pform-input pform-textarea"
+              placeholder="เช่น ระวังแตก, โทรก่อนวาง, ขนาดใหญ่"
+              value={form.notes}
+              onChange={set('notes')}
+              rows={2}
+            />
           </div>
 
           <div className="pform-row">

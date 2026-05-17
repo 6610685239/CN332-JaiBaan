@@ -1,16 +1,18 @@
-import { useState, useEffect, useCallback } from 'react';
+import { Fragment, useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { th } from 'date-fns/locale';
 import {
   FaPlus, FaSearch, FaBox, FaEllipsisV, FaTrash, FaUndo, FaImage, FaEdit,
   FaClock, FaCheckCircle, FaExclamationTriangle, FaTruck,
+  FaSortAmountDown, FaSortAmountUp, FaCalendarAlt, FaHome, FaFire,
 } from 'react-icons/fa';
 import { parcelApi } from '../api/parcels';
 import './ParcelList.css';
 
-const STATUS_LABEL = { ARRIVED: 'รอรับ', PICKED_UP: 'รับแล้ว', RETURNED: 'คืนแล้ว' };
-const STATUS_CLASS = { ARRIVED: 'badge--arrived', PICKED_UP: 'badge--pickedup', RETURNED: 'badge--returned' };
+const STATUS_LABEL    = { ARRIVED: 'รอรับ', PICKED_UP: 'รับแล้ว', RETURNED: 'คืนแล้ว' };
+const STATUS_CLASS    = { ARRIVED: 'badge--arrived', PICKED_UP: 'badge--pickedup', RETURNED: 'badge--returned' };
+const STATUS_ROW_MOD  = { ARRIVED: 'arrived', PICKED_UP: 'pickedup', RETURNED: 'returned' };
 const CARRIERS = ['Kerry', 'Flash', 'J&T', 'Thailand Post', 'DHL', 'Lazada', 'Shopee', 'Amazon'];
 
 const LIMIT = 10;
@@ -24,6 +26,11 @@ export default function ParcelList() {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [carrierFilter, setCarrierFilter] = useState('');
+  const [unitFilter, setUnitFilter] = useState('');
+  const [sortOrder, setSortOrder] = useState('desc');
+  const [dateFrom, setDateFrom] = useState('');
+  const [dateTo, setDateTo] = useState('');
+  const [overdue, setOverdue] = useState(false);
   const [page, setPage] = useState(1);
   const [openMenu, setOpenMenu] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
@@ -45,8 +52,13 @@ export default function ParcelList() {
     try {
       const res = await parcelApi.list({
         search: search || undefined,
-        status: statusFilter || undefined,
+        status: overdue ? undefined : (statusFilter || undefined),
         carrier: carrierFilter || undefined,
+        unitNumber: unitFilter || undefined,
+        sortOrder,
+        dateFrom: dateFrom || undefined,
+        dateTo: dateTo || undefined,
+        overdue: overdue || undefined,
         page,
         limit: LIMIT,
       });
@@ -54,7 +66,7 @@ export default function ParcelList() {
       setPagination(res.pagination);
     } catch { /* silent */ }
     finally { setLoading(false); }
-  }, [search, statusFilter, carrierFilter, page]);
+  }, [search, statusFilter, carrierFilter, unitFilter, sortOrder, dateFrom, dateTo, overdue, page]);
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
@@ -101,7 +113,17 @@ export default function ParcelList() {
     refreshStats();
   };
 
-  const clearFilters = () => { setSearch(''); setStatusFilter(''); setCarrierFilter(''); setPage(1); };
+  const hasFilters = search || statusFilter || carrierFilter || unitFilter || dateFrom || dateTo || overdue;
+  const clearFilters = () => {
+    setSearch(''); setStatusFilter(''); setCarrierFilter(''); setUnitFilter('');
+    setDateFrom(''); setDateTo(''); setOverdue(false); setSortOrder('desc'); setPage(1);
+  };
+
+  const toggleOverdue = () => {
+    setOverdue((v) => !v);
+    if (!overdue) setStatusFilter('');
+    setPage(1);
+  };
 
   // Checkbox helpers
   const allSelected = data.length > 0 && data.every((item) => selected.has(item.id));
@@ -127,95 +149,115 @@ export default function ParcelList() {
 
   return (
     <div className="parcel-page">
-      <header className="parcel-header">
-        <div>
-          <h1 className="parcel-title"><FaBox className="parcel-title-icon" /> Parcels</h1>
-          <p className="parcel-subtitle">จัดการพัสดุและของฝากสำหรับลูกบ้าน</p>
+      <div className="parcel-hero">
+        <div className="parcel-hero-top">
+          <div>
+            <h1 className="parcel-hero-title"><FaBox /> Parcels</h1>
+            <p className="parcel-hero-sub">จัดการพัสดุและของฝากสำหรับลูกบ้าน</p>
+          </div>
+          <button className="btn-hero-add" onClick={() => navigate('/parcels/new')}>
+            <FaPlus /> ลงทะเบียนพัสดุ
+          </button>
         </div>
-        <button className="btn-primary" onClick={() => navigate('/parcels/new')}>
-          <FaPlus /> ลงทะเบียนพัสดุ
-        </button>
-      </header>
 
-      {statsData && (
-        <div className="parcel-stats-grid">
-          <div className="stat-card stat-card--pending">
-            <div className="stat-icon-wrap"><FaClock /></div>
-            <div className="stat-body">
-              <div className="stat-value">{statsData.totalPending}</div>
-              <div className="stat-label">รอรับ (Pending)</div>
+        <div className="parcel-hero-stats">
+          <div className="hero-stat hero-stat--pending">
+            <div className="hero-stat-icon-wrap"><FaClock /></div>
+            <div>
+              <div className="hero-stat-value">{statsData?.totalPending ?? '—'}</div>
+              <div className="hero-stat-label">รอรับ (Pending)</div>
             </div>
           </div>
 
-          <div className="stat-card stat-card--pickedup">
-            <div className="stat-icon-wrap"><FaCheckCircle /></div>
-            <div className="stat-body">
-              <div className="stat-value">{statsData.pickedUpToday}</div>
-              <div className="stat-label">รับแล้ววันนี้</div>
+          <div className="hero-stat hero-stat--pickedup">
+            <div className="hero-stat-icon-wrap"><FaCheckCircle /></div>
+            <div>
+              <div className="hero-stat-value">{statsData?.pickedUpToday ?? '—'}</div>
+              <div className="hero-stat-label">รับแล้ววันนี้</div>
             </div>
           </div>
 
-          <div className={`stat-card ${statsData.overdue > 0 ? 'stat-card--overdue' : 'stat-card--ok'}`}>
-            <div className="stat-icon-wrap"><FaExclamationTriangle /></div>
-            <div className="stat-body">
-              <div className="stat-value">{statsData.overdue}</div>
-              <div className="stat-label">ค้างเกิน 3 วัน</div>
+          <div className={`hero-stat ${statsData?.overdue > 0 ? 'hero-stat--overdue-warn' : 'hero-stat--ok'}`}>
+            <div className="hero-stat-icon-wrap"><FaExclamationTriangle /></div>
+            <div>
+              <div className="hero-stat-value">{statsData?.overdue ?? '—'}</div>
+              <div className="hero-stat-label">ค้างเกิน 3 วัน</div>
             </div>
           </div>
 
-          <div className="stat-card stat-card--carrier">
-            <div className="stat-icon-wrap"><FaTruck /></div>
-            <div className="stat-body">
-              <div className="stat-label" style={{ marginBottom: 6 }}>ขนส่งที่รอรับ</div>
-              {statsData.carrierDistribution.length === 0 ? (
-                <div className="stat-carrier-empty">ไม่มีข้อมูล</div>
+          <div className="hero-stat hero-stat--carrier">
+            <div className="hero-stat-icon-wrap"><FaTruck /></div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div className="hero-stat-label" style={{ marginBottom: 6 }}>ขนส่งที่รอรับ</div>
+              {!statsData || statsData.carrierDistribution.length === 0 ? (
+                <span className="hero-carrier-empty">ไม่มีข้อมูล</span>
               ) : (
-                <div className="stat-carrier-list">
-                  {statsData.carrierDistribution.map((c) => (
-                    <div key={c.carrier} className="stat-carrier-row">
-                      <span className="stat-carrier-name">{c.carrier}</span>
-                      <span className="stat-carrier-count">{c.count}</span>
-                    </div>
+                <div className="hero-carrier-list">
+                  {statsData.carrierDistribution.slice(0, 3).map((c) => (
+                    <span key={c.carrier} className="hero-carrier-pill">
+                      {c.carrier} <strong>{c.count}</strong>
+                    </span>
                   ))}
                 </div>
               )}
             </div>
           </div>
         </div>
-      )}
+      </div>
 
       <div className="parcel-filter-bar">
-        <div className="filter-search-box">
-          <FaSearch className="filter-search-icon" />
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-            placeholder="ค้นหา tracking / ผู้ส่ง / ห้อง..."
-            className="filter-input"
-          />
+        <div className="filter-row">
+          <div className="filter-search-box">
+            <FaSearch className="filter-search-icon" />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+              placeholder="ค้นหา tracking / ผู้ส่ง / ห้อง..."
+              className="filter-input"
+            />
+          </div>
+          <select
+            value={overdue ? '' : statusFilter}
+            onChange={(e) => { setStatusFilter(e.target.value); setOverdue(false); setPage(1); }}
+            className="filter-select"
+            disabled={overdue}
+          >
+            <option value="">ทุกสถานะ</option>
+            {Object.entries(STATUS_LABEL).map(([k, v]) => (
+              <option key={k} value={k}>{v}</option>
+            ))}
+          </select>
+          <select
+            value={carrierFilter}
+            onChange={(e) => { setCarrierFilter(e.target.value); setPage(1); }}
+            className="filter-select"
+          >
+            <option value="">ทุกขนส่ง</option>
+            {CARRIERS.map((c) => <option key={c} value={c}>{c}</option>)}
+          </select>
+          <button
+            className={`filter-toggle-btn ${overdue ? 'filter-toggle-btn--active' : ''}`}
+            onClick={toggleOverdue}
+            title="แสดงเฉพาะพัสดุค้างเกิน 3 วัน"
+          >
+             ค้างนาน
+          </button>
+          <button
+            className="filter-sort-btn"
+            onClick={() => { setSortOrder((s) => s === 'desc' ? 'asc' : 'desc'); setPage(1); }}
+            title="เปลี่ยนการเรียง"
+          >
+            {sortOrder === 'desc' ? <FaSortAmountDown /> : <FaSortAmountUp />}
+            {sortOrder === 'desc' ? 'ใหม่สุด' : 'เก่าสุด'}
+          </button>
         </div>
-        <select
-          value={statusFilter}
-          onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
-          className="filter-select"
-        >
-          <option value="">ทุกสถานะ</option>
-          {Object.entries(STATUS_LABEL).map(([k, v]) => (
-            <option key={k} value={k}>{v}</option>
-          ))}
-        </select>
-        <select
-          value={carrierFilter}
-          onChange={(e) => { setCarrierFilter(e.target.value); setPage(1); }}
-          className="filter-select"
-        >
-          <option value="">ทุกขนส่ง</option>
-          {CARRIERS.map((c) => <option key={c} value={c}>{c}</option>)}
-        </select>
-        {(search || statusFilter || carrierFilter) && (
-          <button className="filter-clear" onClick={clearFilters}>ล้างตัวกรอง</button>
-        )}
+
+        <div className="filter-row">
+          {hasFilters && (
+            <button className="filter-clear" onClick={clearFilters}>ล้างทั้งหมด</button>
+          )}
+        </div>
       </div>
 
       {selected.size > 0 && (
@@ -272,11 +314,24 @@ export default function ParcelList() {
               </tr>
             </thead>
             <tbody>
-              {data.map((item) => (
-                <tr
-                  key={item.id}
-                  className={`parcel-row ${selected.has(item.id) ? 'parcel-row--selected' : ''}`}
-                >
+              {(() => {
+                let lastDate = null;
+                return data.map((item) => {
+                  const itemDate = fmt(item.arrivedAt);
+                  const showSep = itemDate !== lastDate;
+                  if (showSep) lastDate = itemDate;
+                  return (
+                    <Fragment key={item.id}>
+                      {showSep && (
+                        <tr className="date-separator-row">
+                          <td colSpan={9} className="date-separator-cell">
+                            <span className="date-separator-label">{itemDate}</span>
+                          </td>
+                        </tr>
+                      )}
+                      <tr
+                        className={`parcel-row parcel-row--${STATUS_ROW_MOD[item.status]} ${selected.has(item.id) ? 'parcel-row--selected' : ''}`}
+                      >
                   <td className="col-check">
                     <input
                       type="checkbox"
@@ -298,7 +353,10 @@ export default function ParcelList() {
                       <div className="parcel-no-photo"><FaImage /></div>
                     )}
                   </td>
-                  <td><span className="parcel-tracking">{item.trackingNumber}</span></td>
+                  <td>
+                    <span className="parcel-tracking">{item.trackingNumber}</span>
+                    {item.notes && <div className="parcel-notes">{item.notes}</div>}
+                  </td>
                   <td>{item.carrier}</td>
                   <td><span className="parcel-unit">{item.unitNumber}</span></td>
                   <td className="parcel-location">{item.storageLocation || '—'}</td>
@@ -344,7 +402,10 @@ export default function ParcelList() {
                     </div>
                   </td>
                 </tr>
-              ))}
+                    </Fragment>
+                  );
+                });
+              })()}
             </tbody>
           </table>
         )}
