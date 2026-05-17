@@ -519,7 +519,7 @@ class _LicensePlateScreenState extends State<LicensePlateScreen>
           items: const [
             BottomNavigationBarItem(icon: Icon(Icons.home_rounded), label: 'Home'),
             BottomNavigationBarItem(icon: Icon(Icons.grid_view_rounded), label: 'Facilities'),
-            BottomNavigationBarItem(icon: Icon(Icons.phone_rounded), label: 'Call JumNC'),
+            BottomNavigationBarItem(icon: Icon(Icons.phone_rounded), label: 'Call Juristic'),
             BottomNavigationBarItem(icon: Icon(Icons.settings_rounded), label: 'Settings'),
           ],
         ),

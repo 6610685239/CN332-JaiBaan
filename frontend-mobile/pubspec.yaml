@@ -81,6 +81,8 @@ flutter:
     - assets/images/banner2.png
     - assets/images/banner3.png
     - assets/images/LPR_icon.png
+    - assets/images/lpr_bg1.png
+    - assets/images/lpr_bg2.png
     - assets/images/repair.png
     - assets/images/package.png
     - assets/images/annouce.png
