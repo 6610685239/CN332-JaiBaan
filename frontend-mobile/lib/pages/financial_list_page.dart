@@ -102,73 +102,103 @@ class _FinancialListPageState extends State<FinancialListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFAFAFA),
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios_new_rounded,
-            size: 20,
-            color: Color(0xFF424242),
+      backgroundColor: Colors.white,
+      body: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          // base background image
+          Positioned.fill(
+            child: Opacity(
+              opacity: 0.5,
+              child: Image.asset('assets/images/background.png', fit: BoxFit.cover),
+            ),
           ),
-          onPressed: () => Navigator.of(context).maybePop(),
-        ),
-        title: const Text(
-          'Financial Transactions',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-            color: Color(0xFF1A1A1A),
-            letterSpacing: 0.2,
+          // lpr_bg1 top left
+          Positioned(
+            top: -250,
+            left: -250,
+            child: Image.asset('assets/images/lpr_bg1.png', width: 700),
           ),
-        ),
-      ),
-      body: RefreshIndicator(
-        color: const Color(0xFFFF7043),
-        onRefresh: () => _loadTransactions(page: 1),
-        child: ListView(
-          controller: _scrollController,
-          padding: const EdgeInsets.only(top: 16, bottom: 22),
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: _buildSearchBar(),
-            ),
-            const SizedBox(height: 12),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: _buildFilterButton(),
-            ),
-            const SizedBox(height: 16),
-            if (_errorMessage != null) Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: _buildError(),
-            ),
-            if (_isLoading)
-              const Padding(
-                padding: EdgeInsets.only(top: 60),
-                child: Center(child: CircularProgressIndicator(color: Color(0xFFFF7043))),
+          // lpr_bg2 bottom
+          Positioned(
+            bottom: 0,
+            left: -100,
+            right: -160,
+            child: Image.asset('assets/images/lpr_bg2.png', width: double.infinity, height: 220, fit: BoxFit.fill),
+          ),
+          SafeArea(
+            child: Scaffold(
+              backgroundColor: Colors.transparent,
+              appBar: AppBar(
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                centerTitle: true,
+                leading: IconButton(
+                  icon: const Icon(
+                    Icons.arrow_back_ios_new_rounded,
+                    size: 20,
+                    color: Color(0xFF424242),
+                  ),
+                  onPressed: () => Navigator.of(context).maybePop(),
+                ),
+                title: const Text(
+                  'Financial Transactions',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF1A1A1A),
+                    letterSpacing: 0.2,
+                  ),
+                ),
               ),
-            if (!_isLoading && _transactions.isEmpty && _errorMessage == null)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: _buildEmpty(),
+              body: RefreshIndicator(
+                color: const Color(0xFFFF7043),
+                onRefresh: () => _loadTransactions(page: 1),
+                child: ListView(
+                  controller: _scrollController,
+                  padding: const EdgeInsets.only(top: 16, bottom: 22),
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: _buildSearchBar(),
+                    ),
+                    const SizedBox(height: 12),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: _buildFilterButton(),
+                    ),
+                    const SizedBox(height: 16),
+                    if (_errorMessage != null) Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: _buildError(),
+                    ),
+                    if (_isLoading)
+                      const Padding(
+                        padding: EdgeInsets.only(top: 60),
+                        child: Center(child: CircularProgressIndicator(color: Color(0xFFFF7043))),
+                      ),
+                    if (!_isLoading && _transactions.isEmpty && _errorMessage == null)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: _buildEmpty(),
+                      ),
+                    ..._transactions.map((transaction) {
+                      return FinancialItemCard(
+                        transaction: transaction,
+                        onTap: () => _navigateToDetail(transaction),
+                      );
+                    }).toList(),
+                    if (!_isLoading && _totalPages > 1)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: _buildPagination(),
+                      ),
+                  ],
+                ),
               ),
-            ..._transactions.map((transaction) {
-              return FinancialItemCard(
-                transaction: transaction,
-                onTap: () => _navigateToDetail(transaction),
-              );
-            }).toList(),
-            if (!_isLoading && _totalPages > 1)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: _buildPagination(),
-              ),
-          ],
-        ),
+            ),
+          ),
+        ],
       ),
     );
   }

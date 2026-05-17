@@ -132,72 +132,79 @@ class _AnnouncementListPageState extends State<AnnouncementListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFAFAFA),
-      extendBody: true,
-      appBar: _buildAppBar(),
+      backgroundColor: Colors.white,
       body: Stack(
+        clipBehavior: Clip.none,
         children: [
-          // Background diagonal decoration
-          _buildBackground(),
-
-          // Content
-          RefreshIndicator(
-            color: const Color(0xFFFF7043),
-            onRefresh: () => _loadAnnouncements(page: 1),
-            child: CustomScrollView(
-              controller: _scrollController,
-              slivers: [
-                // Search bar
-                SliverToBoxAdapter(child: _buildSearchBar()),
-
-                // Category filter chips
-                SliverToBoxAdapter(child: _buildCategoryFilter()),
-
-                // Error
-                if (_errorMessage != null)
-                  SliverToBoxAdapter(child: _buildError()),
-
-                // Loading
-                if (_isLoading)
-                  SliverToBoxAdapter(child: _buildInitialLoader()),
-
-                // Empty state
-                if (!_isLoading && _announcements.isEmpty && _errorMessage == null)
-                  SliverToBoxAdapter(child: _buildEmpty()),
-
-                // List
-                SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      final item = _announcements[index];
-                      final isRead = _readIds.contains(item.id);
-                      return AnnouncementItemCard(
-                        announcement: item,
-                        isRead: isRead,
-                        onTap: () => _navigateToDetail(item),
-                        onReadStatusChanged: (r) =>
-                            _handleReadStatusChanged(item.id, r),
-                      );
-                    },
-                    childCount: _announcements.length,
-                  ),
+          // base background image
+          Positioned.fill(
+            child: Opacity(
+              opacity: 0.5,
+              child: Image.asset('assets/images/background.png', fit: BoxFit.cover),
+            ),
+          ),
+          // lpr_bg1 top left
+          Positioned(
+            top: -250,
+            left: -250,
+            child: Image.asset('assets/images/lpr_bg1.png', width: 700),
+          ),
+          // lpr_bg2 bottom
+          Positioned(
+            bottom: 0,
+            left: -100,
+            right: -160,
+            child: Image.asset('assets/images/lpr_bg2.png', width: double.infinity, height: 220, fit: BoxFit.fill),
+          ),
+          SafeArea(
+            child: Scaffold(
+              backgroundColor: Colors.transparent,
+              extendBody: true,
+              appBar: _buildAppBar(),
+              body: RefreshIndicator(
+                color: const Color(0xFFFF7043),
+                onRefresh: () => _loadAnnouncements(page: 1),
+                child: CustomScrollView(
+                  controller: _scrollController,
+                  slivers: [
+                    SliverToBoxAdapter(child: _buildSearchBar()),
+                    SliverToBoxAdapter(child: _buildCategoryFilter()),
+                    if (_errorMessage != null)
+                      SliverToBoxAdapter(child: _buildError()),
+                    if (_isLoading)
+                      SliverToBoxAdapter(child: _buildInitialLoader()),
+                    if (!_isLoading && _announcements.isEmpty && _errorMessage == null)
+                      SliverToBoxAdapter(child: _buildEmpty()),
+                    SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) {
+                          final item = _announcements[index];
+                          final isRead = _readIds.contains(item.id);
+                          return AnnouncementItemCard(
+                            announcement: item,
+                            isRead: isRead,
+                            onTap: () => _navigateToDetail(item),
+                            onReadStatusChanged: (r) =>
+                                _handleReadStatusChanged(item.id, r),
+                          );
+                        },
+                        childCount: _announcements.length,
+                      ),
+                    ),
+                    if (!_isLoading && _totalPages > 1)
+                      SliverToBoxAdapter(child: _buildPagination()),
+                    const SliverToBoxAdapter(child: SizedBox(height: 90)),
+                  ],
                 ),
-
-                // Pagination (ปุ่มกดเปลี่ยนหน้า)
-                if (!_isLoading && _totalPages > 1)
-                  SliverToBoxAdapter(child: _buildPagination()),
-
-                // Bottom spacing for nav bar
-                const SliverToBoxAdapter(child: SizedBox(height: 90)),
-              ],
+              ),
+              // bottomNavigationBar: JaiBaanBottomNavBar(
+              //   currentIndex: _navIndex,
+              //   onTap: (i) => setState(() => _navIndex = i),
+              // ),
             ),
           ),
         ],
       ),
-      // bottomNavigationBar: JaiBaanBottomNavBar(
-      //   currentIndex: _navIndex,
-      //   onTap: (i) => setState(() => _navIndex = i),
-      // ),
     );
   }
 
@@ -207,7 +214,7 @@ class _AnnouncementListPageState extends State<AnnouncementListPage> {
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.transparent,
       elevation: 0,
       centerTitle: true,
       leading: IconButton(
@@ -223,14 +230,6 @@ class _AnnouncementListPageState extends State<AnnouncementListPage> {
           color: Color(0xFF1A1A1A),
           letterSpacing: 0.2,
         ),
-      ),
-    );
-  }
-
-  Widget _buildBackground() {
-    return Positioned.fill(
-      child: CustomPaint(
-        painter: _DiagonalBgPainter(),
       ),
     );
   }
@@ -487,43 +486,4 @@ class _AnnouncementListPageState extends State<AnnouncementListPage> {
       ),
     );
   }
-}
-
-// ─────────────────────────────────────────────
-// Background painter — diagonal peach shape
-// ─────────────────────────────────────────────
-
-class _DiagonalBgPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = const Color(0xFFFF7043).withOpacity(0.10)
-      ..style = PaintingStyle.fill;
-
-    final path = Path()
-      ..moveTo(size.width * 0.45, 0)
-      ..lineTo(size.width, 0)
-      ..lineTo(size.width, size.height * 0.38)
-      ..lineTo(size.width * 0.1, size.height * 0.18)
-      ..close();
-
-    canvas.drawPath(path, paint);
-
-    // Second lighter layer
-    final paint2 = Paint()
-      ..color = const Color(0xFFFF7043).withOpacity(0.06)
-      ..style = PaintingStyle.fill;
-
-    final path2 = Path()
-      ..moveTo(size.width * 0.6, 0)
-      ..lineTo(size.width, 0)
-      ..lineTo(size.width, size.height * 0.22)
-      ..lineTo(size.width * 0.25, size.height * 0.08)
-      ..close();
-
-    canvas.drawPath(path2, paint2);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
