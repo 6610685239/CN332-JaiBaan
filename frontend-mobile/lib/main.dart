@@ -3,7 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'pages/login_page.dart';
-import 'pages/dashboard_page.dart';
+import 'pages/main_dashboard.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -39,7 +39,7 @@ class AuthWrapper extends StatelessWidget {
           );
         }
         if (snapshot.hasData && snapshot.data != null) {
-          return const DashboardPage();
+          return const MainDashboardPage();
         }
         return const LoginPage();
       },

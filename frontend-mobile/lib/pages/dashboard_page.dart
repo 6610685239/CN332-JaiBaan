@@ -5,6 +5,9 @@ import 'login_page.dart';
 import 'facility_page.dart';
 import 'announcement_list_page.dart';
 import 'license_plate_screen.dart';
+import 'user_settings_page.dart';
+import 'parcel_page.dart';
+import 'financial_list_page.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -27,7 +30,7 @@ class _DashboardPageState extends State<DashboardPage> {
     try {
       final prefs = await SharedPreferences.getInstance();
       final userJson = prefs.getString('user_data');
-      
+
       if (userJson != null) {
         setState(() {
           _userData = jsonDecode(userJson);
@@ -60,6 +63,17 @@ class _DashboardPageState extends State<DashboardPage> {
     }
   }
 
+  void _navigateToFinancial() async {
+    final token = await _getUserToken();
+    if (mounted) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => FinancialListPage(token: token),
+        ),
+      );
+    }
+  }
+
   Future<void> _handleLogout() async {
     // Show confirmation dialog
     showDialog(
@@ -75,12 +89,12 @@ class _DashboardPageState extends State<DashboardPage> {
           TextButton(
             onPressed: () async {
               Navigator.pop(context); // Close dialog
-              
+
               // Clear stored data
               final prefs = await SharedPreferences.getInstance();
               await prefs.remove('auth_token');
               await prefs.remove('user_data');
-              
+
               // Navigate back to login
               if (mounted) {
                 Navigator.pushReplacement(
@@ -105,6 +119,11 @@ class _DashboardPageState extends State<DashboardPage> {
         elevation: 0,
         foregroundColor: Colors.black,
         actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: _navigateToSettings,
+            tooltip: 'Settings',
+          ),
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: _handleLogout,
@@ -200,8 +219,11 @@ class _DashboardPageState extends State<DashboardPage> {
                           ),
                           child: const Row(
                             children: [
-                              Icon(Icons.apartment_rounded,
-                                  color: Color(0xFFFF7B7B), size: 28),
+                              Icon(
+                                Icons.apartment_rounded,
+                                color: Color(0xFFFF7B7B),
+                                size: 28,
+                              ),
                               SizedBox(width: 16),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -216,6 +238,58 @@ class _DashboardPageState extends State<DashboardPage> {
                                   ),
                                   Text(
                                     'Book common areas',
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Spacer(),
+                              Icon(
+                                Icons.chevron_right,
+                                color: Color(0xFFFF7B7B),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const ParcelPage(),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(18),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFFF5F3),
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(color: const Color(0xFFFFD6D0)),
+                          ),
+                          child: const Row(
+                            children: [
+                              Icon(Icons.inventory_2_outlined,
+                                  color: Color(0xFFFF7B7B), size: 28),
+                              SizedBox(width: 16),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Parcels',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xFF2D3436),
+                                    ),
+                                  ),
+                                  Text(
+                                    'Check & confirm your deliveries',
                                     style: TextStyle(
                                       fontSize: 13,
                                       color: Colors.grey,
@@ -336,6 +410,58 @@ class _DashboardPageState extends State<DashboardPage> {
                           ),
                         ),
                       ),
+                      const SizedBox(height: 20),
+
+                      GestureDetector(
+                        onTap: _navigateToFinancial,
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: Colors.grey[300]!),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.08),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    'Financial Records',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    'ดูรายการและไฟล์แนบ',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Icon(
+                                Icons.arrow_forward_ios_rounded,
+                                color: Colors.grey[400],
+                                size: 18,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                       const SizedBox(height: 50),
                     ],
                   ),
@@ -369,13 +495,19 @@ class _DashboardPageState extends State<DashboardPage> {
           const SizedBox(height: 5),
           Text(
             value,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-            ),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
           ),
         ],
       ),
     );
+  }
+
+  void _navigateToSettings() async {
+    final token = await _getUserToken();
+    if (mounted) {
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => UserSettingsPage(token: token)),
+      );
+    }
   }
 }

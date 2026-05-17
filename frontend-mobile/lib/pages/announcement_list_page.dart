@@ -194,10 +194,10 @@ class _AnnouncementListPageState extends State<AnnouncementListPage> {
           ),
         ],
       ),
-      bottomNavigationBar: JaiBaanBottomNavBar(
-        currentIndex: _navIndex,
-        onTap: (i) => setState(() => _navIndex = i),
-      ),
+      // bottomNavigationBar: JaiBaanBottomNavBar(
+      //   currentIndex: _navIndex,
+      //   onTap: (i) => setState(() => _navIndex = i),
+      // ),
     );
   }
 

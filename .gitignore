@@ -17,6 +17,7 @@ package-lock.json
 .claude/
 .idea/
 .vscode/
+claude.md
 
 frontend/jaibaan/build/
 frontend-mobile/build/
