@@ -311,10 +311,10 @@ class _FinancialDetailPageState extends State<FinancialDetailPage> {
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                   decoration: BoxDecoration(
-                    color: isPdf ? const Color(0xFFFFF3E0) : Colors.grey[50],
+                    color: isPdf ? const Color.fromARGB(255, 255, 255, 255) : Colors.grey[50],
                     borderRadius: BorderRadius.circular(14),
                     border: Border.all(
-                      color: isPdf ? const Color(0xFFFFB300).withOpacity(0.4) : Colors.grey[200]!,
+                      color: isPdf ? const Color.fromARGB(255, 0, 0, 0).withOpacity(0.4) : Colors.grey[200]!,
                     ),
                   ),
                   child: Row(
@@ -323,7 +323,7 @@ class _FinancialDetailPageState extends State<FinancialDetailPage> {
                         width: 40,
                         height: 40,
                         decoration: BoxDecoration(
-                          color: isPdf ? const Color(0xFFFFB300).withOpacity(0.15) : Colors.blueGrey[50],
+                          color: isPdf ? const Color.fromARGB(255, 219, 110, 110).withOpacity(0.15) : Colors.blueGrey[50],
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Icon(
