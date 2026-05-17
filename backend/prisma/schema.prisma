@@ -25,6 +25,8 @@ model User {
   phoneNumber      String?
   resetToken       String?
   resetTokenExpiry DateTime?
+  fcmToken         String?
+  socialId         String?   @unique
   resident         Resident?
 }
 
@@ -49,6 +51,28 @@ model Resident {
   userId        Int           @unique
   reservations  Reservation[]
   User          User          @relation(fields: [userId], references: [id])
+  vehicles      Vehicle[]
+  visitorPasses VisitorPass[]
+}
+
+model Vehicle {
+  id         Int      @id @default(autoincrement())
+  plate      String
+  province   String
+  residentId Int
+  createdAt  DateTime @default(now())
+  resident   Resident @relation(fields: [residentId], references: [id], onDelete: Cascade)
+}
+
+model VisitorPass {
+  id         Int      @id @default(autoincrement())
+  plate      String
+  province   String
+  isActive   Boolean  @default(true)
+  expiresAt  DateTime
+  residentId Int
+  createdAt  DateTime @default(now())
+  resident   Resident @relation(fields: [residentId], references: [id], onDelete: Cascade)
 }
 
 model Announcement {
@@ -87,52 +111,6 @@ model Attachment {
   announcement   Announcement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
 }
 
-model FinancialTransaction {
-  id              String                    @id @default(uuid())
-  type            TxType
-  category        TxCategory
-  amount          Decimal                   @db.Decimal(12, 2)
-  description     String
-  transactionDate DateTime
-  year            Int
-  month           Int
-  attachments     FinancialAttachment[]
-  createdBy       String
-  createdAt       DateTime                  @default(now())
-  updatedAt       DateTime                  @updatedAt
-
-  @@index([year, month])
-  @@index([type])
-  @@index([category])
-}
-
-model FinancialAttachment {
-  id               String               @id @default(uuid())
-  transactionId    String
-  transaction      FinancialTransaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
-  filename         String
-  originalName     String
-  url              String
-  mimeType         String
-  size             Int
-  createdAt        DateTime             @default(now())
-}
-
-enum TxType {
-  INCOME
-  EXPENSE
-}
-
-enum TxCategory {
-  COMMON_FEE
-  RENTAL
-  OTHER_INCOME
-  ELECTRICITY
-  WATER
-  MAINTENANCE
-  OTHER_EXPENSE
-}
-
 model Facility {
   id           Int           @id @default(autoincrement())
   name         String
@@ -160,6 +138,56 @@ model Reservation {
   resident    Resident @relation(fields: [residentId], references: [id])
 }
 
+model FinancialAttachment {
+  id               String               @id @default(uuid())
+  transactionId    String
+  transaction      FinancialTransaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  filename         String
+  originalName     String
+  url              String
+  mimeType         String
+  size             Int
+  createdAt        DateTime             @default(now())
+}
+
+model FinancialTransaction {
+  id              String                    @id @default(uuid())
+  type            TxType
+  category        TxCategory
+  amount          Decimal                   @db.Decimal(12, 2)
+  description     String
+  transactionDate DateTime
+  year            Int
+  month           Int
+  attachments     FinancialAttachment[]
+  createdBy       String
+  createdAt       DateTime                  @default(now())
+  updatedAt       DateTime                  @updatedAt
+
+  @@index([year, month])
+  @@index([type])
+  @@index([category])
+}
+
+model Parcel {
+  id              Int          @id @default(autoincrement())
+  trackingNumber  String       @unique
+  carrier         String
+  unitNumber      String
+  storageLocation String?
+  photoUrl        String?
+  status          ParcelStatus @default(ARRIVED)
+  arrivedAt       DateTime     @default(now())
+  pickedUpAt      DateTime?
+  returnedAt      DateTime?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime
+  notes           String?
+
+  @@index([status])
+  @@index([unitNumber])
+}
+
 enum Category {
   GENERAL
   MAINTENANCE
@@ -181,27 +209,23 @@ enum TargetType {
   UNIT
 }
 
-model Parcel {
-  id              Int          @id @default(autoincrement())
-  trackingNumber  String       @unique
-  carrier         String
-  unitNumber      String
-  storageLocation String?
-  photoUrl        String?
-  notes           String?
-  status          ParcelStatus @default(ARRIVED)
-  arrivedAt       DateTime     @default(now())
-  pickedUpAt      DateTime?
-  returnedAt      DateTime?
-  createdAt       DateTime     @default(now())
-  updatedAt       DateTime     @updatedAt
-
-  @@index([unitNumber])
-  @@index([status])
-}
-
 enum ParcelStatus {
   ARRIVED
   PICKED_UP
   RETURNED
+}
+
+enum TxCategory {
+  COMMON_FEE
+  RENTAL
+  OTHER_INCOME
+  ELECTRICITY
+  WATER
+  MAINTENANCE
+  OTHER_EXPENSE
+}
+
+enum TxType {
+  INCOME
+  EXPENSE
 }

@@ -11,6 +11,7 @@ import 'facility_page.dart';
 import 'parcel_page.dart';
 import 'announcement_list_page.dart';
 import 'financial_list_page.dart';
+import 'license_plate_screen.dart';
 
 class MainDashboardPage extends StatefulWidget {
   const MainDashboardPage({super.key});
@@ -475,7 +476,12 @@ class _MainPageState extends State<MainDashboardPage> {
                   const SizedBox(height: 14),
                   // ── Gradient button with white dots ──────────────────
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const LicensePlateScreen()),
+                      );
+                    },
                     child: Container(
                       height: 50,
                       decoration: BoxDecoration(
