@@ -1,107 +1,554 @@
-/* Dashboard.css - JaiBaan Professional Theme */
-@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap');
 
-.dashboard-page-container {
-  padding: 40px 50px;
-  background-color: #fff5f3;
-  /* สีพื้นหลังชมพูอ่อนที่ต้องการ */
+/* ── Page ──────────────────────────────────────────────── */
+.db-page {
+  padding: 32px 48px;
+  background: #fff5f3;
   min-height: 100%;
   font-family: 'Kanit', sans-serif;
-}
-
-.dashboard-header-section {
-  margin-bottom: 45px;
-}
-
-.dashboard-header-section h1 {
-  font-size: 2.2rem;
-  color: #2d3436;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.greeting-sparkle {
-  color: #ffb100;
-}
-
-.dashboard-subtitle {
-  color: #8e7f7d;
-  font-size: 1.1rem;
-  margin-top: 5px;
-}
-
-/* Stats Grid Layout */
-.dashboard-stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 30px;
-}
-
-/* Individual Card Design */
-.stat-info-card {
-  background: white;
-  padding: 35px;
-  border-radius: 30px;
-  /* มุมโค้งมนตามรูป */
-  box-shadow: 0 10px 25px rgba(255, 107, 107, 0.04);
   display: flex;
   flex-direction: column;
   gap: 20px;
-  transition: transform 0.3s ease;
 }
 
-.stat-info-card:hover {
-  transform: translateY(-8px);
+/* ── Header ────────────────────────────────────────────── */
+.db-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
 }
 
-.stat-card-icon {
-  font-size: 3.5rem;
-  /* ขนาดไอคอนใหญ่ตามรูป */
+.db-greeting {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #2d3436;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.db-greeting-name {
+  color: #ff6b6b;
+  font-weight: 700;
+  font-style: italic;
+}
+
+.db-sparkle { color: #ffb100; font-size: 1.6rem; }
+
+.db-date {
+  margin: 4px 0 0;
+  color: #8e7f7d;
+  font-size: 0.9rem;
+}
+
+/* ── Stat cards ────────────────────────────────────────── */
+.db-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.db-stat-card {
+  background: white;
+  border-radius: 20px;
+  padding: 20px 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+  border: 1.5px solid #ffecea;
+  transition: transform 0.2s;
+  min-width: 0;
+}
+
+.db-stat-card:hover { transform: translateY(-3px); }
+
+.db-stat-icon-wrap {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  color: var(--c);
+  flex-shrink: 0;
+}
+
+.db-stat-label {
+  flex: 1;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2d3436;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.db-stat-value {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--c);
+  margin: 0;
+  line-height: 1;
+  white-space: nowrap;
+  flex-shrink: 0;
+  background: var(--bg);
+  border: 1.5px solid var(--c);
+  border-radius: 12px;
+  padding: 6px 14px;
+  opacity: 0.9;
+}
+
+/* ── Panel Actions ─────────────────────────────────────── */
+.db-panel-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.db-panel-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 10px 15px;
+  border-radius: 10px;
+  background: var(--panel-c, #ff8a75);
+  color: white;
+  font-size: 0.78rem;
+  font-weight: 500;
+  border: none;
+  font-family: 'Kanit', sans-serif;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  white-space: nowrap;
+}
+
+.db-panel-action-btn:hover { opacity: 0.82; }
+
+/* ── Top zone ──────────────────────────────────────────── */
+.db-top-zone {
+  background: white;
+  border-radius: 24px;
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-shadow: 0 4px 24px rgba(255, 107, 107, 0.08);
+  border: 1.5px solid #ffecea;
+}
+
+/* ── Body layout ───────────────────────────────────────── */
+.db-body {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 20px;
+  align-items: start;
+}
+
+.db-left-col {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.db-right-col {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ── Panel ─────────────────────────────────────────────── */
+.db-panel {
+  background: white;
+  border-radius: 20px;
+  padding: 22px 24px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+  border: 1.5px solid var(--panel-border, #ffecea);
+  border-left: 4px solid var(--panel-c, #ff8a75);
+}
+
+.db-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.db-panel-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--panel-c, #2d3436);
+  margin: 0;
   display: flex;
   align-items: center;
 }
 
-.stat-card-details {
+.db-panel-subtitle {
+  font-size: 0.76rem;
+  color: #8e7f7d;
+  margin: 2px 0 0;
+}
+
+.db-panel-link {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  font-family: 'Kanit', sans-serif;
+  font-size: 0.82rem;
+  color: #ff8a75;
+  cursor: pointer;
+  padding: 10px 10px;
+  transition: color 0.2s;
+}
+
+.db-panel-link:hover { color: #ff6b6b; }
+
+.db-empty {
+  color: #c0aaa8;
+  font-size: 0.85rem;
+  text-align: center;
+  padding: 24px 0;
+  margin: 0;
+}
+
+/* ── Financial Chart ───────────────────────────────────── */
+.db-fin-legend {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78rem;
+  color: #8e7f7d;
+}
+
+.db-fin-leg-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.db-fin-chart {
+  display: flex;
+  gap: 3px;
+  height: 140px;
+}
+
+.db-fin-col {
+  flex: 1;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  gap: 4px;
 }
 
-.stat-card-label {
-  color: #8e7f7d;
-  font-size: 1.2rem;
-  font-weight: 400;
-  margin-bottom: 5px;
+.db-fin-bar-wrap {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  justify-content: center;
 }
 
-.stat-card-value {
-  font-size: 3.2rem;
-  /* ตัวเลขใหญ่ชัดเจน */
-  font-weight: 600;
+.db-fin-bar {
+  width: 44%;
+  border-radius: 4px 4px 0 0;
+  min-height: 2px;
+  transition: height 0.4s ease;
+}
+
+.db-fin-income  { background: #ff8a75; }
+.db-fin-expense { background: #818cf8; }
+
+.db-fin-label {
+  font-size: 0.6rem;
+  color: #b0a0a0;
+  flex-shrink: 0;
   line-height: 1;
 }
 
-/* Loading State Styles */
-.dashboard-loading {
-  grid-column: 1 / -1;
-  text-align: center;
-  padding: 60px;
-  color: #ff8a75;
+.db-fin-totals {
+  display: flex;
+  gap: 0;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid #ffecea;
 }
 
-.spin-animate {
-  font-size: 3rem;
-  margin-bottom: 15px;
-  animation: spin 1s linear infinite;
+.db-fin-total-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  border-right: 1px solid #ffecea;
 }
 
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
+.db-fin-total-item:last-child { border-right: none; }
 
-  to {
-    transform: rotate(360deg);
-  }
+.db-fin-total-label {
+  font-size: 0.72rem;
+  color: #8e7f7d;
+}
+
+.db-fin-total-val {
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+/* ── Carrier Breakdown ─────────────────────────────────── */
+.db-carrier-sub {
+  font-size: 0.75rem;
+  color: #8e7f7d;
+  background: #fef3c7;
+  color: #b45309;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-weight: 500;
+}
+
+.db-carrier-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.db-carrier-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.db-carrier-name {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: #2d3436;
+  min-width: 64px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.db-carrier-bar-wrap {
+  flex: 1;
+  height: 8px;
+  background: #f1f5f9;
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.db-carrier-bar {
+  height: 100%;
+  background: linear-gradient(to right, #ff9a8b, #f59e0b);
+  border-radius: 99px;
+  min-width: 4px;
+  transition: width 0.5s ease;
+}
+
+.db-carrier-count {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #f59e0b;
+  min-width: 24px;
+  text-align: right;
+}
+
+/* ── Parcel list ───────────────────────────────────────── */
+.db-parcel-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.db-parcel-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid #ffecea;
+}
+
+.db-parcel-row:last-child { border-bottom: none; }
+
+.db-parcel-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.db-parcel-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.db-parcel-tracking {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #2d3436;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.db-parcel-meta {
+  font-size: 0.78rem;
+  color: #8e7f7d;
+}
+
+.db-parcel-date {
+  font-size: 0.78rem;
+  color: #8e7f7d;
+  flex-shrink: 0;
+}
+
+/* ── Booking list ──────────────────────────────────────── */
+.db-booking-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.db-booking-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid #ffecea;
+}
+
+.db-booking-row:last-child { border-bottom: none; }
+
+.db-booking-time {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 44px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #059669;
+  background: #f0fdf4;
+  border-radius: 8px;
+  padding: 4px 6px;
+  gap: 1px;
+}
+
+.db-booking-time-end {
+  font-weight: 400;
+  color: #6b7280;
+  font-size: 0.72rem;
+}
+
+.db-booking-info { flex: 1; min-width: 0; }
+
+.db-booking-facility {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #2d3436;
+}
+
+.db-booking-meta {
+  font-size: 0.76rem;
+  color: #8e7f7d;
+}
+
+/* ── Announcement list ─────────────────────────────────── */
+.db-ann-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.db-ann-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid #ffecea;
+}
+
+.db-ann-row:last-child { border-bottom: none; }
+
+.db-ann-icon {
+  color: #7c3aed;
+  font-size: 0.85rem;
+  margin-top: 3px;
+  flex-shrink: 0;
+}
+
+.db-ann-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.db-ann-title {
+  font-size: 0.85rem;
+  color: #2d3436;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.db-ann-date {
+  font-size: 0.76rem;
+  color: #8e7f7d;
+  flex-shrink: 0;
+}
+
+/* ── Skeleton loading ──────────────────────────────────── */
+.db-skeleton {
+  background: linear-gradient(90deg, #ffecea 25%, #fff5f3 50%, #ffecea 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  border-radius: 12px;
+}
+
+.db-stat-card.db-skeleton {
+  height: 84px;
+  border: none;
+}
+
+.db-list-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.db-skeleton-row {
+  height: 40px;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }

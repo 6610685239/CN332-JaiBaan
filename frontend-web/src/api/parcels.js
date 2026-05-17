@@ -1,7 +1,7 @@
 import api from './axios';
 
 export const parcelApi = {
-  stats: () => api.get('/parcels/stats').then((r) => r.data),
+  stats: () => api.get('/parcels/stats').then((r) => r.data.data ?? r.data),
   list: (params) => api.get('/parcels', { params }).then((r) => r.data),
   getById: (id) => api.get(`/parcels/${id}`).then((r) => r.data),
   create: (data) => api.post('/parcels', data).then((r) => r.data),
