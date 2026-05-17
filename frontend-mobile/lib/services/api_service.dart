@@ -4,7 +4,7 @@ import '../models/facility_model.dart';
 import '../models/reservation_model.dart';
 
 class ApiService {
-  static const String baseUrl = "http://192.168.1.108:3000/api"; // ใส่ IP เครื่องคุณ
+  static const String baseUrl = "http://localhost:3000/api"; 
 
   Future<List<Facility>> getFacilities() async {
     final response = await http.get(Uri.parse('$baseUrl/facilities'));

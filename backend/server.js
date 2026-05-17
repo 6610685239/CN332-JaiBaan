@@ -8,20 +8,29 @@ app.use(cors());
 app.use(express.json());
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
+// 2. Serve static files from uploads directory
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// 3. เพิ่มตัวเช็ค (Logger) ว่ามีใครยิง API เข้ามาไหม
 app.use((req, res, next) => {
   console.log(`[REQUEST] ${req.method} ${req.originalUrl}`);
   next();
 });
 
+// 4. Routes
 const authRoutes = require('./src/routes/authRoutes');
 const dashboardRoutes = require('./src/routes/dashboardRoutes');
 const announcementRoutes = require('./src/routes/announcements');
 const facilityRoutes = require('./src/FacilityService/facility.routes');
+const parcelRoutes = require('./src/routes/parcels');
+const financialRoutes = require('./src/routes/financial');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/announcements', announcementRoutes);
 app.use('/api/facilities', facilityRoutes);
+app.use('/api/parcels', parcelRoutes);
+app.use('/api/financial', financialRoutes);
 
 app.get('/health', (req, res) => res.json({ status: 'ok', timestamp: new Date() }));
 

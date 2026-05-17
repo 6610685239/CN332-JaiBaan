@@ -23,7 +23,6 @@ const CATEGORIES = [
 
 const TARGET_TYPES = [
   { value: 'ALL',  label: 'ลูกบ้านทั้งหมด' },
-  { value: 'ZONE', label: 'เฉพาะโซน' },
   { value: 'UNIT', label: 'เฉพาะบ้านเลขที่' },
 ];
 

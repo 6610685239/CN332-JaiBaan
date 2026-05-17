@@ -41,8 +41,8 @@ model Resident {
   unitNumber    String
   familyMembers String[]
   userId        Int           @unique
-  User          User          @relation(fields: [userId], references: [id])
   reservations  Reservation[]
+  User          User          @relation(fields: [userId], references: [id])
 }
 
 model Announcement {
@@ -56,13 +56,13 @@ model Announcement {
   targetType    TargetType
   targetZones   String[]     @default([])
   targetUnits   String[]     @default([])
-  attachments   Attachment[]
   notifSent     Boolean      @default(false)
   scheduledAt   DateTime?
   publishedAt   DateTime?
   createdBy     String
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
+  attachments   Attachment[]
 
   @@index([status])
   @@index([category])
@@ -77,8 +77,54 @@ model Attachment {
   mimeType       String
   size           Int
   announcementId String
-  announcement   Announcement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
   createdAt      DateTime     @default(now())
+  announcement   Announcement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
+}
+
+model FinancialTransaction {
+  id              String                    @id @default(uuid())
+  type            TxType
+  category        TxCategory
+  amount          Decimal                   @db.Decimal(12, 2)
+  description     String
+  transactionDate DateTime
+  year            Int
+  month           Int
+  attachments     FinancialAttachment[]
+  createdBy       String
+  createdAt       DateTime                  @default(now())
+  updatedAt       DateTime                  @updatedAt
+
+  @@index([year, month])
+  @@index([type])
+  @@index([category])
+}
+
+model FinancialAttachment {
+  id               String               @id @default(uuid())
+  transactionId    String
+  transaction      FinancialTransaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  filename         String
+  originalName     String
+  url              String
+  mimeType         String
+  size             Int
+  createdAt        DateTime             @default(now())
+}
+
+enum TxType {
+  INCOME
+  EXPENSE
+}
+
+enum TxCategory {
+  COMMON_FEE
+  RENTAL
+  OTHER_INCOME
+  ELECTRICITY
+  WATER
+  MAINTENANCE
+  OTHER_EXPENSE
 }
 
 model Facility {
@@ -97,15 +143,15 @@ model Reservation {
   id          Int      @id @default(autoincrement())
   bookingCode String   @unique
   residentId  Int
-  resident    Resident @relation(fields: [residentId], references: [id])
   facilityId  Int
-  facility    Facility @relation(fields: [facilityId], references: [id])
   startTime   DateTime
   endTime     DateTime
   pax         Int      @default(1)
   status      String   @default("CONFIRMED")
   note        String?
   createdAt   DateTime @default(now())
+  facility    Facility @relation(fields: [facilityId], references: [id])
+  resident    Resident @relation(fields: [residentId], references: [id])
 }
 
 enum Category {
@@ -127,4 +173,29 @@ enum TargetType {
   ALL
   ZONE
   UNIT
+}
+
+model Parcel {
+  id              Int          @id @default(autoincrement())
+  trackingNumber  String       @unique
+  carrier         String
+  unitNumber      String
+  storageLocation String?
+  photoUrl        String?
+  notes           String?
+  status          ParcelStatus @default(ARRIVED)
+  arrivedAt       DateTime     @default(now())
+  pickedUpAt      DateTime?
+  returnedAt      DateTime?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  @@index([unitNumber])
+  @@index([status])
+}
+
+enum ParcelStatus {
+  ARRIVED
+  PICKED_UP
+  RETURNED
 }

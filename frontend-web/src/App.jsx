@@ -4,11 +4,17 @@ import axios from 'axios';
 import './App.css';
 
 import MainLayout from './layouts/MainLayout';
+import HomePage from './pages/HomePage';
 import Dashboard from './pages/Dashboard';
 import AnnouncementList from './pages/AnnouncementList';
 import AnnouncementForm from './pages/AnnouncementForm';
 import FacilityList from './pages/FacilityList';
 import FacilityForm from './pages/FacilityForm';
+import ParcelList from './pages/ParcelList';
+import ParcelForm from './pages/ParcelForm';
+import FinancialPage from './pages/FinancialPage';
+import FinancialList from './pages/FinancialList';
+import FinancialForm from './pages/FinancialForm';
 import ForgotPassword from './pages/ForgotPassword';
 import logoImg from './assets/logo.png';
 
@@ -101,8 +107,9 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/home" element={<HomePage user={userData} onLogout={handleLogout} />} />
         <Route path="/" element={<MainLayout user={userData} onLogout={handleLogout} />}>
-          <Route index element={<Navigate to="/dashboard" replace />} />
+          <Route index element={<Navigate to="/home" replace />} />
           <Route path="dashboard" element={<Dashboard user={userData} />} />
           <Route path="announcements" element={<AnnouncementList />} />
           <Route path="announcements/new" element={<AnnouncementForm />} />
@@ -110,8 +117,14 @@ function App() {
           <Route path="facilities" element={<FacilityList />} />
           <Route path="facilities/new" element={<FacilityForm />} />
           <Route path="facilities/:id/edit" element={<FacilityForm />} />
+          <Route path="parcels" element={<ParcelList />} />
+          <Route path="parcels/new" element={<ParcelForm />} />
+          <Route path="financial" element={<FinancialPage />} />
+          <Route path="financial/transactions" element={<FinancialList />} />
+          <Route path="financial/transactions/new" element={<FinancialForm />} />
+          <Route path="financial/transactions/:id/edit" element={<FinancialForm />} />
         </Route>
-        <Route path="*" element={<Navigate to="/dashboard" replace />} />
+        <Route path="*" element={<Navigate to="/home" replace />} />
       </Routes>
     </BrowserRouter>
   );
