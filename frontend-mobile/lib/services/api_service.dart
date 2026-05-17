@@ -2,9 +2,19 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/facility_model.dart';
 import '../models/reservation_model.dart';
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 
 class ApiService {
-  static const String baseUrl = "http://localhost:3000/api"; 
+    String get baseUrl {
+    if (kIsWeb || Platform.isLinux || Platform.isWindows || Platform.isMacOS) {
+      return 'http://localhost:3000/api';
+    }
+    if (Platform.isAndroid) {
+      return 'http://10.0.2.2:3000/api';
+    }
+    return 'http://localhost:3000/api';
+  }
 
   Future<List<Facility>> getFacilities() async {
     final response = await http.get(Uri.parse('$baseUrl/facilities'));
