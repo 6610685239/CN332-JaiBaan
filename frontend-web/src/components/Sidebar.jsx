@@ -2,17 +2,14 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import logoImg from '../assets/logo.png';
 import {
-  FaChartPie, FaUsers, FaBox, FaWrench,
-  FaClipboardList, FaSignOutAlt, FaBullhorn, FaBuilding, FaWallet,
+  FaChartPie, FaBox, FaSignOutAlt, FaBullhorn, FaBuilding, FaWallet, FaHome,
 } from 'react-icons/fa';
 import './Sidebar.css';
 
 const menuItems = [
+  { to: '/home',           label: 'Homepage',      icon: <FaHome /> },
   { to: '/dashboard',      label: 'Dashboard',    icon: <FaChartPie /> },
-  { to: '/residents',      label: 'Residents',    icon: <FaUsers /> },
   { to: '/parcels',        label: 'Parcels',      icon: <FaBox /> },
-  { to: '/repairs',        label: 'Repairs',      icon: <FaWrench /> },
-  { to: '/records',        label: 'Records',      icon: <FaClipboardList /> },
   { to: '/announcements',  label: 'Announcements', icon: <FaBullhorn /> },
   { to: '/facilities',     label: 'Facilities',   icon: <FaBuilding /> },
   { to: '/financial',      label: 'Financial',    icon: <FaWallet /> },

@@ -45,7 +45,7 @@ export default function ParcelList() {
   const [bulkAction, setBulkAction] = useState(null); // 'delete' | 'return'
 
   useEffect(() => {
-    parcelApi.stats().then((r) => setStatsData(r.data)).catch(() => {});
+    parcelApi.stats().then((stats) => setStatsData(stats)).catch(() => {});
   }, []);
 
   const fetchData = useCallback(async () => {
@@ -74,7 +74,7 @@ export default function ParcelList() {
   // Clear selection when data changes
   useEffect(() => { setSelected(new Set()); }, [data]);
 
-  const refreshStats = () => parcelApi.stats().then((r) => setStatsData(r.data)).catch(() => {});
+  const refreshStats = () => parcelApi.stats().then((stats) => setStatsData(stats)).catch(() => {});
 
   const handleReturn = async (id) => {
     await parcelApi.return(id).catch(() => {});

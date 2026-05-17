@@ -1,107 +1,376 @@
-/* Dashboard.css - JaiBaan Professional Theme */
-@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap');
 
-.dashboard-page-container {
-  padding: 40px 50px;
-  background-color: #fff5f3;
-  /* สีพื้นหลังชมพูอ่อนที่ต้องการ */
+/* ── Page ──────────────────────────────────────────────── */
+.db-page {
+  padding: 36px 48px;
+  background: #fff5f3;
   min-height: 100%;
   font-family: 'Kanit', sans-serif;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
 }
 
-.dashboard-header-section {
-  margin-bottom: 45px;
+/* ── Header ────────────────────────────────────────────── */
+.db-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
 }
 
-.dashboard-header-section h1 {
-  font-size: 2.2rem;
+.db-greeting {
+  font-size: 2rem;
+  font-weight: 600;
   color: #2d3436;
-  font-weight: 600;
+  margin: 0;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
-.greeting-sparkle {
-  color: #ffb100;
-}
+.db-sparkle { color: #ffb100; font-size: 1.6rem; }
 
-.dashboard-subtitle {
+.db-date {
+  margin: 4px 0 0;
   color: #8e7f7d;
-  font-size: 1.1rem;
-  margin-top: 5px;
+  font-size: 0.9rem;
 }
 
-/* Stats Grid Layout */
-.dashboard-stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 30px;
+.db-actions {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+  align-items: center;
 }
 
-/* Individual Card Design */
-.stat-info-card {
+.db-btn-primary,
+.db-btn-secondary {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 18px;
+  border-radius: 12px;
+  font-family: 'Kanit', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+
+.db-btn-primary {
+  background: linear-gradient(to right, #ff9a8b, #ff6b6b);
+  color: white;
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+}
+
+.db-btn-primary:hover { filter: brightness(1.05); transform: translateY(-1px); }
+
+.db-btn-secondary {
   background: white;
-  padding: 35px;
-  border-radius: 30px;
-  /* มุมโค้งมนตามรูป */
-  box-shadow: 0 10px 25px rgba(255, 107, 107, 0.04);
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  transition: transform 0.3s ease;
+  border: 1.5px solid #ffd6d0;
+  color: #8e7f7d;
 }
 
-.stat-info-card:hover {
-  transform: translateY(-8px);
+.db-btn-secondary:hover { border-color: #ff8a75; color: #ff6b6b; background: #fff8f7; }
+
+/* ── Stat cards ────────────────────────────────────────── */
+.db-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
 }
 
-.stat-card-icon {
-  font-size: 3.5rem;
-  /* ขนาดไอคอนใหญ่ตามรูป */
+.db-stat-card {
+  background: white;
+  border-radius: 20px;
+  padding: 20px 22px;
   display: flex;
   align-items: center;
+  gap: 16px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+  border: 1.5px solid #ffecea;
+  transition: transform 0.2s;
 }
 
-.stat-card-details {
+.db-stat-card:hover { transform: translateY(-3px); }
+
+.db-stat-icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--bg);
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  color: var(--c);
+  flex-shrink: 0;
 }
 
-.stat-card-label {
+.db-stat-label {
+  font-size: 0.78rem;
   color: #8e7f7d;
-  font-size: 1.2rem;
-  font-weight: 400;
-  margin-bottom: 5px;
+  margin: 0 0 2px;
+  white-space: nowrap;
 }
 
-.stat-card-value {
-  font-size: 3.2rem;
-  /* ตัวเลขใหญ่ชัดเจน */
-  font-weight: 600;
+.db-stat-value {
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: var(--c);
+  margin: 0;
   line-height: 1;
 }
 
-/* Loading State Styles */
-.dashboard-loading {
-  grid-column: 1 / -1;
-  text-align: center;
-  padding: 60px;
+/* ── Body two-column ───────────────────────────────────── */
+.db-body {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 20px;
+  align-items: start;
+}
+
+.db-right-col {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ── Panel ─────────────────────────────────────────────── */
+.db-panel {
+  background: white;
+  border-radius: 20px;
+  padding: 22px 24px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+  border: 1.5px solid #ffecea;
+}
+
+.db-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.db-panel-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2d3436;
+  margin: 0;
+}
+
+.db-panel-link {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  font-family: 'Kanit', sans-serif;
+  font-size: 0.82rem;
   color: #ff8a75;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s;
 }
 
-.spin-animate {
-  font-size: 3rem;
-  margin-bottom: 15px;
-  animation: spin 1s linear infinite;
+.db-panel-link:hover { color: #ff6b6b; }
+
+.db-empty {
+  color: #c0aaa8;
+  font-size: 0.85rem;
+  text-align: center;
+  padding: 24px 0;
+  margin: 0;
 }
 
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
+/* ── Parcel list ───────────────────────────────────────── */
+.db-parcel-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
 
-  to {
-    transform: rotate(360deg);
-  }
+.db-parcel-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid #ffecea;
+}
+
+.db-parcel-row:last-child { border-bottom: none; }
+
+.db-parcel-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.db-parcel-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.db-parcel-tracking {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #2d3436;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.db-parcel-meta {
+  font-size: 0.78rem;
+  color: #8e7f7d;
+}
+
+.db-parcel-date {
+  font-size: 0.78rem;
+  color: #8e7f7d;
+  flex-shrink: 0;
+}
+
+/* ── Booking list ──────────────────────────────────────── */
+.db-booking-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.db-booking-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid #ffecea;
+}
+
+.db-booking-row:last-child { border-bottom: none; }
+
+.db-booking-time {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 44px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #059669;
+  background: #f0fdf4;
+  border-radius: 8px;
+  padding: 4px 6px;
+  gap: 1px;
+}
+
+.db-booking-time-end {
+  font-weight: 400;
+  color: #6b7280;
+  font-size: 0.72rem;
+}
+
+.db-booking-info { flex: 1; min-width: 0; }
+
+.db-booking-facility {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #2d3436;
+}
+
+.db-booking-meta {
+  font-size: 0.76rem;
+  color: #8e7f7d;
+}
+
+/* ── Announcement list ─────────────────────────────────── */
+.db-ann-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.db-ann-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid #ffecea;
+}
+
+.db-ann-row:last-child { border-bottom: none; }
+
+.db-ann-icon {
+  color: #7c3aed;
+  font-size: 0.85rem;
+  margin-top: 3px;
+  flex-shrink: 0;
+}
+
+.db-ann-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.db-ann-title {
+  font-size: 0.85rem;
+  color: #2d3436;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.db-ann-date {
+  font-size: 0.76rem;
+  color: #8e7f7d;
+  flex-shrink: 0;
+}
+
+/* ── Skeleton loading ──────────────────────────────────── */
+.db-skeleton {
+  background: linear-gradient(90deg, #ffecea 25%, #fff5f3 50%, #ffecea 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  border-radius: 12px;
+}
+
+.db-stat-card.db-skeleton {
+  height: 84px;
+  border: none;
+}
+
+.db-list-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.db-skeleton-row {
+  height: 40px;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
