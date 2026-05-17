@@ -23,12 +23,16 @@ const dashboardRoutes = require('./src/routes/dashboardRoutes');
 const announcementRoutes = require('./src/routes/announcements');
 const facilityRoutes = require('./src/FacilityService/facility.routes');
 const userSettingsRoutes = require('./src/routes/userSettingsRoutes');
+const parcelRoutes = require('./src/routes/parcels');
+const financialRoutes = require('./src/routes/financial');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/announcements', announcementRoutes);
 app.use('/api/facilities', facilityRoutes);
 app.use('/api/user', userSettingsRoutes);
+app.use('/api/parcels', parcelRoutes);
+app.use('/api/financial', financialRoutes);
 
 app.get('/health', (req, res) => res.json({ status: 'ok', timestamp: new Date() }));
 

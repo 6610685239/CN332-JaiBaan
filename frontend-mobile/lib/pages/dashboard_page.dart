@@ -5,6 +5,8 @@ import 'login_page.dart';
 import 'facility_page.dart';
 import 'announcement_list_page.dart';
 import 'user_settings_page.dart';
+import 'parcel_page.dart';
+import 'financial_list_page.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -55,6 +57,17 @@ class _DashboardPageState extends State<DashboardPage> {
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => AnnouncementListPage(token: token),
+        ),
+      );
+    }
+  }
+
+  void _navigateToFinancial() async {
+    final token = await _getUserToken();
+    if (mounted) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => FinancialListPage(token: token),
         ),
       );
     }
@@ -240,6 +253,56 @@ class _DashboardPageState extends State<DashboardPage> {
                           ),
                         ),
                       ),
+                      const SizedBox(height: 12),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const ParcelPage(),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(18),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFFF5F3),
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(color: const Color(0xFFFFD6D0)),
+                          ),
+                          child: const Row(
+                            children: [
+                              Icon(Icons.inventory_2_outlined,
+                                  color: Color(0xFFFF7B7B), size: 28),
+                              SizedBox(width: 16),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Parcels',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xFF2D3436),
+                                    ),
+                                  ),
+                                  Text(
+                                    'Check & confirm your deliveries',
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Spacer(),
+                              Icon(Icons.chevron_right,
+                                  color: Color(0xFFFF7B7B)),
+                            ],
+                          ),
+                        ),
+                      ),
                       const SizedBox(height: 30),
 
                       // Announcements section
@@ -285,6 +348,58 @@ class _DashboardPageState extends State<DashboardPage> {
                                   const SizedBox(height: 4),
                                   Text(
                                     'Check the latest updates',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Icon(
+                                Icons.arrow_forward_ios_rounded,
+                                color: Colors.grey[400],
+                                size: 18,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+
+                      GestureDetector(
+                        onTap: _navigateToFinancial,
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: Colors.grey[300]!),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.08),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    'Financial Records',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    'ดูรายการและไฟล์แนบ',
                                     style: TextStyle(
                                       fontSize: 12,
                                       color: Colors.grey[600],
