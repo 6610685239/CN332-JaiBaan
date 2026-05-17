@@ -15,8 +15,8 @@ const uploadPhoto = async (req, res) => {
 // GET /api/parcels  (admin)
 const list = async (req, res) => {
   try {
-    const { status, unitNumber, search, page, limit } = req.query
-    const result = await service.getParcels({ status, unitNumber, search, page, limit })
+    const { status, unitNumber, carrier, search, page, limit } = req.query
+    const result = await service.getParcels({ status, unitNumber, carrier, search, page, limit })
     res.json({ success: true, ...result })
   } catch (err) {
     res.status(500).json({ success: false, message: err.message })
@@ -120,6 +120,34 @@ const updateStatus = async (req, res) => {
   }
 }
 
+// POST /api/parcels/bulk-delete  (admin)
+const bulkDelete = async (req, res) => {
+  try {
+    const { ids } = req.body
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({ success: false, message: 'ids required' })
+    }
+    const result = await service.bulkDelete(ids)
+    res.json({ success: true, count: result.count })
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message })
+  }
+}
+
+// POST /api/parcels/bulk-return  (admin)
+const bulkReturn = async (req, res) => {
+  try {
+    const { ids } = req.body
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({ success: false, message: 'ids required' })
+    }
+    const result = await service.bulkReturn(ids)
+    res.json({ success: true, count: result.count })
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message })
+  }
+}
+
 // GET /api/parcels/stats  (admin dashboard)
 const stats = async (req, res) => {
   try {
@@ -144,4 +172,4 @@ const removePhoto = async (req, res) => {
   }
 }
 
-module.exports = { uploadPhoto, list, listMine, listByUnit, getById, create, pickup, returned, updateStatus, removePhoto, remove, stats }
+module.exports = { uploadPhoto, list, listMine, listByUnit, getById, create, pickup, returned, updateStatus, removePhoto, remove, stats, bulkDelete, bulkReturn }

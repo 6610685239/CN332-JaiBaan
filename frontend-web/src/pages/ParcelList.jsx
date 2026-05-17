@@ -4,12 +4,14 @@ import { format } from 'date-fns';
 import { th } from 'date-fns/locale';
 import {
   FaPlus, FaSearch, FaBox, FaEllipsisV, FaTrash, FaUndo, FaImage, FaEdit,
+  FaClock, FaCheckCircle, FaExclamationTriangle, FaTruck,
 } from 'react-icons/fa';
 import { parcelApi } from '../api/parcels';
 import './ParcelList.css';
 
 const STATUS_LABEL = { ARRIVED: 'รอรับ', PICKED_UP: 'รับแล้ว', RETURNED: 'คืนแล้ว' };
 const STATUS_CLASS = { ARRIVED: 'badge--arrived', PICKED_UP: 'badge--pickedup', RETURNED: 'badge--returned' };
+const CARRIERS = ['Kerry', 'Flash', 'J&T', 'Thailand Post', 'DHL', 'Lazada', 'Shopee', 'Amazon'];
 
 const LIMIT = 10;
 const fmt = (d) => { try { return format(new Date(d), 'd MMM yy', { locale: th }); } catch { return '—'; } };
@@ -21,12 +23,22 @@ export default function ParcelList() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
+  const [carrierFilter, setCarrierFilter] = useState('');
   const [page, setPage] = useState(1);
   const [openMenu, setOpenMenu] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [photoPreview, setPhotoPreview] = useState(null);
   const [editStatusTarget, setEditStatusTarget] = useState(null);
   const [editStatusValue, setEditStatusValue] = useState('');
+  const [statsData, setStatsData] = useState(null);
+
+  // Multi-select
+  const [selected, setSelected] = useState(new Set());
+  const [bulkAction, setBulkAction] = useState(null); // 'delete' | 'return'
+
+  useEffect(() => {
+    parcelApi.stats().then((r) => setStatsData(r.data)).catch(() => {});
+  }, []);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -34,6 +46,7 @@ export default function ParcelList() {
       const res = await parcelApi.list({
         search: search || undefined,
         status: statusFilter || undefined,
+        carrier: carrierFilter || undefined,
         page,
         limit: LIMIT,
       });
@@ -41,13 +54,19 @@ export default function ParcelList() {
       setPagination(res.pagination);
     } catch { /* silent */ }
     finally { setLoading(false); }
-  }, [search, statusFilter, page]);
+  }, [search, statusFilter, carrierFilter, page]);
 
   useEffect(() => { fetchData(); }, [fetchData]);
+
+  // Clear selection when data changes
+  useEffect(() => { setSelected(new Set()); }, [data]);
+
+  const refreshStats = () => parcelApi.stats().then((r) => setStatsData(r.data)).catch(() => {});
 
   const handleReturn = async (id) => {
     await parcelApi.return(id).catch(() => {});
     fetchData();
+    refreshStats();
   };
 
   const openEditStatus = (item) => {
@@ -61,6 +80,7 @@ export default function ParcelList() {
     await parcelApi.updateStatus(editStatusTarget.id, editStatusValue).catch(() => {});
     setEditStatusTarget(null);
     fetchData();
+    refreshStats();
   };
 
   const handleDelete = async () => {
@@ -68,9 +88,42 @@ export default function ParcelList() {
     await parcelApi.delete(deleteTarget.id).catch(() => {});
     setDeleteTarget(null);
     fetchData();
+    refreshStats();
   };
 
-  const clearFilters = () => { setSearch(''); setStatusFilter(''); setPage(1); };
+  const handleBulkConfirm = async () => {
+    const ids = [...selected];
+    if (bulkAction === 'delete') await parcelApi.bulkDelete(ids).catch(() => {});
+    if (bulkAction === 'return') await parcelApi.bulkReturn(ids).catch(() => {});
+    setBulkAction(null);
+    setSelected(new Set());
+    fetchData();
+    refreshStats();
+  };
+
+  const clearFilters = () => { setSearch(''); setStatusFilter(''); setCarrierFilter(''); setPage(1); };
+
+  // Checkbox helpers
+  const allSelected = data.length > 0 && data.every((item) => selected.has(item.id));
+  const someSelected = data.some((item) => selected.has(item.id));
+
+  const toggleAll = () => {
+    if (allSelected) {
+      setSelected((prev) => { const s = new Set(prev); data.forEach((item) => s.delete(item.id)); return s; });
+    } else {
+      setSelected((prev) => { const s = new Set(prev); data.forEach((item) => s.add(item.id)); return s; });
+    }
+  };
+
+  const toggleOne = (id) => {
+    setSelected((prev) => {
+      const s = new Set(prev);
+      s.has(id) ? s.delete(id) : s.add(id);
+      return s;
+    });
+  };
+
+  const selectedArrivedCount = data.filter((item) => selected.has(item.id) && item.status === 'ARRIVED').length;
 
   return (
     <div className="parcel-page">
@@ -83,6 +136,53 @@ export default function ParcelList() {
           <FaPlus /> ลงทะเบียนพัสดุ
         </button>
       </header>
+
+      {statsData && (
+        <div className="parcel-stats-grid">
+          <div className="stat-card stat-card--pending">
+            <div className="stat-icon-wrap"><FaClock /></div>
+            <div className="stat-body">
+              <div className="stat-value">{statsData.totalPending}</div>
+              <div className="stat-label">รอรับ (Pending)</div>
+            </div>
+          </div>
+
+          <div className="stat-card stat-card--pickedup">
+            <div className="stat-icon-wrap"><FaCheckCircle /></div>
+            <div className="stat-body">
+              <div className="stat-value">{statsData.pickedUpToday}</div>
+              <div className="stat-label">รับแล้ววันนี้</div>
+            </div>
+          </div>
+
+          <div className={`stat-card ${statsData.overdue > 0 ? 'stat-card--overdue' : 'stat-card--ok'}`}>
+            <div className="stat-icon-wrap"><FaExclamationTriangle /></div>
+            <div className="stat-body">
+              <div className="stat-value">{statsData.overdue}</div>
+              <div className="stat-label">ค้างเกิน 3 วัน</div>
+            </div>
+          </div>
+
+          <div className="stat-card stat-card--carrier">
+            <div className="stat-icon-wrap"><FaTruck /></div>
+            <div className="stat-body">
+              <div className="stat-label" style={{ marginBottom: 6 }}>ขนส่งที่รอรับ</div>
+              {statsData.carrierDistribution.length === 0 ? (
+                <div className="stat-carrier-empty">ไม่มีข้อมูล</div>
+              ) : (
+                <div className="stat-carrier-list">
+                  {statsData.carrierDistribution.map((c) => (
+                    <div key={c.carrier} className="stat-carrier-row">
+                      <span className="stat-carrier-name">{c.carrier}</span>
+                      <span className="stat-carrier-count">{c.count}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="parcel-filter-bar">
         <div className="filter-search-box">
@@ -105,10 +205,37 @@ export default function ParcelList() {
             <option key={k} value={k}>{v}</option>
           ))}
         </select>
-        {(search || statusFilter) && (
+        <select
+          value={carrierFilter}
+          onChange={(e) => { setCarrierFilter(e.target.value); setPage(1); }}
+          className="filter-select"
+        >
+          <option value="">ทุกขนส่ง</option>
+          {CARRIERS.map((c) => <option key={c} value={c}>{c}</option>)}
+        </select>
+        {(search || statusFilter || carrierFilter) && (
           <button className="filter-clear" onClick={clearFilters}>ล้างตัวกรอง</button>
         )}
       </div>
+
+      {selected.size > 0 && (
+        <div className="bulk-bar">
+          <span className="bulk-bar-info">เลือก {selected.size} รายการ</span>
+          <div className="bulk-bar-actions">
+            {selectedArrivedCount > 0 && (
+              <button className="bulk-btn bulk-btn--return" onClick={() => setBulkAction('return')}>
+                <FaUndo /> คืนพัสดุ ({selectedArrivedCount})
+              </button>
+            )}
+            <button className="bulk-btn bulk-btn--delete" onClick={() => setBulkAction('delete')}>
+              <FaTrash /> ลบ ({selected.size})
+            </button>
+            <button className="bulk-btn bulk-btn--cancel" onClick={() => setSelected(new Set())}>
+              ยกเลิก
+            </button>
+          </div>
+        </div>
+      )}
 
       <div className="parcel-card">
         {loading ? (
@@ -125,6 +252,15 @@ export default function ParcelList() {
           <table className="parcel-table">
             <thead>
               <tr>
+                <th className="col-check">
+                  <input
+                    type="checkbox"
+                    className="parcel-checkbox"
+                    checked={allSelected}
+                    ref={(el) => { if (el) el.indeterminate = someSelected && !allSelected; }}
+                    onChange={toggleAll}
+                  />
+                </th>
                 <th>รูป</th>
                 <th>Tracking No.</th>
                 <th>ผู้ส่ง</th>
@@ -137,7 +273,18 @@ export default function ParcelList() {
             </thead>
             <tbody>
               {data.map((item) => (
-                <tr key={item.id} className="parcel-row">
+                <tr
+                  key={item.id}
+                  className={`parcel-row ${selected.has(item.id) ? 'parcel-row--selected' : ''}`}
+                >
+                  <td className="col-check">
+                    <input
+                      type="checkbox"
+                      className="parcel-checkbox"
+                      checked={selected.has(item.id)}
+                      onChange={() => toggleOne(item.id)}
+                    />
+                  </td>
                   <td>
                     {item.photoUrl ? (
                       <img
@@ -265,6 +412,32 @@ export default function ParcelList() {
             <div className="dialog-actions">
               <button className="btn-cancel" onClick={() => setDeleteTarget(null)}>ยกเลิก</button>
               <button className="btn-danger" onClick={handleDelete}>ลบ</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {bulkAction && (
+        <div className="parcel-dialog-overlay" onClick={() => setBulkAction(null)}>
+          <div className="parcel-dialog" onClick={(e) => e.stopPropagation()}>
+            <div className="dialog-icon-wrap" style={bulkAction === 'return' ? { background: '#f3e8ff' } : {}}>
+              {bulkAction === 'return'
+                ? <FaUndo style={{ fontSize: '1.4rem', color: '#7c3aed' }} />
+                : <FaTrash className="dialog-icon" />}
+            </div>
+            <h3 className="dialog-title">
+              {bulkAction === 'return' ? 'คืนพัสดุหลายชิ้น' : 'ลบพัสดุหลายชิ้น'}
+            </h3>
+            <p className="dialog-sub">
+              {bulkAction === 'return'
+                ? `คืนพัสดุสถานะ "รอรับ" จำนวน ${selectedArrivedCount} รายการ`
+                : `ลบพัสดุที่เลือกทั้งหมด ${selected.size} รายการ — ไม่สามารถกู้คืนได้`}
+            </p>
+            <div className="dialog-actions">
+              <button className="btn-cancel" onClick={() => setBulkAction(null)}>ยกเลิก</button>
+              {bulkAction === 'return'
+                ? <button className="btn-save-status" onClick={handleBulkConfirm}>ยืนยัน</button>
+                : <button className="btn-danger" onClick={handleBulkConfirm}>ลบ</button>}
             </div>
           </div>
         </div>

@@ -12,9 +12,10 @@ const createParcel = async ({ trackingNumber, carrier, unitNumber, storageLocati
   return parcel
 }
 
-const getParcels = async ({ status, unitNumber, search, page = 1, limit = LIMIT }) => {
+const getParcels = async ({ status, unitNumber, carrier, search, page = 1, limit = LIMIT }) => {
   const where = {}
   if (status) where.status = status
+  if (carrier) where.carrier = { equals: carrier, mode: 'insensitive' }
   if (unitNumber) where.unitNumber = { contains: unitNumber, mode: 'insensitive' }
   if (search) {
     where.OR = [
@@ -79,6 +80,17 @@ const deleteParcel = async (id) => {
   return prisma.parcel.delete({ where: { id: parseInt(id) } })
 }
 
+const bulkDelete = async (ids) => {
+  return prisma.parcel.deleteMany({ where: { id: { in: ids.map(Number) } } })
+}
+
+const bulkReturn = async (ids) => {
+  return prisma.parcel.updateMany({
+    where: { id: { in: ids.map(Number) }, status: 'ARRIVED' },
+    data: { status: 'RETURNED', returnedAt: new Date() },
+  })
+}
+
 const getStats = async () => {
   const now = new Date()
   const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate())
@@ -105,4 +117,4 @@ const getStats = async () => {
   }
 }
 
-module.exports = { createParcel, getParcels, getResidentParcels, getParcelById, markPickedUp, markReturned, updateStatus, deleteParcel, getStats }
+module.exports = { createParcel, getParcels, getResidentParcels, getParcelById, markPickedUp, markReturned, updateStatus, deleteParcel, bulkDelete, bulkReturn, getStats }

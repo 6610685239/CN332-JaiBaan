@@ -15,6 +15,10 @@ router.get('/my', controller.listMine)
 // Resident mobile: view by unitNumber directly
 router.get('/unit/:unitNumber', controller.listByUnit)
 
+// Admin: bulk operations
+router.post('/bulk-delete', controller.bulkDelete)
+router.post('/bulk-return', controller.bulkReturn)
+
 // Admin/Juristic: full list with filters
 router.get('/stats', controller.stats)
 router.get('/', controller.list)
