@@ -30,7 +30,6 @@ class _FinancialListPageState extends State<FinancialListPage> {
   String? _selectedType;
   late int _selectedMonth;
   late int _selectedYear;
-  late final List<int> _years;
 
   @override
   void initState() {
@@ -40,7 +39,6 @@ class _FinancialListPageState extends State<FinancialListPage> {
     final now = DateTime.now();
     _selectedMonth = now.month;
     _selectedYear = now.year;
-    _years = List<int>.generate(5, (index) => now.year - index);
     _loadTransactions(page: 1);
   }
 
@@ -141,7 +139,7 @@ class _FinancialListPageState extends State<FinancialListPage> {
             const SizedBox(height: 12),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: _buildFilterRow(),
+              child: _buildFilterButton(),
             ),
             const SizedBox(height: 16),
             if (_errorMessage != null) Padding(
@@ -223,73 +221,221 @@ class _FinancialListPageState extends State<FinancialListPage> {
     );
   }
 
-  Widget _buildFilterRow() {
-    const monthNames = [
-      '', 'ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.',
-      'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.',
-    ];
-
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Expanded(
-          child: Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              _buildTypeChip('ALL', 'ทั้งหมด'),
-              _buildTypeChip('INCOME', 'รายรับ'),
-              _buildTypeChip('EXPENSE', 'รายจ่าย'),
-            ],
-          ),
-        ),
-        const SizedBox(width: 12),
-        Row(
-          children: [
-            _buildDropdown<int>(
-              value: _selectedMonth,
-              items: List.generate(12, (index) {
-                final month = index + 1;
-                return DropdownMenuItem<int>(
-                  value: month,
-                  child: Text(monthNames[month]),
-                );
-              }),
-              onChanged: (value) {
-                if (value != null) {
-                  setState(() => _selectedMonth = value);
-                  _loadTransactions(page: 1);
-                }
-              },
-            ),
-            const SizedBox(width: 8),
-            _buildDropdown<int>(
-              value: _selectedYear,
-              items: _years.map((year) {
-                return DropdownMenuItem<int>(
-                  value: year,
-                  child: Text('$year'),
-                );
-              }).toList(),
-              onChanged: (value) {
-                if (value != null) {
-                  setState(() => _selectedYear = value);
-                  _loadTransactions(page: 1);
-                }
-              },
+  Widget _buildFilterButton() {
+    return GestureDetector(
+      onTap: _showFilterSheet,
+      child: Container(
+        height: 48,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: const Color(0xFFFF7043)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 10,
+              offset: const Offset(0, 3),
             ),
           ],
         ),
-      ],
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: const [
+            Icon(Icons.tune_rounded, color: Color(0xFFFF7043), size: 20),
+            SizedBox(width: 10),
+            Text(
+              'ตัวกรอง',
+              style: TextStyle(
+                color: Color(0xFFFF7043),
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            SizedBox(width: 6),
+            Icon(Icons.keyboard_arrow_down_rounded, color: Color(0xFFFF7043), size: 20),
+          ],
+        ),
+      ),
     );
   }
 
-  Widget _buildTypeChip(String type, String label) {
+  void _showFilterSheet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.75,
+          minChildSize: 0.5,
+          maxChildSize: 0.95,
+          builder: (context, scrollController) {
+            return StatefulBuilder(
+              builder: (context, setModalState) {
+                return Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                  ),
+                  padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
+                  child: SingleChildScrollView(
+                    controller: scrollController,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              'ตัวกรอง',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.close_rounded, color: Colors.black87),
+                              onPressed: () => Navigator.of(context).pop(),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        const Text(
+                          'ประเภทธุรกรรม',
+                          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+                        ),
+                        const SizedBox(height: 10),
+                        Row(
+                          children: [
+                            _buildTypeChip('ALL', 'ทั้งหมด', onSelected: (selected) {
+                              setModalState(() {
+                                _selectedType = null;
+                              });
+                            }),
+                            const SizedBox(width: 10),
+                            _buildTypeChip('INCOME', 'รายรับ', onSelected: (selected) {
+                              setModalState(() {
+                                _selectedType = 'INCOME';
+                              });
+                            }),
+                            const SizedBox(width: 10),
+                            _buildTypeChip('EXPENSE', 'รายจ่าย', onSelected: (selected) {
+                              setModalState(() {
+                                _selectedType = 'EXPENSE';
+                              });
+                            }),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        const Text(
+                          'เดือน',
+                          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+                        ),
+                        const SizedBox(height: 10),
+                        SizedBox(
+                          width: double.infinity,
+                          child: _buildMonthDropdown(onChanged: (month) {
+                            setModalState(() {
+                              _selectedMonth = month;
+                            });
+                          }),
+                        ),
+                        const SizedBox(height: 20),
+                        const Text(
+                          'ปี',
+                          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+                        ),
+                        const SizedBox(height: 10),
+                        SizedBox(
+                          width: double.infinity,
+                          child: _buildYearDropdown(onChanged: (year) {
+                            setModalState(() {
+                              _selectedYear = year;
+                            });
+                          }),
+                        ),
+                        const SizedBox(height: 24),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: OutlinedButton(
+                                style: OutlinedButton.styleFrom(
+                                  backgroundColor: Colors.white,
+                                  side: const BorderSide(color: Color(0xFFFF7043)),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                                  padding: const EdgeInsets.symmetric(vertical: 14),
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _selectedType = null;
+                                    final now = DateTime.now();
+                                    _selectedMonth = now.month;
+                                    _selectedYear = now.year;
+                                  });
+                                  setModalState(() {});
+                                },
+                                child: const Text(
+                                  'ล้างทั้งหมด',
+                                  style: TextStyle(
+                                    color: Color(0xFFFF7043),
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFFFF7043),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                                  padding: const EdgeInsets.symmetric(vertical: 14),
+                                ),
+                                onPressed: () {
+                                  _loadTransactions(page: 1);
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text(
+                                  'ใช้ตัวกรอง',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildTypeChip(String type, String label, {ValueChanged<bool>? onSelected}) {
     final isSelected = _selectedType == type || (type == 'ALL' && _selectedType == null);
+    final Color activeColor;
+    switch (type) {
+      case 'INCOME':
+        activeColor = const Color(0xFF43A047); // green
+        break;
+      case 'EXPENSE':
+        activeColor = const Color(0xFFE53935); // red
+        break;
+      default:
+        activeColor = const Color(0xFFFF7043); // orange for ALL
+    }
     return ChoiceChip(
       label: Text(label),
       selected: isSelected,
-      selectedColor: const Color(0xFFFF7043),
+      selectedColor: activeColor,
       backgroundColor: Colors.white,
       labelStyle: TextStyle(
         color: isSelected ? Colors.white : const Color(0xFF424242),
@@ -298,13 +444,64 @@ class _FinancialListPageState extends State<FinancialListPage> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       elevation: 0,
       side: BorderSide(
-        color: isSelected ? const Color(0xFFFF7043) : const Color(0xFFE0E0E0),
+        color: isSelected ? activeColor : const Color(0xFFE0E0E0),
       ),
-      onSelected: (_) {
-        setState(() {
-          _selectedType = type == 'ALL' ? null : type;
-        });
-        _loadTransactions(page: 1);
+      onSelected: onSelected,
+    );
+  }
+
+  Widget _buildMonthDropdown({void Function(int month)? onChanged}) {
+    const monthNames = [
+      '', 'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
+      'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม',
+    ];
+    return _buildDropdown<int>(
+      value: _selectedMonth,
+      items: List.generate(12, (i) => i + 1).map((m) {
+        return DropdownMenuItem<int>(
+          value: m,
+          child: Row(
+            children: [
+              const Icon(Icons.calendar_today_rounded, size: 16, color: Color(0xFFFF7043)),
+              const SizedBox(width: 8),
+              Text(monthNames[m]),
+            ],
+          ),
+        );
+      }).toList(),
+      onChanged: (selected) {
+        if (selected != null) {
+          if (onChanged != null) {
+            onChanged(selected);
+          } else {
+            setState(() => _selectedMonth = selected);
+            _loadTransactions(page: 1);
+          }
+        }
+      },
+    );
+  }
+
+  Widget _buildYearDropdown({void Function(int year)? onChanged}) {
+    final now = DateTime.now();
+    final years = List.generate(10, (i) => now.year - i);
+    return _buildDropdown<int>(
+      value: _selectedYear,
+      items: years.map((y) {
+        return DropdownMenuItem<int>(
+          value: y,
+          child: Text('$y'),
+        );
+      }).toList(),
+      onChanged: (selected) {
+        if (selected != null) {
+          if (onChanged != null) {
+            onChanged(selected);
+          } else {
+            setState(() => _selectedYear = selected);
+            _loadTransactions(page: 1);
+          }
+        }
       },
     );
   }

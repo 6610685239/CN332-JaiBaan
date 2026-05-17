@@ -12,15 +12,49 @@ class FinancialItemCard extends StatelessWidget {
   }) : super(key: key);
 
   Color get _accentColor {
-    return transaction.type == 'INCOME'
-        ? const Color(0xFF43A047)
-        : const Color(0xFFD32F2F);
+    switch (transaction.category?.toUpperCase()) {
+      // INCOME
+      case 'COMMON_FEE':
+        return const Color(0xFF26A69A); // teal
+      case 'RENTAL':
+        return const Color(0xFF42A5F5); // blue
+      case 'OTHER_INCOME':
+        return const Color(0xFF66BB6A); // green
+      // EXPENSE
+      case 'ELECTRICITY':
+        return const Color(0xFFFFB300); // amber
+      case 'WATER':
+        return const Color(0xFF29B6F6); // light blue
+      case 'MAINTENANCE':
+        return const Color(0xFFFF7043); // deep orange
+      case 'OTHER_EXPENSE':
+        return const Color(0xFF8D6E63); // brown
+      default:
+        return const Color(0xFF9E9E9E);
+    }
   }
 
   IconData get _typeIcon {
-    return transaction.type == 'INCOME'
-        ? Icons.arrow_downward_rounded
-        : Icons.arrow_upward_rounded;
+    switch (transaction.category?.toUpperCase()) {
+      // INCOME
+      case 'COMMON_FEE':
+        return Icons.apartment_rounded;
+      case 'RENTAL':
+        return Icons.key_rounded;
+      case 'OTHER_INCOME':
+        return Icons.account_balance_wallet_rounded;
+      // EXPENSE
+      case 'ELECTRICITY':
+        return Icons.bolt_rounded;
+      case 'WATER':
+        return Icons.water_drop_rounded;
+      case 'MAINTENANCE':
+        return Icons.build_rounded;
+      case 'OTHER_EXPENSE':
+        return Icons.receipt_long_rounded;
+      default:
+        return Icons.attach_money_rounded;
+    }
   }
 
   String _formatDate(DateTime date) {
@@ -65,8 +99,8 @@ class FinancialItemCard extends StatelessWidget {
                       width: 46,
                       height: 46,
                       decoration: BoxDecoration(
-                        color: _accentColor.withOpacity(0.12),
-                        shape: BoxShape.circle,
+                        color: _accentColor.withOpacity(0.15),
+                        borderRadius: BorderRadius.circular(14),
                       ),
                       child: Icon(_typeIcon, color: _accentColor, size: 24),
                     ),

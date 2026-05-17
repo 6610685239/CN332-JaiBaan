@@ -60,15 +60,29 @@ class _FinancialDetailPageState extends State<FinancialDetailPage> {
   }
 
   Color get _accentColor {
-    return _transaction.type == 'INCOME'
-        ? const Color(0xFF43A047)
-        : const Color(0xFFD32F2F);
+    switch (_transaction.category?.toUpperCase()) {
+      case 'COMMON_FEE':   return const Color(0xFF26A69A);
+      case 'RENTAL':       return const Color(0xFF42A5F5);
+      case 'OTHER_INCOME': return const Color(0xFF66BB6A);
+      case 'ELECTRICITY':  return const Color(0xFFFFB300);
+      case 'WATER':        return const Color(0xFF29B6F6);
+      case 'MAINTENANCE':  return const Color(0xFFFF7043);
+      case 'OTHER_EXPENSE':return const Color(0xFF8D6E63);
+      default:             return const Color(0xFF9E9E9E);
+    }
   }
 
   IconData get _typeIcon {
-    return _transaction.type == 'INCOME'
-        ? Icons.arrow_downward_rounded
-        : Icons.arrow_upward_rounded;
+    switch (_transaction.category?.toUpperCase()) {
+      case 'COMMON_FEE':   return Icons.apartment_rounded;
+      case 'RENTAL':       return Icons.key_rounded;
+      case 'OTHER_INCOME': return Icons.account_balance_wallet_rounded;
+      case 'ELECTRICITY':  return Icons.bolt_rounded;
+      case 'WATER':        return Icons.water_drop_rounded;
+      case 'MAINTENANCE':  return Icons.build_rounded;
+      case 'OTHER_EXPENSE':return Icons.receipt_long_rounded;
+      default:             return Icons.attach_money_rounded;
+    }
   }
 
   @override
