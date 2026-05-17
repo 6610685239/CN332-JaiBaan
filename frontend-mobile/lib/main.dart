@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'pages/login_page.dart';
-import 'pages/dashboard_page.dart';
+import 'pages/main_dashboard.dart';
 
 void main() {
   runApp(const JaiBaanApp());
@@ -37,7 +37,7 @@ class AuthWrapper extends StatelessWidget {
 
         // If token exists, go to dashboard; otherwise go to login
         if (snapshot.hasData && snapshot.data != null) {
-          return const DashboardPage();
+          return const MainDashboardPage();
         }
         return const LoginPage();
       },
