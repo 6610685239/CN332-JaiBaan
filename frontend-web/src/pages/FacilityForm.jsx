@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { FaArrowLeft, FaBuilding, FaSave } from 'react-icons/fa';
+import { FaArrowLeft, FaBuilding, FaSave, FaCamera, FaTimes } from 'react-icons/fa';
 import { facilityApi } from '../api/facilities';
 import './FacilityForm.css';
 
@@ -20,9 +20,40 @@ export default function FacilityForm() {
   const isEdit = Boolean(id);
 
   const [form, setForm] = useState(EMPTY);
+  const fileRef = useRef(null);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
+  const [toast, setToast] = useState(null);
+
+  const showToast = (msg, type = 'success') => {
+    setToast({ msg, type });
+    setTimeout(() => setToast(null), 3000);
+  };
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    const prevUrl = form.imageUrl;
+    if (prevUrl) facilityApi.deletePhoto(prevUrl).catch(() => {});
+    try {
+      const res = await facilityApi.uploadPhoto(file);
+      setForm((prev) => ({ ...prev, imageUrl: res.url }));
+      showToast('อัพโหลดรูปสำเร็จ');
+    } catch {
+      showToast('อัพโหลดรูปไม่สำเร็จ', 'error');
+    } finally {
+      setUploading(false);
+      e.target.value = '';
+    }
+  };
+
+  const handleRemovePhoto = () => {
+    if (form.imageUrl) facilityApi.deletePhoto(form.imageUrl).catch(() => {});
+    setForm((prev) => ({ ...prev, imageUrl: '' }));
+  };
 
   useEffect(() => {
     if (!isEdit) return;
@@ -77,6 +108,7 @@ export default function FacilityForm() {
 
   return (
     <div className="facform-page">
+      {toast && <div className={`facform-toast facform-toast--${toast.type}`}>{toast.msg}</div>}
       <header className="facform-header">
         <button className="btn-back" onClick={() => navigate('/facilities')}>
           <FaArrowLeft /> กลับ
@@ -123,24 +155,38 @@ export default function FacilityForm() {
           </div>
 
           <div className="facform-field">
-            <label className="facform-label">URL รูปภาพ</label>
-            <input
-              className="facform-input"
-              type="text"
-              placeholder="http://localhost:3000/public/images/facilities/pool.png"
-              value={form.imageUrl}
-              onChange={set('imageUrl')}
-            />
-            <p className="facform-hint">
-              ใช้ URL เต็ม เช่น <code>http://&lt;server-ip&gt;:3000/public/images/facilities/filename.png</code> เพื่อให้แอปมือถือโหลดได้
-            </p>
-            {form.imageUrl && (
-              <div className="facform-preview">
-                <img src={form.imageUrl} alt="preview" className="facform-img-preview"
-                  onError={(e) => { e.target.style.display = 'none'; }}
-                />
-              </div>
-            )}
+            <label className="facform-label">รูปภาพ</label>
+            <div className="facform-photo-area">
+              {form.imageUrl ? (
+                <div className="facform-photo-preview">
+                  <img src={form.imageUrl} alt="facility" className="facform-preview-img" />
+                  <button type="button" className="facform-photo-remove" onClick={handleRemovePhoto}>
+                    <FaTimes />
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  className="facform-upload-btn"
+                  onClick={() => fileRef.current?.click()}
+                  disabled={uploading}
+                >
+                  {uploading ? (
+                    <span className="facform-upload-spinner" />
+                  ) : (
+                    <FaCamera className="facform-camera-icon" />
+                  )}
+                  <span>{uploading ? 'กำลังอัพโหลด...' : 'เลือกรูปภาพ'}</span>
+                </button>
+              )}
+              <input
+                ref={fileRef}
+                type="file"
+                accept="image/*"
+                style={{ display: 'none' }}
+                onChange={handleFileChange}
+              />
+            </div>
           </div>
         </div>
 

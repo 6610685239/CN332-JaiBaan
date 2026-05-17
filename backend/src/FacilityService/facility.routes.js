@@ -2,6 +2,11 @@
 const express = require('express');
 const router = express.Router();
 const facilityController = require('./facility.controller');
+const upload = require('../middleware/upload');
+
+// Photo upload / delete
+router.post('/upload-photo', upload.single('file'), facilityController.uploadPhoto);
+router.delete('/photo', facilityController.removePhoto);
 
 // Specific paths must come before parameterized /:id routes
 router.get('/', facilityController.getFacilities);

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaPlus, FaEdit, FaTrash, FaEllipsisV, FaBuilding, FaSearch } from 'react-icons/fa';
+import { FaPlus, FaEdit, FaTrash, FaBuilding, FaSearch, FaClock, FaUsers } from 'react-icons/fa';
 import { HiOutlineSparkles } from 'react-icons/hi2';
 import { facilityApi } from '../api/facilities';
 import './FacilityList.css';
@@ -10,7 +10,6 @@ export default function FacilityList() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [openMenu, setOpenMenu] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
 
   const fetchData = useCallback(async () => {
@@ -60,88 +59,72 @@ export default function FacilityList() {
             className="filter-input"
           />
         </div>
+        <span className="fac-count">{filtered.length} สถานที่</span>
       </div>
 
-      <div className="fac-card">
-        {loading ? (
-          <div className="fac-loading">
-            <div className="fac-spinner" />
-            <p>กำลังโหลดข้อมูล...</p>
-          </div>
-        ) : filtered.length === 0 ? (
-          <div className="fac-empty">
-            <FaBuilding className="fac-empty-icon" />
-            <p>ไม่พบสถานที่</p>
-          </div>
-        ) : (
-          <table className="fac-table">
-            <thead>
-              <tr>
-                <th>สถานที่</th>
-                <th>รายละเอียด</th>
-                <th>ความจุ</th>
-                <th>เวลาเปิด-ปิด</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((item) => (
-                <tr key={item.id} className="fac-row">
-                  <td>
-                    <div className="fac-name-cell">
-                      {item.imageUrl ? (
-                        <img src={item.imageUrl} alt={item.name} className="fac-thumb" />
-                      ) : (
-                        <div className="fac-thumb-placeholder"><FaBuilding /></div>
-                      )}
-                      <span className="fac-name">{item.name}</span>
-                    </div>
-                  </td>
-                  <td>
-                    <span className="fac-desc">{item.description || '—'}</span>
-                  </td>
-                  <td>
-                    {item.capacityMin || item.capacityMax ? (
-                      <span className="fac-capacity">
-                        {item.capacityMin ?? '—'} – {item.capacityMax ?? '—'} คน
-                      </span>
-                    ) : '—'}
-                  </td>
-                  <td>
-                    {item.openTime && item.closeTime ? (
-                      <span className="fac-time">{item.openTime} – {item.closeTime}</span>
-                    ) : '—'}
-                  </td>
-                  <td>
-                    <div className="action-menu-wrap">
-                      <button
-                        className="action-trigger"
-                        onClick={() => setOpenMenu(openMenu === item.id ? null : item.id)}
-                      >
-                        <FaEllipsisV />
-                      </button>
-                      {openMenu === item.id && (
-                        <>
-                          <div className="action-backdrop" onClick={() => setOpenMenu(null)} />
-                          <div className="action-dropdown">
-                            <button onClick={() => { navigate(`/facilities/${item.id}/edit`); setOpenMenu(null); }}>
-                              <FaEdit /> แก้ไข
-                            </button>
-                            <div className="action-divider" />
-                            <button className="action-delete" onClick={() => { setDeleteTarget(item); setOpenMenu(null); }}>
-                              <FaTrash /> ลบ
-                            </button>
-                          </div>
-                        </>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
+      {loading ? (
+        <div className="fac-loading">
+          <div className="fac-spinner" />
+          <p>กำลังโหลดข้อมูล...</p>
+        </div>
+      ) : filtered.length === 0 ? (
+        <div className="fac-empty">
+          <div className="fac-empty-icon-wrap"><FaBuilding /></div>
+          <p className="fac-empty-title">ไม่พบสถานที่</p>
+          <p className="fac-empty-sub">ลองเปลี่ยนคำค้นหา หรือเพิ่มสถานที่ใหม่</p>
+        </div>
+      ) : (
+        <div className="fac-grid">
+          {filtered.map((item) => (
+            <div key={item.id} className="fac-card">
+              <div className="fac-card-img-wrap">
+                {item.imageUrl ? (
+                  <img src={item.imageUrl} alt={item.name} className="fac-card-img" />
+                ) : (
+                  <div className="fac-card-img-placeholder">
+                    <FaBuilding />
+                  </div>
+                )}
+                <div className="fac-card-actions">
+                  <button
+                    className="fac-action-btn fac-action-edit"
+                    onClick={() => navigate(`/facilities/${item.id}/edit`)}
+                    title="แก้ไข"
+                  >
+                    <FaEdit />
+                  </button>
+                  <button
+                    className="fac-action-btn fac-action-delete"
+                    onClick={() => setDeleteTarget(item)}
+                    title="ลบ"
+                  >
+                    <FaTrash />
+                  </button>
+                </div>
+              </div>
+
+              <div className="fac-card-body">
+                <h3 className="fac-card-name">{item.name}</h3>
+                {item.description && (
+                  <p className="fac-card-desc">{item.description}</p>
+                )}
+                <div className="fac-card-meta">
+                  {(item.capacityMin || item.capacityMax) && (
+                    <span className="fac-badge fac-badge-capacity">
+                      <FaUsers /> {item.capacityMin ?? '—'}–{item.capacityMax ?? '—'} คน
+                    </span>
+                  )}
+                  {item.openTime && item.closeTime && (
+                    <span className="fac-badge fac-badge-time">
+                      <FaClock /> {item.openTime} – {item.closeTime}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
       {deleteTarget && (
         <div className="fac-dialog-overlay" onClick={() => setDeleteTarget(null)}>

@@ -1,6 +1,27 @@
 const facilityService = require('./facility.service');
+const { saveFacilityPhoto, deleteFacilityPhoto } = require('../services/facilityFileService');
 
 class FacilityController {
+    uploadPhoto = async (req, res) => {
+        try {
+            if (!req.file) return res.status(400).json({ success: false, message: 'ไม่พบไฟล์' });
+            const url = await saveFacilityPhoto(req.file);
+            res.json({ success: true, url });
+        } catch (err) {
+            res.status(500).json({ success: false, message: err.message });
+        }
+    };
+
+    removePhoto = async (req, res) => {
+        try {
+            const { filename } = req.body;
+            if (!filename) return res.status(400).json({ success: false, message: 'ไม่พบชื่อไฟล์' });
+            await deleteFacilityPhoto(filename);
+            res.json({ success: true });
+        } catch (err) {
+            res.status(500).json({ success: false, message: err.message });
+        }
+    };
     // ใช้ => เพื่อล็อคขอบเขตฟังก์ชัน
     getFacilities = async (req, res) => {
         try {

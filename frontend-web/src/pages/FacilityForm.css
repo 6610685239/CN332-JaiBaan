@@ -177,17 +177,105 @@
   color: #ff8a75;
 }
 
-/* Image preview */
-.facform-preview {
-  margin-top: 8px;
+/* Photo upload */
+.facform-photo-area {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.facform-img-preview {
-  width: 120px;
-  height: 80px;
+.facform-upload-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 22px;
+  border: 2px dashed #ffd6d0;
+  border-radius: 18px;
+  background: #fff8f7;
+  color: #c0aaa8;
+  font-family: 'Kanit', sans-serif;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  justify-content: center;
+}
+
+.facform-upload-btn:hover:not(:disabled) {
+  border-color: #ff8a75;
+  background: #fff0ee;
+  color: #ff8a75;
+}
+
+.facform-upload-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.facform-camera-icon { font-size: 1.2rem; color: #ff8a75; }
+
+.facform-upload-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #ffd6d0;
+  border-top-color: #ff8a75;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  display: inline-block;
+}
+
+.facform-photo-preview {
+  position: relative;
+  display: inline-block;
+}
+
+.facform-preview-img {
+  width: 100%;
+  max-height: 220px;
   object-fit: cover;
+  border-radius: 18px;
+  border: 1.5px solid #ffecea;
+  display: block;
+}
+
+.facform-photo-remove {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,107,107,0.85);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: background 0.2s;
+}
+
+.facform-photo-remove:hover { background: #ff4444; }
+
+/* Toast */
+.facform-toast {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 9999;
+  padding: 12px 22px;
   border-radius: 14px;
-  border: 1px solid #ffecea;
+  font-family: 'Kanit', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+  animation: slideIn 0.3s ease;
+}
+
+.facform-toast--success { background: #22c55e; color: white; }
+.facform-toast--error   { background: #ef4444; color: white; }
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 /* Actions */

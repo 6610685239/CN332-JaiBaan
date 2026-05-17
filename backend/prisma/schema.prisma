@@ -13,20 +13,19 @@ model User {
   createdAt        DateTime  @default(now())
   avatarUrl        String?
   facebookId       String?   @unique
-  socialId         String?   @unique
   firstName        String
   lastName         String
-  email            String?
-  nickname         String?
-  gender           String?
-  country          String?
-  address          String?
   passwordHash     String
   phoneNumber      String?
   resetToken       String?
   resetTokenExpiry DateTime?
   fcmToken         String?
   socialId         String?   @unique
+  email            String?
+  nickname         String?
+  gender           String?
+  country          String?
+  address          String?
   resident         Resident?
 }
 
@@ -139,30 +138,30 @@ model Reservation {
 }
 
 model FinancialAttachment {
-  id               String               @id @default(uuid())
-  transactionId    String
-  transaction      FinancialTransaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
-  filename         String
-  originalName     String
-  url              String
-  mimeType         String
-  size             Int
-  createdAt        DateTime             @default(now())
+  id            String               @id @default(uuid())
+  transactionId String
+  filename      String
+  originalName  String
+  url           String
+  mimeType      String
+  size          Int
+  createdAt     DateTime             @default(now())
+  transaction   FinancialTransaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
 }
 
 model FinancialTransaction {
-  id              String                    @id @default(uuid())
+  id              String                @id @default(uuid())
   type            TxType
   category        TxCategory
-  amount          Decimal                   @db.Decimal(12, 2)
+  amount          Decimal               @db.Decimal(12, 2)
   description     String
   transactionDate DateTime
   year            Int
   month           Int
-  attachments     FinancialAttachment[]
   createdBy       String
-  createdAt       DateTime                  @default(now())
-  updatedAt       DateTime                  @updatedAt
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+  attachments     FinancialAttachment[]
 
   @@index([year, month])
   @@index([type])
@@ -174,7 +173,6 @@ model Parcel {
   trackingNumber  String       @unique
   carrier         String
   unitNumber      String
-  recipientName   String?
   storageLocation String?
   photoUrl        String?
   status          ParcelStatus @default(ARRIVED)
@@ -184,6 +182,7 @@ model Parcel {
   createdAt       DateTime     @default(now())
   updatedAt       DateTime
   notes           String?
+  recipientName   String?
 
   @@index([status])
   @@index([unitNumber])
