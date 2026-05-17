@@ -287,8 +287,10 @@ export default function Dashboard({ user }) {
           <section className="db-panel" style={{ '--panel-c': '#7c3aed', '--panel-border': '#ddd6fe' }}>
             <div className="db-panel-header">
               <h2 className="db-panel-title">Recent Announcements</h2>
-              <div> </div>
               <div className="db-panel-actions">
+                <button className="db-panel-link" onClick={() => navigate('/announcements')}>
+                  View all <FaArrowRight />
+                </button>
                 <button className="db-panel-action-btn" onClick={() => navigate('/announcements/new')}>
                   <FaPlus /> New
                 </button>

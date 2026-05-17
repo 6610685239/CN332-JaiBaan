@@ -1,13 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&family=Varela+Round&display=swap');
 
 .fac-page {
-  padding: 40px 50px;
+  padding: 32px 36px;
   background-color: #fff5f3;
   min-height: 100%;
   font-family: 'Kanit', sans-serif;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
 }
 
 /* ── Header ── */
@@ -152,8 +152,16 @@
 /* ── Card Grid ── */
 .fac-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+@media (max-width: 1100px) {
+  .fac-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 700px) {
+  .fac-grid { grid-template-columns: 1fr; }
 }
 
 .fac-card {
@@ -175,7 +183,7 @@
 .fac-card-img-wrap {
   position: relative;
   width: 100%;
-  height: 180px;
+  height: 160px;
   overflow: hidden;
   flex-shrink: 0;
 }
@@ -255,10 +263,10 @@
 
 /* Card body */
 .fac-card-body {
-  padding: 18px 20px 20px;
+  padding: 14px 16px 16px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
   flex: 1;
 }
 
