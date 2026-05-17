@@ -4,7 +4,10 @@ const path = require('path')
 let initialized = false
 
 const initFirebase = () => {
-  if (initialized) return
+  if (initialized || admin.apps.length > 0) {
+    initialized = true
+    return
+  }
   try {
     const serviceAccount = require(path.resolve(process.env.FIREBASE_SERVICE_ACCOUNT || './firebase-service-account.json'))
     admin.initializeApp({
@@ -71,7 +74,19 @@ const sendAnnouncementNotification = async (announcement, tokens = []) => {
 // strip HTML tags for notification body preview
 const stripHtml = (html = '') => html.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim()
 
+const sendPushNotification = async (token, title, body, data = {}) => {
+  if (!initialized) return { success: false, reason: 'Firebase not initialized' }
+  if (!token) return { success: false, reason: 'No token' }
+  try {
+    await admin.messaging().send({ token, notification: { title, body }, data })
+    return { success: true }
+  } catch (err) {
+    console.error('FCM send error:', err)
+    return { success: false, reason: err.message }
+  }
+}
+
 // Initialize on module load
 initFirebase()
 
-module.exports = { sendAnnouncementNotification }
+module.exports = { sendAnnouncementNotification, initFirebase }

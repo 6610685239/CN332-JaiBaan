@@ -1,8 +1,11 @@
-import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/foundation.dart';
+import 'dart:ui';
+
+import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:http/http.dart' as http;
+import 'agreement_page.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -14,77 +17,77 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
 
-  // Controllers ตามผังใหม่
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _firstNameController = TextEditingController();
-  final _lastNameController = TextEditingController();
-  final _phoneController = TextEditingController();
-  final _roomController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  final _roomController = TextEditingController();
+
+  bool _isPasswordVisible = false;
+  bool _isConfirmPasswordVisible = false;
+  bool _acceptAgreement = false;
+  bool _isLoading = false;
 
   String get apiUrl {
-    // ถ้าเป็น Web หรือรันบนคอม (Linux/Windows/Mac) ให้ใช้ localhost
     if (kIsWeb || Platform.isLinux || Platform.isWindows || Platform.isMacOS) {
       return 'http://localhost:3000/api/auth/register';
     }
-
-    // ถ้าเป็น Android (Emulator) ให้ใช้ 10.0.2.2
     if (Platform.isAndroid) {
       return 'http://10.0.2.2:3000/api/auth/register';
     }
-
-    // กรณีอื่นๆ (เช่น iOS Simulator)
     return 'http://localhost:3000/api/auth/register';
   }
 
   Future<void> _submitRegister() async {
-    if (_formKey.currentState!.validate()) {
-      // Check if passwords match before sending
-      if (_passwordController.text != _confirmPasswordController.text) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('รหัสผ่านไม่ตรงกัน')));
-        return;
-      }
+    if (!_formKey.currentState!.validate()) return;
+    if (!_acceptAgreement) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please accept the Agreement to continue')),
+      );
+      return;
+    }
 
-      final url = Uri.parse(apiUrl);
+    setState(() => _isLoading = true);
 
-      try {
-        final response = await http.post(
-          url,
-          headers: {'Content-Type': 'application/json'},
-          body: jsonEncode({
-            "username": _usernameController.text,
-            "password": _passwordController.text,
-            "firstName": _firstNameController.text,
-            "lastName": _lastNameController.text,
-            "phoneNumber": _phoneController.text,
-            "roomNumber": _roomController.text,
-          }),
+    try {
+      final response = await http
+          .post(
+            Uri.parse(apiUrl),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({
+              'username': _usernameController.text.trim(),
+              'password': _passwordController.text,
+              'roomNumber': _roomController.text.trim(),
+            }),
+          )
+          .timeout(const Duration(seconds: 10));
+
+      if (!mounted) return;
+
+      if (response.statusCode == 201) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Registration successful! Please sign in.'),
+            backgroundColor: Colors.green,
+          ),
         );
-
-        if (!mounted) return;
-
-        if (response.statusCode == 201 && mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('ลงทะเบียนสำเร็จ! กรุณาเข้าสู่ระบบ')),
-          );
-          Navigator.pop(context);
-        } else {
-          // กรณี Server ตอบกลับมาว่า Error (เช่น Username ซ้ำ)
-          final msg = jsonDecode(response.body)['message'] ?? 'เกิดข้อผิดพลาด';
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text('Error: $msg')));
-        }
-      } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Connection Error: ${e.toString()}")),
-          );
-        }
+        Navigator.pop(context);
+      } else {
+        final msg = jsonDecode(response.body)['message'] ?? 'Registration failed';
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $msg'), backgroundColor: Colors.red),
+        );
       }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Cannot connect to server: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -92,222 +95,423 @@ class _RegisterPageState extends State<RegisterPage> {
   void dispose() {
     _usernameController.dispose();
     _passwordController.dispose();
-    _firstNameController.dispose();
-    _lastNameController.dispose();
-    _phoneController.dispose();
-    _roomController.dispose();
     _confirmPasswordController.dispose();
+    _roomController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
     return Scaffold(
-      body: Container(
-        width: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Color(0xFFFDF0E7), Colors.white],
+      body: Stack(
+        children: [
+          Container(
+            width: double.infinity,
+            height: double.infinity,
+            color: const Color(0xFFFDF0E7),
           ),
-        ),
-        child: SingleChildScrollView(
-          child: Form(
-            key: _formKey,
-            child: Column(
+
+          Positioned.fill(
+            child: Stack(
               children: [
-                const SizedBox(height: 80),
-                Image.asset('assets/images/logo.png', height: 100),
-                const SizedBox(height: 30),
-                Text(
-                  "Create an account",
-                  style: TextStyle(
-                    color: Colors.grey[700],
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 30),
-
-                // Group 1: Account Info
-                _buildField(
-                  Icons.person_outline,
-                  "Username",
-                  _usernameController,
-                  // เพิ่ม Validator สำหรับ Username
-                  validator: (value) {
-                    if (value == null || value.isEmpty)
-                      return 'กรุณากรอก Username';
-                    if (!RegExp(r"^[a-zA-Z0-9]+$").hasMatch(value)) {
-                      return 'Username ต้องเป็นตัวอักษรหรือตัวเลขเท่านั้น';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 15),
-                _buildField(
-                  Icons.lock_outline,
-                  "Password",
-                  _passwordController,
-                  isObscure: true,
-                ),
-                const SizedBox(height: 15),
-
-                // Confirm Password พร้อม Validator เช็คความเหมือน
-                _buildField(
-                  Icons.lock_outline,
-                  "Confirm Password",
-                  _confirmPasswordController,
-                  isObscure: true,
-                  validator: (value) {
-                    if (value == null || value.isEmpty)
-                      return 'กรุณายืนยันรหัสผ่าน';
-                    if (value != _passwordController.text) {
-                      return 'รหัสผ่านไม่ตรงกัน'; // ขึ้นตัวแดงใต้ช่องนี้
-                    }
-                    return null;
-                  },
-                ),
-
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 20),
-                  child: Text(
-                    "Personal Details",
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                ),
-
-                // Group 2: Personal Info
-                _buildField(
-                  Icons.badge_outlined,
-                  "First Name",
-                  _firstNameController,
-                ),
-                const SizedBox(height: 15),
-                _buildField(
-                  Icons.badge_outlined,
-                  "Last Name",
-                  _lastNameController,
-                ),
-                const SizedBox(height: 15),
-                _buildField(
-                  Icons.phone_outlined,
-                  "Phone Number",
-                  _phoneController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty)
-                      return 'กรุณากรอกเบอร์โทรศัพท์';
-                    // Regex: ขึ้นต้นด้วย 0 ตามด้วยตัวเลขอีก 9 ตัว (รวมเป็น 10 ตัว)
-                    if (!RegExp(r'^0[0-9]{9}$').hasMatch(value)) {
-                      return 'กรุณากรอกเบอร์มือถือ 10 หลัก (ไม่ต้องมีขีด)';
-                    }
-                    return null;
-                  },
-                ),
-
-                const SizedBox(height: 15),
-                _buildField(
-                  Icons.home_outlined,
-                  "House Number",
-                  _roomController,
-                ),
-
-                const SizedBox(height: 40),
-
-                Container(
-                  width: 250,
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFFF9A082), Color(0xFFFF7B7B)],
-                    ),
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: ElevatedButton(
-                    onPressed: _submitRegister,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.transparent,
-                      shadowColor: Colors.transparent,
-                      padding: const EdgeInsets.symmetric(vertical: 15),
-                    ),
-                    child: const Text(
-                      "REGISTER",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
+                Positioned(
+                  top: size.height * 0.175,
+                  left: size.width * 0.03,
+                  child: Container(
+                    width: 180,
+                    height: 180,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: RadialGradient(
+                        colors: [
+                          const Color(0xFFF05053).withOpacity(0.7),
+                          const Color(0xFFF05053).withOpacity(0.0),
+                        ],
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(height: 20),
-
-                // Already have an account? Login link
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Already have an account? ",
-                      style: TextStyle(color: Colors.grey[600]),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      child: const Text(
-                        "Login",
-                        style: TextStyle(
-                          color: Color(0xFFFF7B7B),
-                          fontWeight: FontWeight.bold,
-                        ),
+                Positioned(
+                  top: size.height * 0.175,
+                  right: size.width * 0.03,
+                  child: Container(
+                    width: 200,
+                    height: 200,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: RadialGradient(
+                        colors: [
+                          const Color(0xFFF05053).withOpacity(0.6),
+                          const Color(0xFFF05053).withOpacity(0.0),
+                        ],
                       ),
                     ),
-                  ],
+                  ),
                 ),
-                const SizedBox(height: 50),
+                Positioned(
+                  bottom: size.height * 0.25,
+                  left: size.width * 0.15,
+                  child: Container(
+                    width: 180,
+                    height: 180,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: RadialGradient(
+                        colors: [
+                          const Color(0xFFF05053).withOpacity(0.5),
+                          const Color(0xFFF05053).withOpacity(0.0),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  bottom: size.height * 0.2,
+                  right: size.width * 0.1,
+                  child: Container(
+                    width: 150,
+                    height: 150,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: RadialGradient(
+                        colors: [
+                          const Color(0xFFF05053).withOpacity(0.6),
+                          const Color(0xFFF05053).withOpacity(0.0),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: size.height * 0.35,
+                  left: size.width * 0.45,
+                  child: Container(
+                    width: 200,
+                    height: 200,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: RadialGradient(
+                        colors: [
+                          const Color(0xFFF05053).withOpacity(0.4),
+                          const Color(0xFFF05053).withOpacity(0.0),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: size.height * 0.35,
+                  left: size.width * 0.1,
+                  child: Container(
+                    width: 200,
+                    height: 200,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: RadialGradient(
+                        colors: [
+                          const Color(0xFFF05053).withOpacity(0.4),
+                          const Color(0xFFF05053).withOpacity(0.0),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 100, sigmaY: 100),
+                  child: Container(color: Colors.transparent),
+                ),
               ],
             ),
           ),
-        ),
+
+          SafeArea(
+            child: Center(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 32),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const SizedBox(height: 40),
+
+                        Image.asset('assets/images/logo.png', height: 100),
+                        const SizedBox(height: 8),
+
+                        Text(
+                          '"Bringing heart back to the neighborhood."',
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontStyle: FontStyle.italic,
+                            fontSize: 12,
+                          ),
+                        ),
+                        const SizedBox(height: 32),
+
+                        _buildField(
+                          icon: Icons.person_outline,
+                          hint: 'Username',
+                          controller: _usernameController,
+                          validator: (v) {
+                            if (v == null || v.isEmpty) return 'Please enter a username';
+                            if (!RegExp(r'^[a-zA-Z0-9]+$').hasMatch(v)) {
+                              return 'Username must be alphanumeric';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 14),
+
+                        _buildField(
+                          icon: Icons.lock_outline,
+                          hint: 'Password',
+                          controller: _passwordController,
+                          isObscure: !_isPasswordVisible,
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _isPasswordVisible
+                                  ? Icons.visibility_outlined
+                                  : Icons.visibility_off_outlined,
+                              color: Colors.grey[400],
+                              size: 20,
+                            ),
+                            onPressed: () => setState(
+                              () => _isPasswordVisible = !_isPasswordVisible,
+                            ),
+                          ),
+                          validator: (v) {
+                            if (v == null || v.isEmpty) return 'Please enter a password';
+                            if (v.length < 6) return 'Password must be at least 6 characters';
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 14),
+
+                        _buildField(
+                          icon: Icons.lock_outline,
+                          hint: 'Confirm Password',
+                          controller: _confirmPasswordController,
+                          isObscure: !_isConfirmPasswordVisible,
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _isConfirmPasswordVisible
+                                  ? Icons.visibility_outlined
+                                  : Icons.visibility_off_outlined,
+                              color: Colors.grey[400],
+                              size: 20,
+                            ),
+                            onPressed: () => setState(
+                              () => _isConfirmPasswordVisible = !_isConfirmPasswordVisible,
+                            ),
+                          ),
+                          validator: (v) {
+                            if (v == null || v.isEmpty) return 'Please confirm your password';
+                            if (v != _passwordController.text) return 'Passwords do not match';
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 14),
+
+                        _buildField(
+                          icon: Icons.home_outlined,
+                          hint: 'Room Number',
+                          controller: _roomController,
+                        ),
+                        const SizedBox(height: 16),
+
+                        // Agreement row
+                        Row(
+                          children: [
+                            SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: Checkbox(
+                                value: _acceptAgreement,
+                                onChanged: _isLoading
+                                    ? null
+                                    : (v) => setState(() => _acceptAgreement = v ?? false),
+                                activeColor: const Color(0xFFF05053),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                side: BorderSide(color: Colors.grey[400]!, width: 1.5),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              'I accept the ',
+                              style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                            ),
+                            GestureDetector(
+                              onTap: () async {
+                                final accepted = await Navigator.push<bool>(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const AgreementPage(),
+                                  ),
+                                );
+                                if (accepted == true) {
+                                  setState(() => _acceptAgreement = true);
+                                }
+                              },
+                              child: const Text(
+                                'Agreement.',
+                                style: TextStyle(
+                                  color: Color(0xFFF05053),
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                  decoration: TextDecoration.underline,
+                                  decorationColor: Color(0xFFF05053),
+                                ),
+                              ),
+                            ),
+                            const Spacer(),
+                            GestureDetector(
+                              onTap: () {},
+                              child: Text(
+                                'Personal data',
+                                style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 24),
+
+                        Container(
+                          width: double.infinity,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFFF9A082), Color(0xFFFF7B7B)],
+                            ),
+                            borderRadius: BorderRadius.circular(25),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xFFF9A082).withOpacity(0.4),
+                                blurRadius: 20,
+                                offset: const Offset(0, 8),
+                              ),
+                            ],
+                          ),
+                          child: ElevatedButton(
+                            onPressed: _isLoading ? null : _submitRegister,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.transparent,
+                              shadowColor: Colors.transparent,
+                              disabledBackgroundColor: Colors.transparent,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(25),
+                              ),
+                            ),
+                            child: _isLoading
+                                ? const SizedBox(
+                                    width: 24,
+                                    height: 24,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2.5,
+                                    ),
+                                  )
+                                : const Text(
+                                    'SIGN UP',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                      letterSpacing: 1,
+                                    ),
+                                  ),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Already have an account? ',
+                              style: TextStyle(color: Colors.grey[600], fontSize: 13),
+                            ),
+                            TextButton(
+                              onPressed: _isLoading ? null : () => Navigator.pop(context),
+                              style: TextButton.styleFrom(
+                                padding: EdgeInsets.zero,
+                                minimumSize: const Size(0, 0),
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              ),
+                              child: const Text(
+                                'Sign In',
+                                style: TextStyle(
+                                  color: Color(0xFFF05053),
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(height: 40),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildField(
-    IconData icon,
-    String hint,
-    TextEditingController controller, {
+  Widget _buildField({
+    required IconData icon,
+    required String hint,
+    required TextEditingController controller,
     bool isObscure = false,
-    String? Function(String?)? validator, // รับฟังก์ชัน Validator เข้ามา
+    Widget? suffixIcon,
+    TextInputType? keyboardType,
+    String? Function(String?)? validator,
   }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 40),
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.95),
+        borderRadius: BorderRadius.circular(25),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: TextFormField(
         controller: controller,
         obscureText: isObscure,
-        // ถ้ามีการส่ง validator มาให้ใช้ตัวนั้น ถ้าไม่มีให้ใช้เช็คค่าว่างเป็น default
-        validator:
-            validator ??
-            (value) => (value == null || value.isEmpty)
-                ? 'กรุณากรอกข้อมูล $hint'
-                : null,
+        keyboardType: keyboardType,
+        enabled: !_isLoading,
+        validator: validator ?? (v) => (v == null || v.isEmpty) ? 'Please fill in $hint' : null,
         decoration: InputDecoration(
-          prefixIcon: Icon(icon, color: Colors.grey),
+          prefixIcon: Icon(icon, color: Colors.grey[400], size: 20),
+          suffixIcon: suffixIcon,
           hintText: hint,
-          filled: true,
-          fillColor: Colors.white,
-          // ปรับขอบเวลา Error ให้เป็นสีแดงสวยงาม
+          hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(25),
+            borderSide: BorderSide.none,
+          ),
           errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30),
+            borderRadius: BorderRadius.circular(25),
             borderSide: const BorderSide(color: Colors.red, width: 1.0),
           ),
           focusedErrorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30),
+            borderRadius: BorderRadius.circular(25),
             borderSide: const BorderSide(color: Colors.red, width: 2.0),
           ),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30),
-            borderSide: BorderSide.none,
-          ),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         ),
       ),
     );
