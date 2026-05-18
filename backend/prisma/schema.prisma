@@ -1,0 +1,231 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id               Int       @id @default(autoincrement())
+  username         String    @unique
+  role             String    @default("resident")
+  createdAt        DateTime  @default(now())
+  avatarUrl        String?
+  facebookId       String?   @unique
+  firstName        String
+  lastName         String
+  passwordHash     String
+  phoneNumber      String?
+  resetToken       String?
+  resetTokenExpiry DateTime?
+  fcmToken         String?
+  socialId         String?   @unique
+  email            String?
+  nickname         String?
+  gender           String?
+  country          String?
+  address          String?
+  resident         Resident?
+}
+
+model JuristicPerson {
+  id      Int    @id @default(autoincrement())
+  staffId String @unique
+}
+
+model RegistrationRequest {
+  id           Int      @id @default(autoincrement())
+  email        String
+  providerType String
+  roomNumber   String
+  status       String   @default("pending")
+  submittedAt  DateTime @default(now())
+}
+
+model Resident {
+  id            Int           @id @default(autoincrement())
+  unitNumber    String
+  familyMembers String[]
+  userId        Int           @unique
+  reservations  Reservation[]
+  User          User          @relation(fields: [userId], references: [id])
+  vehicles      Vehicle[]
+  visitorPasses VisitorPass[]
+}
+
+model Vehicle {
+  id         Int      @id @default(autoincrement())
+  plate      String
+  province   String
+  residentId Int
+  createdAt  DateTime @default(now())
+  resident   Resident @relation(fields: [residentId], references: [id], onDelete: Cascade)
+}
+
+model VisitorPass {
+  id         Int      @id @default(autoincrement())
+  plate      String
+  province   String
+  isActive   Boolean  @default(true)
+  expiresAt  DateTime
+  residentId Int
+  createdAt  DateTime @default(now())
+  resident   Resident @relation(fields: [residentId], references: [id], onDelete: Cascade)
+}
+
+model Announcement {
+  id            String       @id @default(uuid())
+  title         String
+  category      Category
+  content       String
+  status        Status       @default(DRAFT)
+  effectiveDate DateTime
+  expiryDate    DateTime?
+  targetType    TargetType
+  targetZones   String[]     @default([])
+  targetUnits   String[]     @default([])
+  notifSent     Boolean      @default(false)
+  scheduledAt   DateTime?
+  publishedAt   DateTime?
+  createdBy     String
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  attachments   Attachment[]
+
+  @@index([status])
+  @@index([category])
+  @@index([createdAt])
+}
+
+model Attachment {
+  id             String       @id @default(uuid())
+  filename       String
+  originalName   String
+  url            String
+  mimeType       String
+  size           Int
+  announcementId String
+  createdAt      DateTime     @default(now())
+  announcement   Announcement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
+}
+
+model Facility {
+  id           Int           @id @default(autoincrement())
+  name         String
+  imageUrl     String?
+  capacityMin  Int?
+  capacityMax  Int?
+  openTime     String?
+  closeTime    String?
+  description  String?
+  reservations Reservation[]
+}
+
+model Reservation {
+  id          Int      @id @default(autoincrement())
+  bookingCode String   @unique
+  residentId  Int
+  facilityId  Int
+  startTime   DateTime
+  endTime     DateTime
+  pax         Int      @default(1)
+  status      String   @default("CONFIRMED")
+  note        String?
+  createdAt   DateTime @default(now())
+  facility    Facility @relation(fields: [facilityId], references: [id])
+  resident    Resident @relation(fields: [residentId], references: [id])
+}
+
+model FinancialAttachment {
+  id            String               @id @default(uuid())
+  transactionId String
+  filename      String
+  originalName  String
+  url           String
+  mimeType      String
+  size          Int
+  createdAt     DateTime             @default(now())
+  transaction   FinancialTransaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+}
+
+model FinancialTransaction {
+  id              String                @id @default(uuid())
+  type            TxType
+  category        TxCategory
+  amount          Decimal               @db.Decimal(12, 2)
+  description     String
+  transactionDate DateTime
+  year            Int
+  month           Int
+  createdBy       String
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+  attachments     FinancialAttachment[]
+
+  @@index([year, month])
+  @@index([type])
+  @@index([category])
+}
+
+model Parcel {
+  id              Int          @id @default(autoincrement())
+  trackingNumber  String       @unique
+  carrier         String
+  unitNumber      String
+  storageLocation String?
+  photoUrl        String?
+  status          ParcelStatus @default(ARRIVED)
+  arrivedAt       DateTime     @default(now())
+  pickedUpAt      DateTime?
+  returnedAt      DateTime?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime
+  notes           String?
+  recipientName   String?
+
+  @@index([status])
+  @@index([unitNumber])
+}
+
+enum Category {
+  GENERAL
+  MAINTENANCE
+  EVENT
+  FINANCE
+  URGENT
+}
+
+enum Status {
+  DRAFT
+  SCHEDULED
+  PUBLISHED
+  ARCHIVED
+}
+
+enum TargetType {
+  ALL
+  ZONE
+  UNIT
+}
+
+enum ParcelStatus {
+  ARRIVED
+  PICKED_UP
+  RETURNED
+}
+
+enum TxCategory {
+  COMMON_FEE
+  RENTAL
+  OTHER_INCOME
+  ELECTRICITY
+  WATER
+  MAINTENANCE
+  OTHER_EXPENSE
+}
+
+enum TxType {
+  INCOME
+  EXPENSE
+}

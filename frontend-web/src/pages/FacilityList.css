@@ -1,0 +1,405 @@
+@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&family=Varela+Round&display=swap');
+
+.fac-page {
+  padding: 32px 36px;
+  background-color: #fff5f3;
+  min-height: 100%;
+  font-family: 'Kanit', sans-serif;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ── Header ── */
+.fac-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.fac-title {
+  font-family: 'Varela Round', sans-serif;
+  font-size: 2rem;
+  color: #2d3436;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+}
+
+.fac-title-spark { color: #ffb100; font-size: 1.6rem; }
+.fac-subtitle { color: #8e7f7d; font-size: 1rem; margin-top: 4px; }
+
+.btn-primary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(to right, #ff9a8b, #ff6b6b);
+  color: white;
+  border: none;
+  padding: 12px 22px;
+  border-radius: 15px;
+  font-size: 0.95rem;
+  font-family: 'Kanit', sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 8px 15px rgba(255, 107, 107, 0.25);
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 20px rgba(255, 107, 107, 0.35);
+  filter: brightness(1.05);
+}
+
+/* ── Filter Bar ── */
+.fac-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: white;
+  padding: 14px 20px;
+  border-radius: 20px;
+  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.06);
+}
+
+.filter-search-box {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  background: #fdf2f0;
+  border-radius: 50px;
+  padding: 8px 18px;
+  gap: 10px;
+  border: 1.5px solid transparent;
+  transition: all 0.3s;
+}
+
+.filter-search-box:focus-within {
+  border-color: #ff8a75;
+  background: white;
+  box-shadow: 0 0 0 4px rgba(255, 138, 117, 0.1);
+}
+
+.filter-search-icon { color: #c0aaa8; font-size: 0.85rem; flex-shrink: 0; }
+
+.filter-input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-family: 'Kanit', sans-serif;
+  font-size: 0.9rem;
+  color: #555;
+  width: 100%;
+}
+
+.filter-input::placeholder { color: #c0aaa8; }
+
+.fac-count {
+  font-size: 0.85rem;
+  color: #c0aaa8;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ── States ── */
+.fac-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px;
+  color: #c0aaa8;
+  gap: 14px;
+}
+
+.fac-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid #ffd6d0;
+  border-top-color: #ff8a75;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.fac-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px;
+  gap: 10px;
+}
+
+.fac-empty-icon-wrap {
+  width: 72px;
+  height: 72px;
+  background: #fff0ee;
+  border-radius: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  color: #ffb8a8;
+  margin-bottom: 6px;
+}
+
+.fac-empty-title { font-size: 1.1rem; font-weight: 600; color: #2d3436; margin: 0; }
+.fac-empty-sub { font-size: 0.88rem; color: #c0aaa8; margin: 0; }
+
+/* ── Card Grid ── */
+.fac-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+@media (max-width: 1100px) {
+  .fac-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 700px) {
+  .fac-grid { grid-template-columns: 1fr; }
+}
+
+.fac-card {
+  background: white;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(255, 107, 107, 0.07);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.fac-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 16px 36px rgba(255, 107, 107, 0.14);
+}
+
+/* Image area */
+.fac-card-img-wrap {
+  position: relative;
+  width: 100%;
+  height: 160px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.fac-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.35s ease;
+}
+
+.fac-card:hover .fac-card-img {
+  transform: scale(1.05);
+}
+
+.fac-card-img-placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #fff0ee, #ffe4df);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  color: #ffb8a8;
+}
+
+/* Action buttons overlay */
+.fac-card-actions {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  gap: 8px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.fac-card:hover .fac-card-actions {
+  opacity: 1;
+}
+
+.fac-action-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  transition: all 0.2s;
+}
+
+.fac-action-edit {
+  background: rgba(255, 255, 255, 0.85);
+  color: #ff8a75;
+}
+
+.fac-action-edit:hover {
+  background: white;
+  color: #ff6b6b;
+  transform: scale(1.1);
+}
+
+.fac-action-delete {
+  background: rgba(255, 107, 107, 0.85);
+  color: white;
+}
+
+.fac-action-delete:hover {
+  background: #ff4444;
+  transform: scale(1.1);
+}
+
+/* Card body */
+.fac-card-body {
+  padding: 14px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.fac-card-name {
+  font-family: 'Varela Round', sans-serif;
+  font-size: 1.05rem;
+  color: #2d3436;
+  margin: 0;
+}
+
+.fac-card-desc {
+  font-size: 0.83rem;
+  color: #8e7f7d;
+  line-height: 1.5;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Badges */
+.fac-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.fac-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+
+.fac-badge-capacity {
+  background: #fff0ee;
+  color: #ff8a75;
+}
+
+.fac-badge-time {
+  background: #f0f4ff;
+  color: #6b7aff;
+}
+
+/* ── Delete Dialog ── */
+.fac-dialog-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(45, 52, 54, 0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.2s ease;
+}
+
+.fac-dialog {
+  background: white;
+  border-radius: 30px;
+  padding: 36px;
+  width: 100%;
+  max-width: 420px;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(255, 107, 107, 0.15);
+  animation: slideUp 0.3s ease;
+}
+
+.dialog-icon-wrap {
+  width: 60px;
+  height: 60px;
+  background: #fee2e2;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+}
+
+.dialog-icon { font-size: 1.4rem; color: #ff6b6b; }
+.dialog-title { font-family: 'Varela Round', sans-serif; font-size: 1.3rem; color: #2d3436; margin-bottom: 6px; }
+.dialog-sub { font-size: 0.85rem; color: #8e7f7d; margin-bottom: 16px; }
+
+.dialog-target {
+  background: #fff8f7;
+  border: 1px solid #ffecea;
+  border-radius: 14px;
+  padding: 12px 16px;
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 24px;
+}
+
+.dialog-actions { display: flex; gap: 12px; }
+
+.btn-cancel {
+  flex: 1;
+  padding: 12px;
+  border: 1.5px solid #ffd6d0;
+  border-radius: 14px;
+  background: white;
+  font-family: 'Kanit', sans-serif;
+  font-size: 0.95rem;
+  color: #8e7f7d;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-cancel:hover { background: #fff5f3; border-color: #ff8a75; color: #ff8a75; }
+
+.btn-danger {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(to right, #ff9a8b, #ff6b6b);
+  color: white;
+  font-family: 'Kanit', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 6px 15px rgba(255, 107, 107, 0.3);
+  transition: all 0.2s;
+}
+
+.btn-danger:hover { filter: brightness(1.05); transform: translateY(-1px); }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { transform: translateY(16px); opacity: 0; } to { transform: none; opacity: 1; } }
