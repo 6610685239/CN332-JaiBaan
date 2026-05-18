@@ -231,7 +231,7 @@ cli-app
     </a>
 </br>
 <a href="https://canva.link/eiid01jggq4236u">
-  <img src="https://img.shields.io/badge/Canva-Week_4_CLI_Implementation-00C4CC?style=for-the-badge&logo=canva&logoColor=white" alt="Final Slides" />
+  <img src="https://img.shields.io/badge/Canva-Final-Slide-00C4CC?style=for-the-badge&logo=canva&logoColor=white" alt="Final Slides" />
 </a>
  
 ---
