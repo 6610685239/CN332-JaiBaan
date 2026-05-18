@@ -229,7 +229,11 @@ cli-app
     <a href="https://www.canva.com/design/DAHAFJmlls4/GA3YTewO8UXsmbn_-NIkRw/view?utm_content=DAHAFJmlls4&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hf75cb9804c">
       <img src="https://img.shields.io/badge/Canva-Week_4_CLI_Implementation-00C4CC?style=for-the-badge&logo=canva&logoColor=white" alt="Week 4 Slides" />
     </a>
-
+</br>
+<a href="https://canva.link/eiid01jggq4236u">
+  <img src="https://img.shields.io/badge/Canva-Week_4_CLI_Implementation-00C4CC?style=for-the-badge&logo=canva&logoColor=white" alt="Final Slides" />
+</a>
+ 
 ---
 
 </div>
