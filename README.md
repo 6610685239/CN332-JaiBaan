@@ -204,35 +204,22 @@ cli-app
 
 ---
 
-## Design & Slides
+## Presentations & Slides
 
 <div align="center">
 
 <a href="https://www.figma.com/proto/n3McNAhstvGYcdtzi9dBgB/332?node-id=74-1203" target="_blank">
   <img src="https://img.shields.io/badge/Figma-GUI_Prototype-F24E1E?style=for-the-badge&logo=figma&logoColor=white" alt="Figma Prototype" />
 </a>
+<br><br>
+
+| Date | Content Covered | Slides & Materials |
+| :--: | :--- | :--- |
+| **9 Feb 2026** | **Week 1 - 4:** Concept, Requirements, Use Case, Class Diagram, and CLI Implementation | <a href="https://www.canva.com/design/DAG-GTz4SEA/qIboK-DglKiTsCFo_rzSeA/view?utm_content=DAG-GTz4SEA&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h94c65cc7eb"><img src="https://img.shields.io/badge/Canva-Week_1-00C4CC?style=flat-square&logo=canva&logoColor=white" alt="Week 1" /></a> <a href="https://www.canva.com/design/DAG-x67lH8g/6mgE1tJihe294j1pzOv7Mg/view?utm_content=DAG-x67lH8g&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=he09656b283"><img src="https://img.shields.io/badge/Canva-Week_2-00C4CC?style=flat-square&logo=canva&logoColor=white" alt="Week 2" /></a> <a href="https://www.canva.com/design/DAG_dIobgos/5u-nA9_Q7cZAXXzgKPuSrA/view?utm_content=DAG_dIobgos&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h582fbb0d21"><img src="https://img.shields.io/badge/Canva-Week_3-00C4CC?style=flat-square&logo=canva&logoColor=white" alt="Week 3" /></a> <a href="https://www.canva.com/design/DAHAFJmlls4/GA3YTewO8UXsmbn_-NIkRw/view?utm_content=DAHAFJmlls4&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hf75cb9804c"><img src="https://img.shields.io/badge/Canva-Week_4-00C4CC?style=flat-square&logo=canva&logoColor=white" alt="Week 4" /></a> |
+| **27 Apr 2026** | **Week 6 - 7:** Implementing User Login & Register Interfaces, Plan Implementation, Preview feature| <a href="https://canva.link/kfen48pfq2u4hnj"><img src="https://img.shields.io/badge/Canva-Week_6--7-00C4CC?style=flat-square&logo=canva&logoColor=white" alt="Week 6-7" /></a> |
+| **18 May 2026** | **Week Final:** Final Presentation & Demo | <a href="https://canva.link/eiid01jggq4236u"><img src="https://img.shields.io/badge/Canva-Final_Slide-00C4CC?style=flat-square&logo=canva&logoColor=white" alt="Final Slides" /></a> |
 
 </div>
-<br>
-    <a href="https://www.canva.com/design/DAG-GTz4SEA/qIboK-DglKiTsCFo_rzSeA/view?utm_content=DAG-GTz4SEA&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h94c65cc7eb">
-    <img src="https://img.shields.io/badge/Canva-Week_1_Concept-00C4CC?style=for-the-badge&logo=canva&logoColor=white" alt="Week 1 Slides" />
-    </a>
-</br>
-    <a href="https://www.canva.com/design/DAG-x67lH8g/6mgE1tJihe294j1pzOv7Mg/view?utm_content=DAG-x67lH8g&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=he09656b283">
-    <img src="https://img.shields.io/badge/Canva-Week_2_Requirements-00C4CC?style=for-the-badge&logo=canva&logoColor=white" alt="Week 2 Slides" />
-    </a>
-<br>
-    <a href="https://www.canva.com/design/DAG_dIobgos/5u-nA9_Q7cZAXXzgKPuSrA/view?utm_content=DAG_dIobgos&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h582fbb0d21">
-    <img src="https://img.shields.io/badge/Canva-Week_3_use_case_diagram_&_class diagram-00C4CC?style=for-the-badge&logo=canva&logoColor=white" alt="Week 3 Slides" />
-    </a>
-</br>
-    <a href="https://www.canva.com/design/DAHAFJmlls4/GA3YTewO8UXsmbn_-NIkRw/view?utm_content=DAHAFJmlls4&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hf75cb9804c">
-      <img src="https://img.shields.io/badge/Canva-Week_4_CLI_Implementation-00C4CC?style=for-the-badge&logo=canva&logoColor=white" alt="Week 4 Slides" />
-    </a>
-</br>
-<a href="https://canva.link/eiid01jggq4236u">
-  <img src="https://img.shields.io/badge/Canva-Final_Slide-00C4CC?style=for-the-badge&logo=canva&logoColor=white" alt="Final Slides" />
-</a>
  
 ---
 
