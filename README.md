@@ -188,6 +188,22 @@ cli-app
 
 ---
 
+  ## Account
+
+  <b>Admin Website</b>
+  Username : admin
+  Password : admin
+  
+  <b>Mobile Application </b>
+  Username : res1 
+  Password : 1234
+  
+  Username : res2
+  Password : 1234
+
+
+---
+
 <div align="center">
   
 ## Project Members
