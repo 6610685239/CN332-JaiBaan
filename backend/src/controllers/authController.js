@@ -3,6 +3,7 @@ const crypto = require('crypto');
 const prisma = require('../../db');
 const jwt = require('jsonwebtoken');
 const admin = require('firebase-admin');
+const axios = require('axios');
 require('../services/notificationService');
 
 // Register new resident user
@@ -95,7 +96,7 @@ exports.residentLogin = async (req, res) => {
                 role: user.role,
                 username: user.username
             },
-            process.env.JWT_SECRET || 'your_secret_key',
+            process.env.JWT_SECRET,
             { expiresIn: '7d' }
         );
 
@@ -166,25 +167,52 @@ exports.juristicLogin = async (req, res) => {
 // Google Sign-In — verify token, check if user exists
 exports.googleLogin = async (req, res) => {
     try {
-        const { idToken } = req.body;
-        if (!idToken) return res.status(400).json({ message: 'idToken is required' });
+        const { idToken, accessToken } = req.body;
+        if (!idToken && !accessToken) {
+            return res.status(400).json({ message: 'idToken or accessToken is required' });
+        }
 
-        // Verify Google OAuth token via Google's tokeninfo endpoint
-        const googleRes = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${idToken}`);
-        const decoded = await googleRes.json();
-        if (decoded.error) return res.status(401).json({ message: 'Invalid Google token' });
+        let decoded;
+        if (idToken) {
+            // Verify Google OAuth token via Google's tokeninfo endpoint
+            const googleRes = await axios.get(`https://oauth2.googleapis.com/tokeninfo?id_token=${idToken}`);
+            decoded = googleRes.data;
+        } else {
+            // Verify via Access Token
+            const googleRes = await axios.get('https://www.googleapis.com/oauth2/v3/userinfo', {
+                headers: { Authorization: `Bearer ${accessToken}` }
+            });
+            decoded = googleRes.data;
+        }
 
-        const uid = decoded.sub;
+        if (decoded.error || (!decoded.sub && !decoded.id)) {
+            return res.status(401).json({ message: 'Invalid Google token' });
+        }
+
+        const uid = decoded.sub || decoded.id;
         const email = decoded.email;
         const name = decoded.name;
         const picture = decoded.picture;
 
-        const existingUser = await prisma.user.findFirst({ where: { socialId: uid } });
+        // 1. Check if user already linked social account
+        let existingUser = await prisma.user.findFirst({ where: { socialId: uid } });
+
+        // 2. If not, check if user exists with the same email (and link them)
+        if (!existingUser && email) {
+            existingUser = await prisma.user.findFirst({ where: { email: email } });
+            if (existingUser) {
+                // Link the account
+                await prisma.user.update({
+                    where: { id: existingUser.id },
+                    data: { socialId: uid, avatarUrl: existingUser.avatarUrl || picture }
+                });
+            }
+        }
 
         if (existingUser) {
             const token = jwt.sign(
                 { id: existingUser.id, role: existingUser.role, username: existingUser.username },
-                process.env.JWT_SECRET || 'your_secret_key',
+                process.env.JWT_SECRET,
                 { expiresIn: '7d' }
             );
             return res.json({
@@ -209,7 +237,7 @@ exports.googleLogin = async (req, res) => {
             picture: picture || '',
         });
     } catch (error) {
-        console.error(error);
+        console.error('Google Login Error:', error.response?.data || error.message);
         res.status(500).json({ message: 'Google login failed', error: error.message });
     }
 };
@@ -230,7 +258,13 @@ exports.googleComplete = async (req, res) => {
         const nameParts = (name || '').split(' ');
         const firstName = nameParts[0] || 'Google';
         const lastName = nameParts.slice(1).join(' ') || 'User';
-        const username = email ? email.split('@')[0] : googleId.substring(0, 10);
+        
+        // Handle username conflict
+        let username = email ? email.split('@')[0] : googleId.substring(0, 10);
+        const userExists = await prisma.user.findUnique({ where: { username } });
+        if (userExists) {
+            username = `${username}_${crypto.randomBytes(3).toString('hex')}`;
+        }
 
         const newUser = await prisma.user.create({
             data: {
@@ -239,6 +273,7 @@ exports.googleComplete = async (req, res) => {
                 firstName,
                 lastName,
                 phoneNumber: '',
+                email: email || null,
                 role: 'resident',
                 socialId: googleId,
                 avatarUrl: picture || null,
@@ -249,7 +284,7 @@ exports.googleComplete = async (req, res) => {
 
         const token = jwt.sign(
             { id: newUser.id, role: newUser.role, username: newUser.username },
-            process.env.JWT_SECRET || 'your_secret_key',
+            process.env.JWT_SECRET,
             { expiresIn: '7d' }
         );
 
@@ -265,7 +300,7 @@ exports.googleComplete = async (req, res) => {
             },
         });
     } catch (error) {
-        console.error(error);
+        console.error('Google Complete Error:', error);
         res.status(500).json({ message: 'Setup failed', error: error.message });
     }
 };

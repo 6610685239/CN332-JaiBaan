@@ -29,7 +29,11 @@ class _LoginPageState extends State<LoginPage> {
 
   final GoogleSignIn _googleSignIn = GoogleSignIn(
     scopes: ['email', 'profile'],
-    serverClientId: '384716873013-kkg9efi8ttj6k0fqdjpqgrjisfrmhktr.apps.googleusercontent.com',
+    clientId:
+        '1030820932337-5v9p4g0so5pif6laan7kj1hmaacipcmd.apps.googleusercontent.com',
+    serverClientId: kIsWeb
+        ? null
+        : '1030820932337-5v9p4g0so5pif6laan7kj1hmaacipcmd.apps.googleusercontent.com',
   );
 
   String get googleApiUrl {
@@ -43,31 +47,50 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> _handleGoogleSignIn() async {
     setState(() => _isGoogleLoading = true);
     try {
+      print('🔵 Starting Google Sign-In...');
       final account = await _googleSignIn.signIn();
-      if (account == null) return;
+      if (account == null) {
+        print('🟡 Google Sign-In cancelled by user');
+        return;
+      }
 
+      print('🟢 Google account selected: ${account.email}');
       final auth = await account.authentication;
       final idToken = auth.idToken;
-      if (idToken == null) {
+      final accessToken = auth.accessToken;
+
+      if (idToken == null && accessToken == null) {
+        print('🔴 Failed to get any token from Google');
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to get Google token'), backgroundColor: Colors.red),
+          const SnackBar(
+            content: Text('Failed to get Google tokens'),
+            backgroundColor: Colors.red,
+          ),
         );
         return;
       }
 
+      print('📤 Sending tokens to backend: $googleApiUrl');
       final response = await http
           .post(
             Uri.parse(googleApiUrl),
             headers: {'Content-Type': 'application/json'},
-            body: jsonEncode({'idToken': idToken}),
+            body: jsonEncode({
+              'idToken': idToken,
+              'accessToken': accessToken,
+            }),
           )
-          .timeout(const Duration(seconds: 10));
+          .timeout(const Duration(seconds: 15));
+
+      print('📥 Backend response status: ${response.statusCode}');
+      print('📥 Backend response body: ${response.body}');
 
       if (!mounted) return;
       final data = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
         if (data['needsSetup'] == true) {
+          print('ℹ️ User needs room setup');
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -80,6 +103,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
           );
         } else {
+          print('✅ Google login successful');
           final prefs = await SharedPreferences.getInstance();
           await prefs.setString('auth_token', data['token']);
           await prefs.setString('user_data', jsonEncode(data['user']));
@@ -91,11 +115,16 @@ class _LoginPageState extends State<LoginPage> {
           }
         }
       } else {
+        print('🔴 Google sign-in failed: ${data['message']}');
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(data['message'] ?? 'Google sign-in failed'), backgroundColor: Colors.red),
+          SnackBar(
+            content: Text(data['message'] ?? 'Google sign-in failed'),
+            backgroundColor: Colors.red,
+          ),
         );
       }
     } catch (e) {
+      print('❌ Error during Google Sign-In: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
@@ -115,7 +144,6 @@ class _LoginPageState extends State<LoginPage> {
     }
     return 'http://localhost:3000/api/auth/login';
   }
-
 
   Future<void> _handleLogin() async {
     final username = _usernameController.text.trim();
@@ -575,12 +603,28 @@ class _LoginPageState extends State<LoginPage> {
                       // Divider
                       Row(
                         children: [
-                          Expanded(child: Divider(color: Colors.grey[300], thickness: 1)),
+                          Expanded(
+                            child: Divider(
+                              color: Colors.grey[300],
+                              thickness: 1,
+                            ),
+                          ),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 12),
-                            child: Text('or', style: TextStyle(color: Colors.grey[400], fontSize: 12)),
+                            child: Text(
+                              'or',
+                              style: TextStyle(
+                                color: Colors.grey[400],
+                                fontSize: 12,
+                              ),
+                            ),
                           ),
-                          Expanded(child: Divider(color: Colors.grey[300], thickness: 1)),
+                          Expanded(
+                            child: Divider(
+                              color: Colors.grey[300],
+                              thickness: 1,
+                            ),
+                          ),
                         ],
                       ),
                       const SizedBox(height: 16),
@@ -601,15 +645,25 @@ class _LoginPageState extends State<LoginPage> {
                           ],
                         ),
                         child: ElevatedButton(
-                          onPressed: (_isLoading || _isGoogleLoading) ? null : _handleGoogleSignIn,
+                          onPressed: (_isLoading || _isGoogleLoading)
+                              ? null
+                              : _handleGoogleSignIn,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.transparent,
                             shadowColor: Colors.transparent,
                             disabledBackgroundColor: Colors.transparent,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(25),
+                            ),
                           ),
                           child: _isGoogleLoading
-                              ? const SizedBox(width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 2.5))
+                              ? const SizedBox(
+                                  width: 22,
+                                  height: 22,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2.5,
+                                  ),
+                                )
                               : Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
@@ -617,7 +671,11 @@ class _LoginPageState extends State<LoginPage> {
                                       'https://www.google.com/favicon.ico',
                                       width: 20,
                                       height: 20,
-                                      errorBuilder: (_, __, ___) => const Icon(Icons.g_mobiledata, size: 22, color: Color(0xFF4285F4)),
+                                      errorBuilder: (_, __, ___) => const Icon(
+                                        Icons.g_mobiledata,
+                                        size: 22,
+                                        color: Color(0xFF4285F4),
+                                      ),
                                     ),
                                     const SizedBox(width: 10),
                                     Text(
@@ -652,7 +710,8 @@ class _LoginPageState extends State<LoginPage> {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => const RegisterPage(),
+                                        builder: (context) =>
+                                            const RegisterPage(),
                                       ),
                                     );
                                   },

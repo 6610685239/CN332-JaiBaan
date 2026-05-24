@@ -19,7 +19,9 @@ app.add_middleware(
 )
 
 import os
-API_KEY = os.environ.get("ROBOFLOW_API_KEY", "8WLfehYcXnvFHJCHtJC2")
+API_KEY = os.environ.get("ROBOFLOW_API_KEY")
+if not API_KEY:
+    print("❌ WARNING: ROBOFLOW_API_KEY not found in environment variables!")
 MODEL_ID = "license-plate-recognition-rxg4e/4"
 
 print("Connecting to Roboflow local server...")
