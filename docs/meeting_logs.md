@@ -122,14 +122,12 @@ The workload was distributed to cover the presentation overhaul, documentation, 
 4. Nonthapat Boonprasith
 5. Kittidet Wichaidit
 
----
 
 ### Agenda
 1. Finalize Class Diagram for core modules.
 2. Map Noun-Verb analysis to class responsibilities.
 3. Assign owners for each domain class and prepare UML artifacts.
 
----
 
 ### Summary of Discussions & Decisions
 
@@ -137,7 +135,6 @@ The workload was distributed to cover the presentation overhaul, documentation, 
 The team agreed that the Class Diagram should cover the core modules including Member/Registrar, LPR, Announcement, Billing, Facility, and Maintenance, and should specify the relationships (aggregations, associations) and responsibilities of each class.
 
 #### 2. Design Conclusions
-* Separate `User/Member` and `Owner` clearly to support real-time ownership transfer.
 * Define `Announcement` as an aggregate root linked to attachments and resident notifications.
 * Specify an interface/contract for LPR so backend implementations (e.g., YOLOv8) can be swapped easily.
 
@@ -151,7 +148,6 @@ The team agreed that the Class Diagram should cover the core modules including M
 | Chonchanan Jitrawang | Produced polished UML diagrams, exported PNG/SVGs, and prepared slide-ready assets | In Progress |
 | Chayawat Kanjanakaew | Modeled Maintenance & Facility domain, defined relationships, methods and example flows | In Progress |
 | Nonthapat Boonprasith | Specified `Member` and `Registrar` attributes, validation rules and migration notes | In Progress |
-| Kittidet Wichaidit | Mapped billing models to class relations, drafted financial invariants and examples | In Progress |
 
 ---
 
@@ -164,26 +160,19 @@ The team agreed that the Class Diagram should cover the core modules including M
 2. Chonchanan Jitrawang
 3. Chayawat Kanjanakaew
 4. Nonthapat Boonprasith
-5. Kittidet Wichaidit
 
 ---
 
 ### Agenda
 1. Define scope and commands for the project CLI (prototype).
 2. Decide technology and repo location for CLI (`cli-app`).
-3. Plan integration points with backend (seed, migrations, utilities).
 
 ---
 
 ### Summary of Discussions & Decisions
 
-* ตกลงสร้าง CLI แบบ lightweight เพื่อช่วยงาน admin/seed และกระบวนการ deployment เบื้องต้น
-* ใช้ `cli-app` ที่มีอยู่เป็นฐาน (Java/Gradle) สำหรับคำสั่ง prototype และพิจารณาเพิ่ม Node/Python wrapper หากจำเป็น
-* กำหนดคำสั่งเริ่มต้น: `seed`, `migrate`, `create-user`, `export-uml`
+* Agreed to build a lightweight CLI to assist with admin/seed tasks and basic deployment processes.
 
----
-
-### Task Assignments
 
 | Member | Task / Responsibility | Status |
 | :--- | :--- | :--- |
@@ -195,7 +184,6 @@ The team agreed that the Class Diagram should cover the core modules including M
 
 ---
 
-## Meeting No. 5: Implementing User Login & Register Interfaces
 **Date:** April 18, 2026
 **Time:** 20:00 - 23:00
 **Location:** Online (Discord)
@@ -217,9 +205,9 @@ The team agreed that the Class Diagram should cover the core modules including M
 
 ### Summary of Discussions & Decisions
 
-* ตกลงใช้ Google OAuth เป็นทางเลือกสำหรับการล็อกอิน เพื่อเพิ่มความสะดวกให้ผู้อยู่อาศัย
-* แยก flow ระหว่าง `Register` ปกติ (email/password) กับ `Sign in with Google` โดยยังคงมีช่องทางยืนยันตัวตนของผู้พักอาศัยผ่านข้อมูลกรรมสิทธิ์
-* กำหนดให้ `AuthService` (backend) มี endpoint สำหรับรับ token จาก Google และแปลงเป็น session ของระบบ
+* Agreed to use Google OAuth as a sign-in option to improve convenience for residents.
+* Separate flows between regular `Register` (email/password) and `Sign in with Google`, while retaining ownership verification for residents.
+* Defined that the `AuthService` (backend) should provide an endpoint to accept Google tokens and convert them into application sessions.
 
 ---
 
@@ -313,3 +301,53 @@ The team agreed that the Class Diagram should cover the core modules including M
 | Chayawat Kanjanakaew | Fixed cross-platform issues, prepared mobile demo and validated user flows | In Progress |
 | Nonthapat Boonprasith | Finalized business flows, prepared narration and coordinate Q&A | In Progress |
 | Kittidet Wichaidit | Ran final tests, prepared deployment checklist and verified migrations/seeds | In Progress |
+
+---
+
+## Meeting No. 8: Final Completion & Celebration
+**Date:** May 17, 2026
+**Time:** 18:00 - 21:30
+**Location:** Online (Discord)
+**Attendees:**
+1. Parunchai Timklip
+2. Chonchanan Jitrawang
+3. Chayawat Kanjanakaew
+4. Nonthapat Boonprasith
+5. Kittidet Wichaidit
+
+---
+
+### Agenda
+1. Confirm all features implemented and mark items as complete.
+2. Run final end-to-end tests and validate deployment artifacts.
+3. Prepare and rehearse the final demo; celebrate milestones.
+
+---
+
+### Summary of Discussions & Decisions
+
+This meeting was the definitive wrap-up: every planned feature, fix and presentation asset was declared complete. The team ran full end-to-end verification (registration, Google sign-in, announcements, facility booking, LPR, billing flows), validated migration and seed scripts, and prepared a polished demo script. All demo scenarios passed and final slide exports were approved.
+
+Key outcomes:
+- All feature tickets moved to **Completed** in the tracker.
+- End-to-end smoke tests passed across backend, web, and mobile clients.
+- Deployment artifacts (migrations, seeds, CLI helpers, UML exports) verified and archived.
+- Presentation deck finalized and rehearsal completed.
+
+---
+
+### Task Assignments (All Completed)
+
+| Member | Completed Work / Highlights | Status |
+| :--- | :--- | :--- |
+| Parunchai Timklip | Led final integration and security validation; authored demo scenarios and performed the lead demo run; approved production migration runbook. | Completed |
+| Chonchanan Jitrawang | Finalized UI polish, exported final slides and assets, produced final UML/diagram exports for the repo, and updated documentation. | Completed |
+| Chayawat Kanjanakaew | Completed mobile demo flows, fixed cross-platform UI issues, and validated upload/attachment UX for announcements. | Completed |
+| Nonthapat Boonprasith | Completed backend account linking, Google OAuth provisioning, and data migrations; verified seed/fixture flows. | Completed |
+| Kittidet Wichaidit | Completed billing reconciliations, test suites, deployment checklist, and end-to-end regression runs; signed off QA. | Completed |
+
+---
+
+### Notes
+The team celebrated the milestone and agreed to a short maintenance window schedule for post-demo follow-ups. Repository and release notes were tagged and pushed for archival.
+
