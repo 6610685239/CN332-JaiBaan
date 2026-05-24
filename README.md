@@ -161,7 +161,7 @@ cli-app
 
 ---
 
-<div>
+<div align="center">
 
 ## How to Run JaiBaan
 
@@ -188,15 +188,18 @@ cli-app
 
 ---
 
+<div align="center">
+
   ## Account
 
-| Role | Username |Password |
-|-------|------------|-----------------------|
-| Admin Website | admin | admin       |
-| Mobile Application | res1 | 1234  |
-| Mobile Application | res2 | 1234      |
+  | Role | Username |Password |
+  |-------|------------|-----------------------|
+  | Admin Website | admin | admin       |
+  | Mobile Application | res1 | 1234  |
+  | Mobile Application | res2 | 1234      |
 
 
+</div>
 
 ---
 
