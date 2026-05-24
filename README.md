@@ -170,7 +170,8 @@ cli-app
 ```bash
   cd /backend 
   npm install
-  npx prisma generate 
+  npx prisma generate
+  npx prisma db push
   node server.js
 ```
 ```bash
@@ -183,6 +184,16 @@ cli-app
   flutter pub get
   flutter run
 ```  
+<b>License Plate Recognition Function</b>
+```bash
+  cd /lpr-api
+  pip install fastapi uvicorn inference-sdk easyocr opencv-python python-dotenv
+  pip install torch --index-url https://download.pytorch.org/whl/cu128
+```  
+Roboflow Desktop App
+```bash
+  uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+``` 
 </p>
 </div>
 
