@@ -161,7 +161,7 @@ cli-app
 
 ---
 
-<div align="center">
+<div>
 
 ## How to Run JaiBaan
 
