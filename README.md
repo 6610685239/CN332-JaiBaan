@@ -165,6 +165,8 @@ cli-app
 
 ## How to Run JaiBaan
 
+</div>
+
 <p>
 
 ```bash
@@ -195,7 +197,7 @@ Roboflow Desktop App
   uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 ``` 
 </p>
-</div>
+
 
 ---
 
