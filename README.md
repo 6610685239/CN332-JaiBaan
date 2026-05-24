@@ -190,16 +190,12 @@ cli-app
 
   ## Account
 
-  <b>Admin Website</b>
-  Username : admin
-  Password : admin
-  
-  <b>Mobile Application </b>
-  Username : res1 
-  Password : 1234
-  
-  Username : res2
-  Password : 1234
+| Role | Username |Password |
+|-------|------------|-----------------------|
+| Admin Website | admin | admin       |
+| Mobile Application | res1 | 1234  |
+| Mobile Application | res2 | 1234      |
+
 
 
 ---
