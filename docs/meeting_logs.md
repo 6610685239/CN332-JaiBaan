@@ -110,3 +110,206 @@ The workload was distributed to cover the presentation overhaul, documentation, 
 | **Team** | **Repository Config** | Changed LICENSE file to **GPL-3.0**. | Completed |
 
 ---
+
+## Meeting No. 3: Class Diagram Finalization
+**Date:** February 14, 2026
+**Time:** 20:00 - 23:00
+**Location:** Online (Discord)
+**Attendees:**
+1. Parunchai Timklip
+2. Chonchanan Jitrawang
+3. Chayawat Kanjanakaew
+4. Nonthapat Boonprasith
+5. Kittidet Wichaidit
+
+---
+
+### Agenda
+1. Finalize Class Diagram for core modules.
+2. Map Noun-Verb analysis to class responsibilities.
+3. Assign owners for each domain class and prepare UML artifacts.
+
+---
+
+### Summary of Discussions & Decisions
+
+#### 1. Class Diagram Scope
+The team agreed that the Class Diagram should cover the core modules including Member/Registrar, LPR, Announcement, Billing, Facility, and Maintenance, and should specify the relationships (aggregations, associations) and responsibilities of each class.
+
+#### 2. Design Conclusions
+* Separate `User/Member` and `Owner` clearly to support real-time ownership transfer.
+* Define `Announcement` as an aggregate root linked to attachments and resident notifications.
+* Specify an interface/contract for LPR so backend implementations (e.g., YOLOv8) can be swapped easily.
+
+---
+
+### Task Assignments
+
+| Member | Assigned Section / Topic | Status |
+| :--- | :--- | :--- |
+| Parunchai Timklip | Led LPR interface design and security; authored access-control specs and review notes | In Progress |
+| Chonchanan Jitrawang | Produced polished UML diagrams, exported PNG/SVGs, and prepared slide-ready assets | In Progress |
+| Chayawat Kanjanakaew | Modeled Maintenance & Facility domain, defined relationships, methods and example flows | In Progress |
+| Nonthapat Boonprasith | Specified `Member` and `Registrar` attributes, validation rules and migration notes | In Progress |
+| Kittidet Wichaidit | Mapped billing models to class relations, drafted financial invariants and examples | In Progress |
+
+---
+
+## Meeting No. 4: CLI Implementation
+**Date:** March 7, 2026
+**Time:** 20:00 - 23:00
+**Location:** Online (Discord)
+**Attendees:**
+1. Parunchai Timklip
+2. Chonchanan Jitrawang
+3. Chayawat Kanjanakaew
+4. Nonthapat Boonprasith
+5. Kittidet Wichaidit
+
+---
+
+### Agenda
+1. Define scope and commands for the project CLI (prototype).
+2. Decide technology and repo location for CLI (`cli-app`).
+3. Plan integration points with backend (seed, migrations, utilities).
+
+---
+
+### Summary of Discussions & Decisions
+
+* ตกลงสร้าง CLI แบบ lightweight เพื่อช่วยงาน admin/seed และกระบวนการ deployment เบื้องต้น
+* ใช้ `cli-app` ที่มีอยู่เป็นฐาน (Java/Gradle) สำหรับคำสั่ง prototype และพิจารณาเพิ่ม Node/Python wrapper หากจำเป็น
+* กำหนดคำสั่งเริ่มต้น: `seed`, `migrate`, `create-user`, `export-uml`
+
+---
+
+### Task Assignments
+
+| Member | Task / Responsibility | Status |
+| :--- | :--- | :--- |
+| Parunchai Timklip | Defined CLI command set, integration points and overall CLI UX spec | Not Started |
+| Chonchanan Jitrawang | Scaffold CLI commands and docs; drafted usage examples and help text | Not Started |
+| Chayawat Kanjanakaew | Implemented initial command handlers and Gradle tasks for `cli-app` | Not Started |
+| Nonthapat Boonprasith | Implement `create-user` and test seed flow; verify DB hooks | Not Started |
+| Kittidet Wichaidit | Add `export-uml` integration to output diagrams and exports | Not Started |
+
+---
+
+## Meeting No. 5: Implementing User Login & Register Interfaces
+**Date:** April 18, 2026
+**Time:** 20:00 - 23:00
+**Location:** Online (Discord)
+**Attendees:**
+1. Parunchai Timklip
+2. Chonchanan Jitrawang
+3. Chayawat Kanjanakaew
+4. Nonthapat Boonprasith
+5. Kittidet Wichaidit
+
+---
+
+### Agenda
+1. Implement Web & Mobile Login/Register interfaces.
+2. Integrate Google Sign-In (OAuth) for authentication.
+3. Define user flow for first-time registration vs existing members.
+
+---
+
+### Summary of Discussions & Decisions
+
+* ตกลงใช้ Google OAuth เป็นทางเลือกสำหรับการล็อกอิน เพื่อเพิ่มความสะดวกให้ผู้อยู่อาศัย
+* แยก flow ระหว่าง `Register` ปกติ (email/password) กับ `Sign in with Google` โดยยังคงมีช่องทางยืนยันตัวตนของผู้พักอาศัยผ่านข้อมูลกรรมสิทธิ์
+* กำหนดให้ `AuthService` (backend) มี endpoint สำหรับรับ token จาก Google และแปลงเป็น session ของระบบ
+
+---
+
+### Task Assignments
+
+| Member | Task / Responsibility | Status |
+| :--- | :--- | :--- |
+| Parunchai Timklip | Configure Google OAuth client IDs (web + mobile), define security flows and consent screens | In Progress |
+| Chonchanan Jitrawang | Implement frontend UI for Google Sign-In, design UX for first-time linking | In Progress |
+| Chayawat Kanjanakaew | Implement mobile/native sign-in flows and handle platform differences | In Progress |
+| Nonthapat Boonprasith | Add backend token verification, account linking and user provisioning logic | In Progress |
+| Kittidet Wichaidit | Prepare test cases, QA checklist and regression tests for auth flows | In Progress |
+
+---
+
+## Meeting No. 6: Facility Announcement Kickoff
+**Date:** April 21, 2026
+**Time:** 20:00 - 23:00
+**Location:** Online (Discord)
+**Attendees:**
+1. Parunchai Timklip
+2. Chonchanan Jitrawang
+3. Chayawat Kanjanakaew
+4. Nonthapat Boonprasith
+5. Kittidet Wichaidit
+---
+
+### Agenda
+1. Begin development of the `Facility Announcement` feature (notices related to facilities).
+2. Design API, data models, and attachment upload flow.
+3. Define initial UI/UX and the notification flow via Line OA.
+
+---
+
+### Summary of Discussions & Decisions
+
+* Start with CRUD endpoints for `FacilityAnnouncement` with support for image/file attachments.
+* Use the existing `announcementService` as a base and extend its scope for facility-related notices.
+* Plan to send notifications via Line OA and display them on an admin dashboard.
+
+---
+
+### Task Assignments
+
+| Member | Task / Responsibility | Status |
+| :--- | :--- | :--- |
+| Parunchai Timklip | Oversaw feature scope, approved data model and access control for facility announcements | In Progress |
+| Chonchanan Jitrawang | API design, routes and documentation for facility announcements and attachments | In Progress |
+| Chayawat Kanjanakaew | Built frontend components, upload handling and preview UX for announcements | In Progress |
+| Nonthapat Boonprasith | Drafted announcement templates, content strategy and scheduling rules | In Progress |
+| Kittidet Wichaidit | Integrated Line OA notification flow and tested delivery scenarios | In Progress |
+
+---
+
+## Meeting No. 7: Final Integration & Polish
+**Date:** May 13, 2026
+**Time:** 18:00 - 23:00
+**Location:** Online (Discord)
+**Attendees:**
+1. Parunchai Timklip
+2. Chonchanan Jitrawang
+3. Chayawat Kanjanakaew
+4. Nonthapat Boonprasith
+5. Kittidet Wichaidit
+
+---
+
+### Agenda
+1. Final integration of implemented features.
+2. Bug fixes, polishing UI, and prepare final presentation/demo.
+3. Verify migrations, seeds, and deployment checklist.
+
+---
+
+### Summary of Discussions & Decisions
+
+* Consolidated outputs from all modules and tested end-to-end flows (register/login, announcement, facility booking, billing).
+* Addressed major bugs and prepared scripts for the demo presentation.
+* Assigned final polishing tasks to each member and finalized slides for the presentation.
+
+---
+
+### Task Assignments
+
+### Task Assignments
+
+| Member | Task / Responsibility | Status |
+| :--- | :--- | :--- |
+| Parunchai Timklip | Final integration, security checks, scripted demo scenarios and lead presenter | In Progress |
+| Chonchanan Jitrawang | Polished UI, finalized slides, exported final assets and handled slide deck design | In Progress |
+| Chayawat Kanjanakaew | Fixed cross-platform issues, prepared mobile demo and validated user flows | In Progress |
+| Nonthapat Boonprasith | Finalized business flows, prepared narration and coordinate Q&A | In Progress |
+| Kittidet Wichaidit | Ran final tests, prepared deployment checklist and verified migrations/seeds | In Progress |
