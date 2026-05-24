@@ -181,7 +181,7 @@ cli-app
 ```bash
   cd /frontend-mobile
   flutter pub get
-  flutter run
+  flutter run -d web-server --web-port=5000
 ```  
 </p>
 </div>
